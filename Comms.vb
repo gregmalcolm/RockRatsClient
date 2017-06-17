@@ -14,6 +14,24 @@ Module Comms
     Private bytesSent As Long = 0
     Private bytesRecv As Long = 0
     Private keepAliveCount As Integer = 0
+    Private dataIsLoaded As Boolean = False
+
+    Private Function phoneyTCPData() As String
+        Dim transmission =
+"4 : 11 :   Chertan : Varpas : Savincates : Bjirup : Firbon : HIP 54844 : HIP 56321 : HIP 54346 : HIP 55823 : Aakuman : HIP 53737
+7 : 5 : Chertan :   Rock Rats : Order of Chertan : Chertan Dominion : Chertan Travel Inc : Union of Chertan Independants
+7 : 5 : Varpas :   Rock Rats : Varpas Confederacy : Varpas Drug Empire : Varpas Purple Power Co : Varpas Dynasty
+7 : 6 : Savincates :   Rock Rats : Natural Mehit Liberty Party : Savincates Blue Major & Co : Savincates Noblement : Savincates Co-operative : Savincates Council
+7 : 7 : Bjirup :   Rock Rats : Revolutionary Party of Bjirup : Unified Atius : HIP 55118 General Corp : Natural Mehit Liberty Party : Bjirup Crimson Life Ltd : Nobles of Bjirup
+7 : 5 : Firbon :   Rock Rats : Firbon Vision Company : Co-op of Firbon : Drug Empire of Firbon : HIP 54346 Silver Comms
+7 : 6 : HIP 54844 :   Rock Rats : Bureau of HIP 53923 Movement : Allied HIP 53923 Autocracy : Natural Mehit Liberty Party : Savincates Blue Major & Co : HIP 53923 Jet Dynamic Solutions
+7 : 5 : HIP 56321 :   Rock Rats : People's HIP 56321 Confederacy : Arawotyan Galactic Limited : Social Niu Hsing League : Democrats of HIP 57080
+7 : 6 : HIP 54346 :   Rock Rats : HIP 54346 Silver Bridge Comms : Firbon Vision Company : Nunggul Confederacy : Social Patakaka Labour : 80 Leonis Values Party
+7 : 5 : HIP 55823 :   Rock Rats : Arawotyan Galactic Limited : Tsim Biko Blue Fortune Pa'nrs : HIP 57112 Blue Allied Exchange : Arawotyan Crimson Vision Corp
+7 : 6 : Aakuman :   Rock Rats : Aakuman Prison Colony : Aakuman Crimson Raiders : 4 A1 Virginis Blue Mafia : Co-operative of Aakuman : Aakuman Holdings
+7 : 6 : HIP 53737 :   Rock Rats : Yin Yin Purple Crew : Mant Silver Major Ltd : Yin Yin Monarchy : Yin Yin Blue Advanced Ltd : Mant Society"
+        Return transmission
+    End Function
 
     Friend Async Function TestConn() As Task(Of Boolean)
         If Await connect() Then
@@ -23,17 +41,17 @@ Module Comms
     End Function
 
     Private Async Function connect() As Task(Of Boolean)
-        Dim HostAddress As String = Parameters.getParameter("HostAddress")
-        Dim HostPort As Integer = CInt(Parameters.getParameter("HostPort"))
-        Try
-            tcpClient.ReceiveTimeout = 15
-            Await tcpClient.ConnectAsync(HostAddress, HostPort)
-        Catch ex As Exception
-            RockRatsClient.ConnStatus1.Text = "Cannot Connect to " + HostAddress + vbNewLine + "Check Hostname and Port" + vbNewLine + ex.Message
-            RockRatsClient.logOutput("Connection Failed - Invalid Hostname or Port")
-            RockRatsClient.ConnStatus1.ForeColor = Color.DarkRed
-            Return False
-        End Try
+        'Dim HostAddress As String = Parameters.getParameter("HostAddress")
+        'Dim HostPort As Integer = CInt(Parameters.getParameter("HostPort"))
+        'Try
+        '    tcpClient.ReceiveTimeout = 15
+        '    Await tcpClient.ConnectAsync(HostAddress, HostPort)
+        'Catch ex As Exception
+        '    RockRatsClient.ConnStatus1.Text = "Cannot Connect to " + HostAddress + vbNewLine + "Check Hostname and Port" + vbNewLine + ex.Message
+        '    RockRatsClient.logOutput("Connection Failed - Invalid Hostname or Port")
+        '    RockRatsClient.ConnStatus1.ForeColor = Color.DarkRed
+        '    Return False
+        'End Try
         Return True
     End Function
 
@@ -129,21 +147,27 @@ Module Comms
     End Function
 
     Private Async Function recvTCP() As Task
-        If tcpClient.Connected And tcpClient.ReceiveBufferSize > 0 Then
-            Dim networkStream As NetworkStream = tcpClient.GetStream()
-            If networkStream.CanWrite And networkStream.CanRead Then
-                Dim returndata As String = ""
-                Try
-                    Dim bytes(tcpClient.ReceiveBufferSize) As Byte
-                    Await networkStream.ReadAsync(bytes, 0, CInt(tcpClient.ReceiveBufferSize))
-                    returndata = Trim(SoftData.whitelistChars(Encoding.ASCII.GetString(bytes)))
-                    bytesRecv = bytesRecv + Len(returndata)
-                    procReturnData(returndata)
-                Catch ex As Exception
-                End Try
-            Else
-                streamError(networkStream)
-            End If
+        'If tcpClient.Connected And tcpClient.ReceiveBufferSize > 0 Then
+        '    Dim networkStream As NetworkStream = tcpClient.GetStream()
+        '    If networkStream.CanWrite And networkStream.CanRead Then
+        '        Dim returndata As String = ""
+        '        Try
+        '            Dim bytes(tcpClient.ReceiveBufferSize) As Byte
+        '            Await networkStream.ReadAsync(bytes, 0, CInt(tcpClient.ReceiveBufferSize))
+        '            returndata = Trim(SoftData.whitelistChars(Encoding.ASCII.GetString(bytes)))
+        '            bytesRecv = bytesRecv + Len(returndata)
+        '            procReturnData(returndata)
+        '        Catch ex As Exception
+        '        End Try
+        '    Else
+        '        streamError(networkStream)
+        '    End If
+        'End If
+        If (Not dataIsLoaded) Then
+            Dim data As String
+            data = phoneyTCPData()
+            procReturnData(data)
+            dataIsLoaded = True
         End If
     End Function
 

@@ -6,7 +6,7 @@
     Friend Sub initDefaultParameters()
         ' RockRatsClient Default Values
         defaultValues.Add("JournalDirectory", Environment.GetEnvironmentVariable("USERPROFILE") + "\Saved Games\Frontier Developments\Elite Dangerous\")
-        defaultValues.Add("HostAddress", "sepp.space")
+        defaultValues.Add("HostAddress", "")
         defaultValues.Add("HostPort", "4526")
         defaultValues.Add("UpdateSiteActivity", "O")
         defaultValues.Add("BlackAndWhile", "False")

@@ -307,24 +307,6 @@ Public Class RockRatsClient
         End If
     End Sub
 
-    Private Sub SystemName_TextChanged(sender As Object, e As EventArgs) Handles SystemName.TextChanged
-        subSystemName.Text = SystemName.Text
-    End Sub
-
-    Private Sub subSystemName_TextChanged(sender As Object, e As EventArgs) Handles subSystemName.TextChanged
-        If subSystemName.Text = "" Then
-            subSubmit.Enabled = False
-        Else
-            subSubmit.Enabled = True
-        End If
-    End Sub
-
-    Private Sub subSubmit_Click(sender As Object, e As EventArgs) Handles subSubmit.Click
-        logOutput("Submitted " + subSystemName.Text + " as a Point of Interest")
-        Dim waitForCompletion As Boolean = Comms.sendUpdate("6", "6", subSystemName.Text + ":" + subComments.Text, "")
-        subComments.Text = ""
-    End Sub
-
     Friend Function getVersion() As String
         Return clientVersion
     End Function
@@ -334,6 +316,10 @@ Public Class RockRatsClient
     End Sub
 
     Private Sub SoftDataGrid_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles SoftDataGrid.CellContentClick
+
+    End Sub
+
+    Private Sub Label12_Click(sender As Object, e As EventArgs) Handles Label12.Click
 
     End Sub
 End Class
