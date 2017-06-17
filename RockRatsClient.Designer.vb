@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
-Partial Class RockRatslient
+Partial Class RockRatsClient
     Inherits Global.System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -23,7 +23,7 @@ Partial Class RockRatslient
     <Global.System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(RockRatslient))
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(RockRatsClient))
         Me.tailTimer = New System.Windows.Forms.Timer(Me.components)
         Me.LoadTimer = New System.Windows.Forms.Timer(Me.components)
         Me.LogTab = New System.Windows.Forms.TabPage()

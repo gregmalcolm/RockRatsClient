@@ -20,12 +20,12 @@ Module Files
         Dim JournalDir As String = getParameter("JournalDirectory")
 
         If Not Directory.Exists(JournalDir) Then
-            RockRatslient.FileStatus.ForeColor = Color.DarkRed
-            RockRatslient.FileStatus.Text = "ERROR - Directory not found"
+            RockRatsClient.FileStatus.ForeColor = Color.DarkRed
+            RockRatsClient.FileStatus.Text = "ERROR - Directory not found"
             Return False
         Else
-            RockRatslient.FileStatus.ForeColor = Color.DarkCyan
-            RockRatslient.FileStatus.Text = "Folder Found"
+            RockRatsClient.FileStatus.ForeColor = Color.DarkCyan
+            RockRatsClient.FileStatus.Text = "Folder Found"
         End If
 
         Try
@@ -34,13 +34,13 @@ Module Files
             If tmpJournal <> currentJournal Then
                 currentJournal = tmpJournal
                 lastMaxOffset = 0
-                RockRatslient.logOutput("Tailing: " + fileName)
+                RockRatsClient.logOutput("Tailing: " + fileName)
             End If
-            RockRatslient.FileStatus.ForeColor = Color.DarkGreen
-            RockRatslient.FileStatus.Text = "Tailing: " + fileName
+            RockRatsClient.FileStatus.ForeColor = Color.DarkGreen
+            RockRatsClient.FileStatus.Text = "Tailing: " + fileName
         Catch ex As Exception
-            RockRatslient.FileStatus.ForeColor = Color.DarkRed
-            RockRatslient.FileStatus.Text = "ERROR - Journals Not Found"
+            RockRatsClient.FileStatus.ForeColor = Color.DarkRed
+            RockRatsClient.FileStatus.Text = "ERROR - Journals Not Found"
             Return False
         End Try
         Return True
@@ -54,8 +54,8 @@ Module Files
     Friend Function tailJournal() As Boolean
         Dim waitForCompletion As Boolean
         If Not File.Exists(currentJournal) Then
-            RockRatslient.FileStatus.ForeColor = Color.DarkRed
-            RockRatslient.FileStatus.Text = "ERROR - File not found"
+            RockRatsClient.FileStatus.ForeColor = Color.DarkRed
+            RockRatsClient.FileStatus.Text = "ERROR - File not found"
             Return False
         End If
 
@@ -76,8 +76,8 @@ Module Files
             End Using
             Return True
         Catch ex As Exception
-            RockRatslient.FileStatus.ForeColor = Color.DarkRed
-            RockRatslient.FileStatus.Text = "ERROR - File could not be read"
+            RockRatsClient.FileStatus.ForeColor = Color.DarkRed
+            RockRatsClient.FileStatus.Text = "ERROR - File could not be read"
             Return False
         End Try
     End Function
@@ -261,7 +261,7 @@ Module Files
             End If
             waitForCompletion = processSystemUpdate(systemName, stationName, systemAllegiance, systemEconomy, systemGovernment, systemSecurity, sFaction, sFactionState, sTimeStamp, uType, uSubType)
             If systemName <> "" Then
-                RockRatslient.SystemName.Text = systemName
+                RockRatsClient.SystemName.Text = systemName
                 DataCache.setDataCache("Store", "LastSystem", systemName)
             End If
             Return True
@@ -285,7 +285,7 @@ Module Files
                     sShip = Trim(Replace(Mid(s, 9), "|", ""))
                 ElseIf InStr(s, "|Commander|:") > 0 And uSubType = "2" Then
                     Dim commanderName As String = Trim(Replace(Mid(s, 14), "|", ""))
-                    RockRatslient.CommanderName.Text = commanderName
+                    RockRatsClient.CommanderName.Text = commanderName
                     DataCache.setDataCache("Store", "LastCommander", commanderName)
                 ElseIf InStr(s, "|ShipType|:") > 0 Then
                     sShip = Trim(Replace(Mid(s, 13), "|", ""))
@@ -314,7 +314,7 @@ Module Files
                 End If
             End If
             If sShip <> "" Then
-                RockRatslient.ShipName.Text = sShip
+                RockRatsClient.ShipName.Text = sShip
                 DataCache.setDataCache("Store", "LastShip", sShip)
             End If
             Return True
@@ -345,7 +345,7 @@ Module Files
             Next
 
             If chatChannel <> "npc" Then
-                RockRatslient.chatOutput(chatType + " -  " + chatText)
+                RockRatsClient.chatOutput(chatType + " -  " + chatText)
             End If
             Return True
         Catch ex As Exception
@@ -420,10 +420,10 @@ Module Files
         If DataCache.getDataCache(cCat, cKey) <> localCache Then
             If DataCache.setDataCache(cCat, cKey, localCache) Then
                 Dim waitForCompletion As Boolean = Comms.sendUpdate(uType, uSubType, DataRow, "")
-                RockRatslient.logOutput("Sending " + cCat + " Update for " + cKey)
+                RockRatsClient.logOutput("Sending " + cCat + " Update for " + cKey)
             End If
         Else
-            RockRatslient.logOutput("Skipping " + cCat + " Update for " + cKey + " - Duplicate Data")
+            RockRatsClient.logOutput("Skipping " + cCat + " Update for " + cKey + " - Duplicate Data")
         End If
         Return True
     End Function
@@ -488,15 +488,15 @@ Module Files
         Dim stringSeparators() As String = {":"}
         elements = systems.Split(stringSeparators, StringSplitOptions.None)
         ReDim RockRatsSystems(CInt(elements(1)))
-        RockRatslient.SystemsList.Items.Clear()
+        RockRatsClient.SystemsList.Items.Clear()
         For index = 2 To elements.GetUpperBound(0)
             Dim cleanSystemName As String = SoftData.whitelistChars(Trim(elements(index)))
             RockRatsSystems(index - 1) = cleanSystemName
-            RockRatslient.SystemsList.Items.Add(cleanSystemName)
-            RockRatslient.selSystem.Items.Add(cleanSystemName)
+            RockRatsClient.SystemsList.Items.Add(cleanSystemName)
+            RockRatsClient.selSystem.Items.Add(cleanSystemName)
             getSystemFactions(cleanSystemName)
         Next
-        RockRatslient.logOutput("Downloaded " + elements(1) + " RockRats Systems")
+        RockRatsClient.logOutput("Downloaded " + elements(1) + " RockRats Systems")
     End Sub
 
     Friend Sub initJournalCodes()

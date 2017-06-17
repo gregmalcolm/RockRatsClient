@@ -32,7 +32,7 @@ Namespace My
         
         <Global.System.Diagnostics.DebuggerStepThroughAttribute()>  _
         Protected Overrides Sub OnCreateMainForm()
-            Me.MainForm = Global.RockRatsClient.RockRatslient
+            Me.MainForm = Global.RockRatsClient.RockRatsClient
         End Sub
     End Class
 End Namespace

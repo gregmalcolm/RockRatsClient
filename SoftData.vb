@@ -61,9 +61,9 @@ Module SoftData
 
     Private Sub addEDCaptureText(factionName As String, influence As String, state As String, influenceVal As Double)
         Dim doUpdate As Boolean = True
-        For Each row As DataGridViewRow In RockRatslient.SoftDataGrid.Rows
+        For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
             If row.Cells(0).Value.ToString = factionName Then
-                If CBool(RockRatslient.SoftDataGrid.Rows(row.Index).Cells(3).Value) Then
+                If CBool(RockRatsClient.SoftDataGrid.Rows(row.Index).Cells(3).Value) Then
                     doUpdate = False
                 End If
                 Exit For
@@ -80,24 +80,24 @@ Module SoftData
 
     Friend Sub updDataGridRow(factionName As String, influence As String, state As String, found As Boolean)
         Dim doInsert As Boolean = True
-        For Each row As DataGridViewRow In RockRatslient.SoftDataGrid.Rows
+        For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
             If row.Cells(0).Value.ToString = factionName Then
-                RockRatslient.SoftDataGrid.Rows(row.Index).Cells(1).Value = influence
-                RockRatslient.SoftDataGrid.Rows(row.Index).Cells(2).Value = state
-                RockRatslient.SoftDataGrid.Rows(row.Index).Cells(3).Value = found
+                RockRatsClient.SoftDataGrid.Rows(row.Index).Cells(1).Value = influence
+                RockRatsClient.SoftDataGrid.Rows(row.Index).Cells(2).Value = state
+                RockRatsClient.SoftDataGrid.Rows(row.Index).Cells(3).Value = found
                 doInsert = False
                 Exit For
             End If
         Next
         If doInsert Then
-            RockRatslient.SoftDataGrid.Rows.Add(factionName, influence, state, found)
+            RockRatsClient.SoftDataGrid.Rows.Add(factionName, influence, state, found)
         End If
     End Sub
 
     Friend Sub procOCRTextChg()
         If procOCRTextChange Then
             Dim i As Double = 0
-            For Each row As DataGridViewRow In RockRatslient.SoftDataGrid.Rows
+            For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
                 Dim n As Double
                 Try
                     n = Val(row.Cells(1).Value.ToString)
@@ -107,29 +107,29 @@ Module SoftData
                 i = i + n
             Next
 
-            RockRatslient.infTotalVal.Text = i.ToString
+            RockRatsClient.infTotalVal.Text = i.ToString
             If i > 99.8 And i <= 100.1 Then
-                RockRatslient.CaptureEDScreen.Enabled = False
-                RockRatslient.PasteEDScreen.Enabled = False
-                RockRatslient.UpdSoftData.Enabled = True
-                RockRatslient.infTotal.ForeColor = Color.DarkGreen
-                RockRatslient.infTotalVal.ForeColor = Color.DarkGreen
+                RockRatsClient.CaptureEDScreen.Enabled = False
+                RockRatsClient.PasteEDScreen.Enabled = False
+                RockRatsClient.UpdSoftData.Enabled = True
+                RockRatsClient.infTotal.ForeColor = Color.DarkGreen
+                RockRatsClient.infTotalVal.ForeColor = Color.DarkGreen
             Else
-                RockRatslient.CaptureEDScreen.Enabled = True
-                RockRatslient.PasteEDScreen.Enabled = True
-                RockRatslient.UpdSoftData.Enabled = False
-                RockRatslient.infTotal.ForeColor = Color.DarkRed
-                RockRatslient.infTotalVal.ForeColor = Color.DarkRed
+                RockRatsClient.CaptureEDScreen.Enabled = True
+                RockRatsClient.PasteEDScreen.Enabled = True
+                RockRatsClient.UpdSoftData.Enabled = False
+                RockRatsClient.infTotal.ForeColor = Color.DarkRed
+                RockRatsClient.infTotalVal.ForeColor = Color.DarkRed
             End If
         End If
     End Sub
 
     Friend Sub procSystemChange(systemName As String)
         If systemName <> selectedSystem Then
-            RockRatslient.CaptureEDScreen.Enabled = True
-            RockRatslient.PasteEDScreen.Enabled = True
-            RockRatslient.UpdSoftData.Enabled = False
-            RockRatslient.SoftDataGrid.Rows.Clear()
+            RockRatsClient.CaptureEDScreen.Enabled = True
+            RockRatsClient.PasteEDScreen.Enabled = True
+            RockRatsClient.UpdSoftData.Enabled = False
+            RockRatsClient.SoftDataGrid.Rows.Clear()
             procOCRTextChg()
             Comms.getSystemFactions(systemName)
             selectedSystem = systemName
@@ -271,7 +271,7 @@ Module SoftData
             Dim elements() As String
             Dim stringSeparators() As String = {":"}
 
-            If UCase(systemName) = UCase(RockRatslient.selSystem.SelectedItem.ToString) Then
+            If UCase(systemName) = UCase(RockRatsClient.selSystem.SelectedItem.ToString) Then
                 elements = factionData.Split(stringSeparators, StringSplitOptions.None)
                 For i = 0 To numFactions
                     systemFactions(i) = ""

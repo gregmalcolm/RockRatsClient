@@ -1,6 +1,6 @@
 ﻿Imports System.IO
 
-Public Class RockRatslient
+Public Class RockRatsClient
     Private AppDataDir As String = Environment.GetEnvironmentVariable("USERPROFILE") + "\AppData\Local\RockRatsClient"
     Private clientVersion As String = Application.ProductVersion
     Private noLogDups As String = ""
