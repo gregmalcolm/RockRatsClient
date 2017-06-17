@@ -956,7 +956,7 @@ Partial Class RockRatsClient
         Me.MaximizeBox = False
         Me.Name = "RockRatsClient"
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
-        Me.Text = "RockRats Client"
+        Me.Text = "Rock Rats Client"
         Me.LogTab.ResumeLayout(False)
         Me.StatusTab.ResumeLayout(False)
         Me.StatusTab.PerformLayout()
