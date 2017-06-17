@@ -3,7 +3,7 @@ Imports System.Globalization
 
 Module Files
     Private currentJournal As String = "NotInitalized"
-    Private SeppSystems(32) As String
+    Private RockRatsSystems(32) As String
     Private lastMaxOffset As Long = 0
     Private line As String = ""
     Private idleCounter As Integer = 0
@@ -20,12 +20,12 @@ Module Files
         Dim JournalDir As String = getParameter("JournalDirectory")
 
         If Not Directory.Exists(JournalDir) Then
-            SeppClient.FileStatus.ForeColor = Color.DarkRed
-            SeppClient.FileStatus.Text = "ERROR - Directory not found"
+            RockRatslient.FileStatus.ForeColor = Color.DarkRed
+            RockRatslient.FileStatus.Text = "ERROR - Directory not found"
             Return False
         Else
-            SeppClient.FileStatus.ForeColor = Color.DarkCyan
-            SeppClient.FileStatus.Text = "Folder Found"
+            RockRatslient.FileStatus.ForeColor = Color.DarkCyan
+            RockRatslient.FileStatus.Text = "Folder Found"
         End If
 
         Try
@@ -34,13 +34,13 @@ Module Files
             If tmpJournal <> currentJournal Then
                 currentJournal = tmpJournal
                 lastMaxOffset = 0
-                SeppClient.logOutput("Tailing: " + fileName)
+                RockRatslient.logOutput("Tailing: " + fileName)
             End If
-            SeppClient.FileStatus.ForeColor = Color.DarkGreen
-            SeppClient.FileStatus.Text = "Tailing: " + fileName
+            RockRatslient.FileStatus.ForeColor = Color.DarkGreen
+            RockRatslient.FileStatus.Text = "Tailing: " + fileName
         Catch ex As Exception
-            SeppClient.FileStatus.ForeColor = Color.DarkRed
-            SeppClient.FileStatus.Text = "ERROR - Journals Not Found"
+            RockRatslient.FileStatus.ForeColor = Color.DarkRed
+            RockRatslient.FileStatus.Text = "ERROR - Journals Not Found"
             Return False
         End Try
         Return True
@@ -54,8 +54,8 @@ Module Files
     Friend Function tailJournal() As Boolean
         Dim waitForCompletion As Boolean
         If Not File.Exists(currentJournal) Then
-            SeppClient.FileStatus.ForeColor = Color.DarkRed
-            SeppClient.FileStatus.Text = "ERROR - File not found"
+            RockRatslient.FileStatus.ForeColor = Color.DarkRed
+            RockRatslient.FileStatus.Text = "ERROR - File not found"
             Return False
         End If
 
@@ -76,8 +76,8 @@ Module Files
             End Using
             Return True
         Catch ex As Exception
-            SeppClient.FileStatus.ForeColor = Color.DarkRed
-            SeppClient.FileStatus.Text = "ERROR - File could not be read"
+            RockRatslient.FileStatus.ForeColor = Color.DarkRed
+            RockRatslient.FileStatus.Text = "ERROR - File could not be read"
             Return False
         End Try
     End Function
@@ -117,7 +117,7 @@ Module Files
         ' # 3 : Docked
         ' # 4 : ShipyardSwap
         ' # 5 : ShipyardNew
-        ' # 6 : SendText (Also Activity Point of Interest - Called from sepp client)
+        ' # 6 : SendText (Also Activity Point of Interest - Called from RockRats client)
         ' # 7 : ReceiveText
         ' # 8 : Promotion
         '
@@ -261,7 +261,7 @@ Module Files
             End If
             waitForCompletion = processSystemUpdate(systemName, stationName, systemAllegiance, systemEconomy, systemGovernment, systemSecurity, sFaction, sFactionState, sTimeStamp, uType, uSubType)
             If systemName <> "" Then
-                SeppClient.SystemName.Text = systemName
+                RockRatslient.SystemName.Text = systemName
                 DataCache.setDataCache("Store", "LastSystem", systemName)
             End If
             Return True
@@ -285,7 +285,7 @@ Module Files
                     sShip = Trim(Replace(Mid(s, 9), "|", ""))
                 ElseIf InStr(s, "|Commander|:") > 0 And uSubType = "2" Then
                     Dim commanderName As String = Trim(Replace(Mid(s, 14), "|", ""))
-                    SeppClient.CommanderName.Text = commanderName
+                    RockRatslient.CommanderName.Text = commanderName
                     DataCache.setDataCache("Store", "LastCommander", commanderName)
                 ElseIf InStr(s, "|ShipType|:") > 0 Then
                     sShip = Trim(Replace(Mid(s, 13), "|", ""))
@@ -314,7 +314,7 @@ Module Files
                 End If
             End If
             If sShip <> "" Then
-                SeppClient.ShipName.Text = sShip
+                RockRatslient.ShipName.Text = sShip
                 DataCache.setDataCache("Store", "LastShip", sShip)
             End If
             Return True
@@ -345,7 +345,7 @@ Module Files
             Next
 
             If chatChannel <> "npc" Then
-                SeppClient.chatOutput(chatType + " -  " + chatText)
+                RockRatslient.chatOutput(chatType + " -  " + chatText)
             End If
             Return True
         Catch ex As Exception
@@ -380,8 +380,8 @@ Module Files
 
     Private Function processSystemUpdate(systemName As String, stationName As String, systemAllegiance As String, systemEconomy As String, systemGovernment As String, systemSecurity As String, sFaction As String, sFactionState As String, sTimeStamp As String, uType As String, uSubType As String) As Boolean
         Try
-            For index = 0 To SeppSystems.GetUpperBound(0)
-                If SeppSystems(index) = systemName Then
+            For index = 0 To RockRatsSystems.GetUpperBound(0)
+                If RockRatsSystems(index) = systemName Then
                     Dim cKey As String = systemName
                     Dim DataRow As String = ""
 
@@ -420,10 +420,10 @@ Module Files
         If DataCache.getDataCache(cCat, cKey) <> localCache Then
             If DataCache.setDataCache(cCat, cKey, localCache) Then
                 Dim waitForCompletion As Boolean = Comms.sendUpdate(uType, uSubType, DataRow, "")
-                SeppClient.logOutput("Sending " + cCat + " Update for " + cKey)
+                RockRatslient.logOutput("Sending " + cCat + " Update for " + cKey)
             End If
         Else
-            SeppClient.logOutput("Skipping " + cCat + " Update for " + cKey + " - Duplicate Data")
+            RockRatslient.logOutput("Skipping " + cCat + " Update for " + cKey + " - Duplicate Data")
         End If
         Return True
     End Function
@@ -483,20 +483,20 @@ Module Files
         Return retValue
     End Function
 
-    Friend Sub setSeppSystems(systems As String)
+    Friend Sub setRockRatsSystems(systems As String)
         Dim elements() As String
         Dim stringSeparators() As String = {":"}
         elements = systems.Split(stringSeparators, StringSplitOptions.None)
-        ReDim SeppSystems(CInt(elements(1)))
-        SeppClient.SystemsList.Items.Clear()
+        ReDim RockRatsSystems(CInt(elements(1)))
+        RockRatslient.SystemsList.Items.Clear()
         For index = 2 To elements.GetUpperBound(0)
             Dim cleanSystemName As String = SoftData.whitelistChars(Trim(elements(index)))
-            SeppSystems(index - 1) = cleanSystemName
-            SeppClient.SystemsList.Items.Add(cleanSystemName)
-            SeppClient.selSystem.Items.Add(cleanSystemName)
+            RockRatsSystems(index - 1) = cleanSystemName
+            RockRatslient.SystemsList.Items.Add(cleanSystemName)
+            RockRatslient.selSystem.Items.Add(cleanSystemName)
             getSystemFactions(cleanSystemName)
         Next
-        SeppClient.logOutput("Downloaded " + elements(1) + " SEPP Systems")
+        RockRatslient.logOutput("Downloaded " + elements(1) + " RockRats Systems")
     End Sub
 
     Friend Sub initJournalCodes()

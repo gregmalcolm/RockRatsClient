@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 
-Public Class SeppClient
-    Private AppDataDir As String = Environment.GetEnvironmentVariable("USERPROFILE") + "\AppData\Local\SeppClient"
+Public Class RockRatslient
+    Private AppDataDir As String = Environment.GetEnvironmentVariable("USERPROFILE") + "\AppData\Local\RockRatsClient"
     Private clientVersion As String = Application.ProductVersion
     Private noLogDups As String = ""
 
@@ -11,7 +11,7 @@ Public Class SeppClient
         tailTimer.Enabled = True
     End Sub
 
-    Private Sub SeppClient_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Sub RockRatsClient_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         If Not Directory.Exists(AppDataDir) Then
             My.Computer.FileSystem.CreateDirectory(AppDataDir)
         End If
@@ -34,22 +34,22 @@ Public Class SeppClient
         SystemName.Text = DataCache.getDataCache("Store", "LastSystem")
         ShipName.Text = DataCache.getDataCache("Store", "LastShip")
         CommanderName.Text = DataCache.getDataCache("Store", "LastCommander")
-        SeppActivity.Items.Add("Logon + All Sepp System Activity")
-        SeppActivity.Items.Add("Logon + Jumps in Sepp Systems")
-        SeppActivity.Items.Add("Logon + Docks in Sepp Systems")
-        SeppActivity.Items.Add("Logon location only")
-        SeppActivity.Items.Add("No Update")
+        RockRatsActivity.Items.Add("Logon + All RockRats System Activity")
+        RockRatsActivity.Items.Add("Logon + Jumps in RockRats Systems")
+        RockRatsActivity.Items.Add("Logon + Docks in RockRats Systems")
+        RockRatsActivity.Items.Add("Logon location only")
+        RockRatsActivity.Items.Add("No Update")
         Dim procActivity As String = getParameter("UpdateSiteActivity")
         If procActivity = "A" Then
-            SeppActivity.SelectedIndex = 0
+            RockRatsActivity.SelectedIndex = 0
         ElseIf procActivity = "N" Then
-            SeppActivity.SelectedIndex = 4
+            RockRatsActivity.SelectedIndex = 4
         ElseIf procActivity = "J" Then
-            SeppActivity.SelectedIndex = 1
+            RockRatsActivity.SelectedIndex = 1
         ElseIf procActivity = "D" Then
-            SeppActivity.SelectedIndex = 2
+            RockRatsActivity.SelectedIndex = 2
         Else
-            SeppActivity.SelectedIndex = 3
+            RockRatsActivity.SelectedIndex = 3
         End If
         Version.Text = "Version: " + clientVersion
         logOutput("AppData: " + AppDataDir)
@@ -118,13 +118,13 @@ Public Class SeppClient
     Private Sub SaveJournalDir_Click(sender As Object, e As EventArgs) Handles SaveJournalDir.Click
         Parameters.setParameter("JournalDirectory", JournalFolder.Text)
         Dim procActivity As String = "O"
-        If SeppActivity.SelectedIndex = 0 Then
+        If RockRatsActivity.SelectedIndex = 0 Then
             procActivity = "A"
-        ElseIf SeppActivity.SelectedIndex = 4 Then
+        ElseIf RockRatsActivity.SelectedIndex = 4 Then
             procActivity = "N"
-        ElseIf SeppActivity.SelectedIndex = 1 Then
+        ElseIf RockRatsActivity.SelectedIndex = 1 Then
             procActivity = "J"
-        ElseIf SeppActivity.SelectedIndex = 2 Then
+        ElseIf RockRatsActivity.SelectedIndex = 2 Then
             procActivity = "D"
         End If
         setParameter("UpdateSiteActivity", procActivity)
@@ -209,23 +209,23 @@ Public Class SeppClient
             grBitmap.DrawImage(screenshot, 0, 0, procBitmap.Width + 1, procBitmap.Height + 1)
             If BlackAndWhile.Checked Then
                 Dim procImg As Bitmap = toGrayScale(procBitmap)
-                Call Global.SeppClient.procEDScreen(procImg)
+                Call Global.RockRatsClient.procEDScreen(procImg)
                 EDCapture.Image = procImg
             Else
-                Call Global.SeppClient.procEDScreen(procBitmap)
+                Call Global.RockRatsClient.procEDScreen(procBitmap)
                 EDCapture.Image = procBitmap
             End If
         ElseIf BlackAndWhile.Checked Then
             Dim procImg As Bitmap = toGrayScale(screenshot)
-            Call Global.SeppClient.procEDScreen(procImg)
+            Call Global.RockRatsClient.procEDScreen(procImg)
             EDCapture.Image = procImg
         Else
-            Call Global.SeppClient.procEDScreen(screenshot)
+            Call Global.RockRatsClient.procEDScreen(screenshot)
             EDCapture.Image = screenshot
         End If
         EDCapture.Refresh()
         ocrWorking.Visible = False
-        Call Global.SeppClient.procOCRTextChg()
+        Call Global.RockRatsClient.procOCRTextChg()
     End Sub
 
     Private Function toGrayScale(ByVal bmp As Bitmap) As Bitmap
@@ -256,7 +256,7 @@ Public Class SeppClient
         Next
         logOutput("Updated " + SoftDataGrid.Rows.Count.ToString + " Factions in " + selSystem.SelectedItem.ToString)
         SoftDataGrid.Rows.Clear()
-        Call Global.SeppClient.procOCRTextChg()
+        Call Global.RockRatsClient.procOCRTextChg()
     End Sub
 
     Private Async Sub commsTimer_Tick(sender As Object, e As EventArgs) Handles commsTimer.Tick
@@ -269,7 +269,7 @@ Public Class SeppClient
 
     Private Sub selSystem_SelectedIndexChanged(sender As Object, e As EventArgs) Handles selSystem.SelectedIndexChanged
         If selSystem.SelectedItem.ToString <> "" Then
-            Call Global.SeppClient.procSystemChange(selSystem.SelectedItem.ToString)
+            Call Global.RockRatsClient.procSystemChange(selSystem.SelectedItem.ToString)
         End If
     End Sub
 
@@ -283,7 +283,7 @@ Public Class SeppClient
     End Sub
 
     Private Sub SoftDataGrid_CellValueChanged(sender As Object, e As DataGridViewCellEventArgs) Handles SoftDataGrid.CellValueChanged
-        Call Global.SeppClient.procOCRTextChg()
+        Call Global.RockRatsClient.procOCRTextChg()
     End Sub
 
     Private Sub resizeSlider_Scroll(sender As Object, e As EventArgs) Handles resizeSlider.Scroll
@@ -329,7 +329,7 @@ Public Class SeppClient
         Return clientVersion
     End Function
 
-    Private Sub SeppActivity_SelectedIndexChanged(sender As Object, e As EventArgs) Handles SeppActivity.SelectedIndexChanged
+    Private Sub RockRatsActivity_SelectedIndexChanged(sender As Object, e As EventArgs) Handles RockRatsActivity.SelectedIndexChanged
         SaveJournalDir.Enabled = True
     End Sub
 

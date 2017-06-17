@@ -6,16 +6,16 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{5791F83B-047E-46BE-A72A-1CBAB701B5A2}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>SeppClient.My.MyApplication</StartupObject>
-    <RootNamespace>SeppClient</RootNamespace>
-    <AssemblyName>SeppClient</AssemblyName>
+    <StartupObject>RockRatsClient.My.MyApplication</StartupObject>
+    <RootNamespace>RockRatsClient</RootNamespace>
+    <AssemblyName>RockRatsClient</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>C:\Games\SEPPClient\</PublishUrl>
+    <PublishUrl>C:\Games\RockRatsClient\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -26,8 +26,8 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <SupportUrl>http:\\sepp.space</SupportUrl>
-    <ProductName>SEPP Client</ProductName>
-    <PublisherName>Sepp Tools</PublisherName>
+    <ProductName>RockRats Client</ProductName>
+    <PublisherName>RockRats Tools</PublisherName>
     <AutorunEnabled>true</AutorunEnabled>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>2.6.4.0</ApplicationVersion>
@@ -42,7 +42,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>SeppClient.xml</DocumentationFile>
+    <DocumentationFile>RockRatsClient.xml</DocumentationFile>
     <NoWarn>
     </NoWarn>
     <Prefer32Bit>true</Prefer32Bit>
@@ -55,7 +55,7 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>SeppClient.xml</DocumentationFile>
+    <DocumentationFile>RockRatsClient.xml</DocumentationFile>
     <NoWarn>
     </NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
@@ -81,7 +81,7 @@
     <ManifestCertificateThumbprint>1D330FD255ABD3EE74A8E9E8FB23686E75C866CE</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>SeppClient_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>RockRatsClient_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -140,9 +140,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationEvents.vb" />
-    <Compile Include="SeppClient.Designer.vb">
-      <DependentUpon>SeppClient.vb</DependentUpon>
+    <Compile Include="RockRatsClient.Designer.vb">
+      <DependentUpon>RockRatsClient.vb</DependentUpon>
     </Compile>
+    <Compile Include="RockRatsClient.vb" />
+    <Compile Include="RockRatsSystem.vb" />
     <Compile Include="viewImage.Designer.vb">
       <DependentUpon>viewImage.vb</DependentUpon>
     </Compile>
@@ -151,10 +153,6 @@
     </Compile>
     <Compile Include="GlobalSuppressions.vb" />
     <Compile Include="SoftData.vb" />
-    <Compile Include="SeppSystem.vb" />
-    <Compile Include="SeppClient.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Comms.vb" />
     <Compile Include="Files.vb" />
     <Compile Include="DataCache.vb" />
@@ -182,8 +180,8 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="SeppClient.resx">
-      <DependentUpon>SeppClient.vb</DependentUpon>
+    <EmbeddedResource Include="RockRatsClient.resx">
+      <DependentUpon>RockRatsClient.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="viewImage.resx">
       <DependentUpon>viewImage.vb</DependentUpon>
@@ -203,7 +201,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="SeppClient_TemporaryKey.pfx" />
     <Content Include="tessdata\eng.cube.bigrams">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -231,6 +228,7 @@
     <Content Include="tessdata\eng.traineddata">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="x64\cvextern.dll">

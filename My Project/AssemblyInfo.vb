@@ -8,11 +8,11 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("Sepp Client")>
+<Assembly: AssemblyTitle("RockRats Client")>
 <Assembly: AssemblyDescription("")>
 <Assembly: AssemblyCompany("")>
-<Assembly: AssemblyProduct("Sepp Client")>
-<Assembly: AssemblyCopyright("Copyright ©  Sepp Tools 2016")>
+<Assembly: AssemblyProduct("RockRats Client")>
+<Assembly: AssemblyCopyright("Copyright ©  RockRats Tools 2016")>
 <Assembly: AssemblyTrademark("")>
 
 <Assembly: ComVisible(False)>

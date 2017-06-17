@@ -147,8 +147,8 @@ If a Faction is not captured on the first attempt or the influence is an incorre
 and try scrolling slightly on the System Map before capturing again, this will usually correct the values.</value>
   </data>
   <data name="Label12.Text" xml:space="preserve">
-    <value>Sepp Client was developed to enable automatic updating of System and Station Faction details
-The client reads from the Commanders Journal (introduced in ED 2.2) to update the Sepp website
+    <value>RockRats Client was developed to enable automatic updating of System and Station Faction details
+The client reads from the Commanders Journal (introduced in ED 2.2) to update the RockRats website
 The Client itself will not update your registry
 All library files bundled for OCR are stored in the Application Directory
 The installer used allows for complete uninstall of the client and all libraries

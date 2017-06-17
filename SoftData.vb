@@ -3,7 +3,7 @@ Imports Emgu.CV.CvEnum
 Imports Emgu.CV.OCR
 
 Module SoftData
-    Private SeppOCR As Tesseract
+    Private RockRatsOCR As Tesseract
     Private procOCRTextChange As Boolean = False
     Private selectedSystem As String = ""
     Private systemFactions(20) As String
@@ -14,13 +14,13 @@ Module SoftData
     Friend Sub procEDScreen(bitmapImage As System.Drawing.Bitmap)
         Try
             procOCRTextChange = False
-            SeppOCR = New Tesseract() ' OcrEngineMode.TesseractCubeCombined
-            SeppOCR.SetVariable("tessedit_char_whitelist", "QWERTYUIOPASDFGHJKLZXCVBNM.0987654321%:")
-            SeppOCR.Init(exeDir + "\tessdata", "eng", OcrEngineMode.TesseractOnly)
-            SeppOCR.Recognize(New Image(Of [Structure].Gray, Byte)(bitmapImage))
+            RockRatsOCR = New Tesseract() ' OcrEngineMode.TesseractCubeCombined
+            RockRatsOCR.SetVariable("tessedit_char_whitelist", "QWERTYUIOPASDFGHJKLZXCVBNM.0987654321%:")
+            RockRatsOCR.Init(exeDir + "\tessdata", "eng", OcrEngineMode.TesseractOnly)
+            RockRatsOCR.Recognize(New Image(Of [Structure].Gray, Byte)(bitmapImage))
             Dim elements() As String
             Dim stringSeparators() As String = {vbCrLf}
-            elements = SeppOCR.GetText.Split(stringSeparators, StringSplitOptions.None)
+            elements = RockRatsOCR.GetText.Split(stringSeparators, StringSplitOptions.None)
             Dim catchFaction As String = ""
             Dim factionName As String = ""
             Dim influence As String = ""
@@ -61,9 +61,9 @@ Module SoftData
 
     Private Sub addEDCaptureText(factionName As String, influence As String, state As String, influenceVal As Double)
         Dim doUpdate As Boolean = True
-        For Each row As DataGridViewRow In SeppClient.SoftDataGrid.Rows
+        For Each row As DataGridViewRow In RockRatslient.SoftDataGrid.Rows
             If row.Cells(0).Value.ToString = factionName Then
-                If CBool(SeppClient.SoftDataGrid.Rows(row.Index).Cells(3).Value) Then
+                If CBool(RockRatslient.SoftDataGrid.Rows(row.Index).Cells(3).Value) Then
                     doUpdate = False
                 End If
                 Exit For
@@ -80,24 +80,24 @@ Module SoftData
 
     Friend Sub updDataGridRow(factionName As String, influence As String, state As String, found As Boolean)
         Dim doInsert As Boolean = True
-        For Each row As DataGridViewRow In SeppClient.SoftDataGrid.Rows
+        For Each row As DataGridViewRow In RockRatslient.SoftDataGrid.Rows
             If row.Cells(0).Value.ToString = factionName Then
-                SeppClient.SoftDataGrid.Rows(row.Index).Cells(1).Value = influence
-                SeppClient.SoftDataGrid.Rows(row.Index).Cells(2).Value = state
-                SeppClient.SoftDataGrid.Rows(row.Index).Cells(3).Value = found
+                RockRatslient.SoftDataGrid.Rows(row.Index).Cells(1).Value = influence
+                RockRatslient.SoftDataGrid.Rows(row.Index).Cells(2).Value = state
+                RockRatslient.SoftDataGrid.Rows(row.Index).Cells(3).Value = found
                 doInsert = False
                 Exit For
             End If
         Next
         If doInsert Then
-            SeppClient.SoftDataGrid.Rows.Add(factionName, influence, state, found)
+            RockRatslient.SoftDataGrid.Rows.Add(factionName, influence, state, found)
         End If
     End Sub
 
     Friend Sub procOCRTextChg()
         If procOCRTextChange Then
             Dim i As Double = 0
-            For Each row As DataGridViewRow In SeppClient.SoftDataGrid.Rows
+            For Each row As DataGridViewRow In RockRatslient.SoftDataGrid.Rows
                 Dim n As Double
                 Try
                     n = Val(row.Cells(1).Value.ToString)
@@ -107,29 +107,29 @@ Module SoftData
                 i = i + n
             Next
 
-            SeppClient.infTotalVal.Text = i.ToString
+            RockRatslient.infTotalVal.Text = i.ToString
             If i > 99.8 And i <= 100.1 Then
-                SeppClient.CaptureEDScreen.Enabled = False
-                SeppClient.PasteEDScreen.Enabled = False
-                SeppClient.UpdSoftData.Enabled = True
-                SeppClient.infTotal.ForeColor = Color.DarkGreen
-                SeppClient.infTotalVal.ForeColor = Color.DarkGreen
+                RockRatslient.CaptureEDScreen.Enabled = False
+                RockRatslient.PasteEDScreen.Enabled = False
+                RockRatslient.UpdSoftData.Enabled = True
+                RockRatslient.infTotal.ForeColor = Color.DarkGreen
+                RockRatslient.infTotalVal.ForeColor = Color.DarkGreen
             Else
-                SeppClient.CaptureEDScreen.Enabled = True
-                SeppClient.PasteEDScreen.Enabled = True
-                SeppClient.UpdSoftData.Enabled = False
-                SeppClient.infTotal.ForeColor = Color.DarkRed
-                SeppClient.infTotalVal.ForeColor = Color.DarkRed
+                RockRatslient.CaptureEDScreen.Enabled = True
+                RockRatslient.PasteEDScreen.Enabled = True
+                RockRatslient.UpdSoftData.Enabled = False
+                RockRatslient.infTotal.ForeColor = Color.DarkRed
+                RockRatslient.infTotalVal.ForeColor = Color.DarkRed
             End If
         End If
     End Sub
 
     Friend Sub procSystemChange(systemName As String)
         If systemName <> selectedSystem Then
-            SeppClient.CaptureEDScreen.Enabled = True
-            SeppClient.PasteEDScreen.Enabled = True
-            SeppClient.UpdSoftData.Enabled = False
-            SeppClient.SoftDataGrid.Rows.Clear()
+            RockRatslient.CaptureEDScreen.Enabled = True
+            RockRatslient.PasteEDScreen.Enabled = True
+            RockRatslient.UpdSoftData.Enabled = False
+            RockRatslient.SoftDataGrid.Rows.Clear()
             procOCRTextChg()
             Comms.getSystemFactions(systemName)
             selectedSystem = systemName
@@ -271,7 +271,7 @@ Module SoftData
             Dim elements() As String
             Dim stringSeparators() As String = {":"}
 
-            If UCase(systemName) = UCase(SeppClient.selSystem.SelectedItem.ToString) Then
+            If UCase(systemName) = UCase(RockRatslient.selSystem.SelectedItem.ToString) Then
                 elements = factionData.Split(stringSeparators, StringSplitOptions.None)
                 For i = 0 To numFactions
                     systemFactions(i) = ""

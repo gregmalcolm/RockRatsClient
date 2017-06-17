@@ -1,10 +1,10 @@
 ﻿Module Parameters
     Private defaultValues As New Hashtable()
     Private userValues As New Hashtable()
-    Private iniFile As String = Environment.GetEnvironmentVariable("USERPROFILE") + "\AppData\Local\SeppClient\SeppClient.ini"
+    Private iniFile As String = Environment.GetEnvironmentVariable("USERPROFILE") + "\AppData\Local\RockRatsClient\RockRatsClient.ini"
 
     Friend Sub initDefaultParameters()
-        ' SeppClient Default Values
+        ' RockRatsClient Default Values
         defaultValues.Add("JournalDirectory", Environment.GetEnvironmentVariable("USERPROFILE") + "\Saved Games\Frontier Developments\Elite Dangerous\")
         defaultValues.Add("HostAddress", "sepp.space")
         defaultValues.Add("HostPort", "4526")

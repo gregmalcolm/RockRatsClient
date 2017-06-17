@@ -17,7 +17,7 @@ Module Comms
 
     Friend Async Function TestConn() As Task(Of Boolean)
         If Await connect() Then
-            Await SendTCP("Hi:" + SeppClient.getVersion, False)
+            Await SendTCP("Hi:" + RockRatslient.getVersion, False)
         End If
         Return False
     End Function
@@ -29,9 +29,9 @@ Module Comms
             tcpClient.ReceiveTimeout = 15
             Await tcpClient.ConnectAsync(HostAddress, HostPort)
         Catch ex As Exception
-            SeppClient.ConnStatus1.Text = "Cannot Connect to " + HostAddress + vbNewLine + "Check Hostname and Port" + vbNewLine + ex.Message
-            SeppClient.logOutput("Connection Failed - Invalid Hostname or Port")
-            SeppClient.ConnStatus1.ForeColor = Color.DarkRed
+            RockRatslient.ConnStatus1.Text = "Cannot Connect to " + HostAddress + vbNewLine + "Check Hostname and Port" + vbNewLine + ex.Message
+            RockRatslient.logOutput("Connection Failed - Invalid Hostname or Port")
+            RockRatslient.ConnStatus1.ForeColor = Color.DarkRed
             Return False
         End Try
         Return True
@@ -153,27 +153,27 @@ Module Comms
         elements = rData.Split(stringSeparators, StringSplitOptions.None)
         For Each line As String In elements
             If Left(line, 1) = "9" Then
-                SeppClient.ConnStatus1.Text = "Unable to Authenticate"
-                SeppClient.ConnStatus2.Text = "Check Username and Site Key"
-                SeppClient.logOutput("Connection Failed - Invalid Username or Site Key")
-                SeppClient.ConnStatus1.ForeColor = Color.DarkRed
-                SeppClient.ConnStatus2.ForeColor = Color.DarkRed
+                RockRatslient.ConnStatus1.Text = "Unable to Authenticate"
+                RockRatslient.ConnStatus2.Text = "Check Username and Site Key"
+                RockRatslient.logOutput("Connection Failed - Invalid Username or Site Key")
+                RockRatslient.ConnStatus1.ForeColor = Color.DarkRed
+                RockRatslient.ConnStatus2.ForeColor = Color.DarkRed
             ElseIf Left(line, 1) = "1" Then
                 authenticated = True
-                SeppClient.logOutput("Connected to " + getParameter("HostAddress"))
-                SeppClient.ConnStatus1.Text = "Connected"
-                SeppClient.ConnStatus1.ForeColor = Color.DarkGreen
-                SeppClient.ConnStatus2.ForeColor = Color.DarkGreen
-                SeppClient.toggleTailLog()
+                RockRatslient.logOutput("Connected to " + getParameter("HostAddress"))
+                RockRatslient.ConnStatus1.Text = "Connected"
+                RockRatslient.ConnStatus1.ForeColor = Color.DarkGreen
+                RockRatslient.ConnStatus2.ForeColor = Color.DarkGreen
+                RockRatslient.toggleTailLog()
                 getSystems()
             ElseIf Left(line, 1) = "4" Then
-                Files.setSeppSystems(line)
+                Files.setRockRatsSystems(line)
             ElseIf Left(line, 1) = "7" Then
                 setSystemFaction(Trim(line))
             ElseIf Len(line) > 0 And Left(line, 1) <> "K" Then
                 Dim otherResponce As String = Trim(line)
                 If Len(otherResponce) > 0 Then
-                    SeppClient.logOutput("    Server responded: " + getResponceDesc(otherResponce))
+                    RockRatslient.logOutput("    Server responded: " + getResponceDesc(otherResponce))
                 End If
             End If
         Next
@@ -195,19 +195,19 @@ Module Comms
         Else
             hRecv = CType(bytesRecv, String) + "B"
         End If
-        SeppClient.ConnStatus2.Text = "Sent: " + hSent + "  Recv: " + hRecv
+        RockRatslient.ConnStatus2.Text = "Sent: " + hSent + "  Recv: " + hRecv
     End Sub
 
     Private Sub streamError(networkStream As NetworkStream)
-        SeppClient.logOutput("Connection Failed - Issue with stream")
+        RockRatslient.logOutput("Connection Failed - Issue with stream")
         If Not networkStream.CanRead Then
-            SeppClient.ConnStatus1.Text = "cannot not write data to this stream"
-            SeppClient.ConnStatus1.ForeColor = Color.DarkRed
+            RockRatslient.ConnStatus1.Text = "cannot not write data to this stream"
+            RockRatslient.ConnStatus1.ForeColor = Color.DarkRed
             tcpClient.Close()
         Else
             If Not networkStream.CanWrite Then
-                SeppClient.ConnStatus1.Text = "cannot read data from this stream"
-                SeppClient.ConnStatus1.ForeColor = Color.DarkRed
+                RockRatslient.ConnStatus1.Text = "cannot read data from this stream"
+                RockRatslient.ConnStatus1.ForeColor = Color.DarkRed
                 tcpClient.Close()
             End If
         End If
@@ -238,7 +238,7 @@ Module Comms
             systemFactions.Remove(systemName)
         End If
         systemFactions.Add(systemName, factionData)
-        SeppClient.logOutput("Downloaded " + elements(1).ToString + " " + systemName + " Factions")
+        RockRatslient.logOutput("Downloaded " + elements(1).ToString + " " + systemName + " Factions")
 
         SoftData.setFactions(systemName, factionData)
     End Sub
@@ -263,10 +263,10 @@ Module Comms
         responceCodes.Add("1", "Authenticated")
         responceCodes.Add("2", "Update not required")
         responceCodes.Add("3", "System Updated")
-        responceCodes.Add("4", "Sepp Systems")
+        responceCodes.Add("4", "RockRats Systems")
         responceCodes.Add("5", "Station Updated")
         responceCodes.Add("6", "Activity Recorded")
-        responceCodes.Add("7", "Sepp System Faction")
+        responceCodes.Add("7", "RockRats System Faction")
         responceCodes.Add("8", "Soft Data Updated")
         responceCodes.Add("-", "Unknown command")
     End Sub

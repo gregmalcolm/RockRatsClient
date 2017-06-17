@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
-Partial Class SeppClient
+Partial Class RockRatslient
     Inherits Global.System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -23,7 +23,7 @@ Partial Class SeppClient
     <Global.System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(SeppClient))
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(RockRatslient))
         Me.tailTimer = New System.Windows.Forms.Timer(Me.components)
         Me.LoadTimer = New System.Windows.Forms.Timer(Me.components)
         Me.LogTab = New System.Windows.Forms.TabPage()
@@ -79,7 +79,7 @@ Partial Class SeppClient
         Me.SettingsTab = New System.Windows.Forms.TabPage()
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.Label20 = New System.Windows.Forms.Label()
-        Me.SeppActivity = New System.Windows.Forms.ComboBox()
+        Me.RockRatsActivity = New System.Windows.Forms.ComboBox()
         Me.SaveJournalDir = New System.Windows.Forms.Button()
         Me.BrowserForDir = New System.Windows.Forms.Button()
         Me.JournalFolder = New System.Windows.Forms.TextBox()
@@ -327,7 +327,7 @@ Partial Class SeppClient
         Me.Label6.Name = "Label6"
         Me.Label6.Size = New System.Drawing.Size(96, 16)
         Me.Label6.TabIndex = 11
-        Me.Label6.Text = "Sepp Systems"
+        Me.Label6.Text = "RockRats Systems"
         '
         'Tabs
         '
@@ -556,7 +556,7 @@ Partial Class SeppClient
         Me.UpdSoftData.Size = New System.Drawing.Size(77, 21)
         Me.UpdSoftData.TabIndex = 25
         Me.UpdSoftData.Text = "Update"
-        Me.ToolTip1.SetToolTip(Me.UpdSoftData, "Update Sepp Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
+        Me.ToolTip1.SetToolTip(Me.UpdSoftData, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
         Me.UpdSoftData.UseVisualStyleBackColor = True
         '
         'CaptureEDScreen
@@ -687,7 +687,7 @@ Partial Class SeppClient
         '
         Me.Panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.Panel2.Controls.Add(Me.Label20)
-        Me.Panel2.Controls.Add(Me.SeppActivity)
+        Me.Panel2.Controls.Add(Me.RockRatsActivity)
         Me.Panel2.Controls.Add(Me.SaveJournalDir)
         Me.Panel2.Controls.Add(Me.BrowserForDir)
         Me.Panel2.Controls.Add(Me.JournalFolder)
@@ -704,16 +704,16 @@ Partial Class SeppClient
         Me.Label20.Name = "Label20"
         Me.Label20.Size = New System.Drawing.Size(148, 12)
         Me.Label20.TabIndex = 28
-        Me.Label20.Text = "Sepp Site - Activity Stream"
+        Me.Label20.Text = "RockRats Site - Activity Stream"
         '
-        'SeppActivity
+        'RockRatsActivity
         '
-        Me.SeppActivity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.SeppActivity.FormattingEnabled = True
-        Me.SeppActivity.Location = New System.Drawing.Point(58, 85)
-        Me.SeppActivity.Name = "SeppActivity"
-        Me.SeppActivity.Size = New System.Drawing.Size(175, 20)
-        Me.SeppActivity.TabIndex = 27
+        Me.RockRatsActivity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.RockRatsActivity.FormattingEnabled = True
+        Me.RockRatsActivity.Location = New System.Drawing.Point(58, 85)
+        Me.RockRatsActivity.Name = "RockRatsActivity"
+        Me.RockRatsActivity.Size = New System.Drawing.Size(175, 20)
+        Me.RockRatsActivity.TabIndex = 27
         '
         'SaveJournalDir
         '
@@ -784,7 +784,7 @@ Partial Class SeppClient
         Me.TestConnection.Size = New System.Drawing.Size(132, 38)
         Me.TestConnection.TabIndex = 10
         Me.TestConnection.Text = "Connect"
-        Me.ToolTip1.SetToolTip(Me.TestConnection, "Connect to the Sepp site")
+        Me.ToolTip1.SetToolTip(Me.TestConnection, "Connect to the RockRats site")
         Me.TestConnection.UseVisualStyleBackColor = True
         '
         'SiteKey
@@ -804,7 +804,7 @@ Partial Class SeppClient
         Me.Username.Name = "Username"
         Me.Username.Size = New System.Drawing.Size(397, 21)
         Me.Username.TabIndex = 4
-        Me.ToolTip1.SetToolTip(Me.Username, "Your Sepp Site username")
+        Me.ToolTip1.SetToolTip(Me.Username, "Your RockRats Site username")
         '
         'SaveConnDetails
         '
@@ -836,7 +836,7 @@ Partial Class SeppClient
         Me.Label4.Size = New System.Drawing.Size(31, 12)
         Me.Label4.TabIndex = 1
         Me.Label4.Text = "User:"
-        Me.ToolTip1.SetToolTip(Me.Label4, "Your Sepp Site username")
+        Me.ToolTip1.SetToolTip(Me.Label4, "Your RockRats Site username")
         '
         'Label2
         '
@@ -901,7 +901,7 @@ Partial Class SeppClient
         Me.Label13.Size = New System.Drawing.Size(502, 36)
         Me.Label13.TabIndex = 3
         Me.Label13.Text = "Username: Use your Username on www.sepp.space" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Site Key: The site key is NOT your" &
-    " password" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "To obtain your unique site key, on the Sepp website, edit your profil" &
+    " password" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "To obtain your unique site key, on the RockRats website, edit your profil" &
     "e and go to your Account tab"
         Me.Label13.TextAlign = System.Drawing.ContentAlignment.TopCenter
         '
@@ -945,7 +945,7 @@ Partial Class SeppClient
         Me.ToolTip1.InitialDelay = 400
         Me.ToolTip1.ReshowDelay = 100
         '
-        'SeppClient
+        'RockRatsClient
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
@@ -954,9 +954,9 @@ Partial Class SeppClient
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MaximizeBox = False
-        Me.Name = "SeppClient"
+        Me.Name = "RockRatsClient"
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
-        Me.Text = "SEPP Client"
+        Me.Text = "RockRats Client"
         Me.LogTab.ResumeLayout(False)
         Me.StatusTab.ResumeLayout(False)
         Me.StatusTab.PerformLayout()
@@ -1061,6 +1061,6 @@ Partial Class SeppClient
     Friend WithEvents subComments As TextBox
     Friend WithEvents Label18 As Label
     Friend WithEvents Label20 As Label
-    Friend WithEvents SeppActivity As ComboBox
+    Friend WithEvents RockRatsActivity As ComboBox
     Friend WithEvents SystemsList As ListBox
 End Class
