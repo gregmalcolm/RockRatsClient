@@ -252,7 +252,7 @@ Public Class RockRatsClient
     Private Sub UpdSoftData_Click(sender As Object, e As EventArgs) Handles UpdSoftData.Click
 
         For Each row As DataGridViewRow In SoftDataGrid.Rows
-            Dim waitForCompletion As Boolean = Comms.sendUpdate("", "", "", selSystem.SelectedItem.ToString + ":" + row.Cells(0).Value.ToString + ":" + row.Cells(2).Value.ToString + ":" + row.Cells(1).Value.ToString)
+            'Dim waitForCompletion As Boolean = Comms.sendUpdate("", "", "", selSystem.SelectedItem.ToString + ":" + row.Cells(0).Value.ToString + ":" + row.Cells(2).Value.ToString + ":" + row.Cells(1).Value.ToString)
         Next
         logOutput("Updated " + SoftDataGrid.Rows.Count.ToString + " Factions in " + selSystem.SelectedItem.ToString)
         SoftDataGrid.Rows.Clear()

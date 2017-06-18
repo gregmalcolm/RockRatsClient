@@ -9,8 +9,8 @@ Module Comms
     Private sendSoftDataQueue As New Queue()
     Private lastSendTime As DateTime = DateTime.Now
     Private doRecv As Boolean = False
-    Private tcpClient As New Global.System.Net.Sockets.TcpClient()
-    Private authenticated As Boolean = False
+    'Private tcpClient As New Global.System.Net.Sockets.TcpClient()
+    Private authenticated As Boolean = True
     Private bytesSent As Long = 0
     Private bytesRecv As Long = 0
     Private keepAliveCount As Integer = 0
@@ -18,7 +18,8 @@ Module Comms
 
     Private Function phoneyTCPData() As String
         Dim transmission =
-"4 : 11 :   Chertan : Varpas : Savincates : Bjirup : Firbon : HIP 54844 : HIP 56321 : HIP 54346 : HIP 55823 : Aakuman : HIP 53737
+"1
+4 : 11 :   Chertan : Varpas : Savincates : Bjirup : Firbon : HIP 54844 : HIP 56321 : HIP 54346 : HIP 55823 : Aakuman : HIP 53737
 7 : 5 : Chertan :   Rock Rats : Order of Chertan : Chertan Dominion : Chertan Travel Inc : Union of Chertan Independants
 7 : 5 : Varpas :   Rock Rats : Varpas Confederacy : Varpas Drug Empire : Varpas Purple Power Co : Varpas Dynasty
 7 : 6 : Savincates :   Rock Rats : Natural Mehit Liberty Party : Savincates Blue Major & Co : Savincates Noblement : Savincates Co-operative : Savincates Council
@@ -34,10 +35,11 @@ Module Comms
     End Function
 
     Friend Async Function TestConn() As Task(Of Boolean)
-        If Await connect() Then
-            Await SendTCP("Hi:" + RockRatsClient.getVersion, False)
-        End If
-        Return False
+        'If Await connect() Then
+        '    Await SendTCP("Hi:" + RockRatsClient.getVersion, False)
+        'End If
+        'Return False
+        Return True
     End Function
 
     Private Async Function connect() As Task(Of Boolean)
@@ -69,13 +71,14 @@ Module Comms
     End Function
 
     Friend Async Function procUpdate() As Task
-        If Not tcpClient.Connected And authenticated Then
-            Try
-                Dim waitForConnect As Boolean = Await connect()
-            Catch ex As Exception
+        'If Not TcpClient.Connected And authenticated Then
+        'Try
+        '    Dim waitForConnect As Boolean = Await connect()
+        'Catch ex As Exception
 
-            End Try
-        ElseIf doRecv Then
+        'End Try
+        'Else
+        If doRecv Then
             doRecv = False
             Try
                 Await recvTCP()
@@ -123,27 +126,27 @@ Module Comms
     End Sub
 
     Private Async Function SendTCP(sendData As String, keepAlive As Boolean) As Task
-        If tcpClient.Connected Then
-            Try
-                Dim sendText As String
-                If keepAlive Then
-                    sendText = sendData
-                Else
-                    sendText = Parameters.getParameter("Username") + ":" + Parameters.getParameter("SiteKey") + "!" + sendData
-                End If
-                Dim networkStream As NetworkStream = tcpClient.GetStream()
-                If networkStream.CanWrite And networkStream.CanRead Then
-                    bytesSent = bytesSent + Len(sendText)
-                    Dim sendBytes As [Byte]() = Encoding.ASCII.GetBytes(sendText & vbNewLine)
-                    Await networkStream.WriteAsync(sendBytes, 0, sendBytes.Length)
-                Else
-                    streamError(networkStream)
-                End If
-            Catch ex As Exception
+        'If tcpClient.Connected Then
+        '    Try
+        '        Dim sendText As String
+        '        If keepAlive Then
+        '            sendText = sendData
+        '        Else
+        '            sendText = Parameters.getParameter("Username") + ":" + Parameters.getParameter("SiteKey") + "!" + sendData
+        '        End If
+        '        Dim networkStream As NetworkStream = TcpClient.GetStream()
+        '        If networkStream.CanWrite And networkStream.CanRead Then
+        '            bytesSent = bytesSent + Len(sendText)
+        '            Dim sendBytes As [Byte]() = Encoding.ASCII.GetBytes(sendText & vbNewLine)
+        '            Await networkStream.WriteAsync(sendBytes, 0, sendBytes.Length)
+        '        Else
+        '            streamError(networkStream)
+        '        End If
+        '    Catch ex As Exception
 
-            End Try
-            keepAliveCount = 0
-        End If
+        '    End Try
+        '    keepAliveCount = 0
+        'End If
     End Function
 
     Private Async Function recvTCP() As Task
@@ -223,18 +226,18 @@ Module Comms
     End Sub
 
     Private Sub streamError(networkStream As NetworkStream)
-        RockRatsClient.logOutput("Connection Failed - Issue with stream")
-        If Not networkStream.CanRead Then
-            RockRatsClient.ConnStatus1.Text = "cannot not write data to this stream"
-            RockRatsClient.ConnStatus1.ForeColor = Color.DarkRed
-            tcpClient.Close()
-        Else
-            If Not networkStream.CanWrite Then
-                RockRatsClient.ConnStatus1.Text = "cannot read data from this stream"
-                RockRatsClient.ConnStatus1.ForeColor = Color.DarkRed
-                tcpClient.Close()
-            End If
-        End If
+        'RockRatsClient.logOutput("Connection Failed - Issue with stream")
+        'If Not networkStream.CanRead Then
+        '    RockRatsClient.ConnStatus1.Text = "cannot not write data to this stream"
+        '    RockRatsClient.ConnStatus1.ForeColor = Color.DarkRed
+        '    tcpClient.Close()
+        'Else
+        '    If Not networkStream.CanWrite Then
+        '        RockRatsClient.ConnStatus1.Text = "cannot read data from this stream"
+        '        RockRatsClient.ConnStatus1.ForeColor = Color.DarkRed
+        '        tcpClient.Close()
+        '    End If
+        'End If
     End Sub
 
     Private Function getResponceDesc(rCode As String) As String
