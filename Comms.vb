@@ -1,5 +1,10 @@
 ﻿Imports System.Net.Sockets
 Imports System.Text
+Imports Amazon
+Imports Amazon.DynamoDBv2
+Imports System.Configuration
+Imports Amazon.Runtime
+
 Module Comms
     Private gotSystems As Boolean = False
     Private responceCodes As New Hashtable()
@@ -10,11 +15,12 @@ Module Comms
     Private lastSendTime As DateTime = DateTime.Now
     Private doRecv As Boolean = False
     'Private tcpClient As New Global.System.Net.Sockets.TcpClient()
-    Private authenticated As Boolean = True
+    Private authenticated As Boolean = False
     Private bytesSent As Long = 0
     Private bytesRecv As Long = 0
     Private keepAliveCount As Integer = 0
     Private dataIsLoaded As Boolean = False
+    Private awsClient As AmazonDynamoDBClient
 
     Private Function phoneyTCPData() As String
         Dim transmission =
@@ -42,18 +48,12 @@ Module Comms
         Return True
     End Function
 
-    Private Async Function connect() As Task(Of Boolean)
-        'Dim HostAddress As String = Parameters.getParameter("HostAddress")
-        'Dim HostPort As Integer = CInt(Parameters.getParameter("HostPort"))
-        'Try
-        '    tcpClient.ReceiveTimeout = 15
-        '    Await tcpClient.ConnectAsync(HostAddress, HostPort)
-        'Catch ex As Exception
-        '    RockRatsClient.ConnStatus1.Text = "Cannot Connect to " + HostAddress + vbNewLine + "Check Hostname and Port" + vbNewLine + ex.Message
-        '    RockRatsClient.logOutput("Connection Failed - Invalid Hostname or Port")
-        '    RockRatsClient.ConnStatus1.ForeColor = Color.DarkRed
-        '    Return False
-        'End Try
+    Private Function connect() As Boolean
+        Dim accessKey = ConfigurationManager.AppSettings("awsAccessKeyId")
+        Dim secretKey = ConfigurationManager.AppSettings("awsSecretAccessKey")
+
+        awsClient = BuildClient(accessKey, secretKey)
+        authenticated = True
         Return True
     End Function
 
@@ -71,14 +71,13 @@ Module Comms
     End Function
 
     Friend Async Function procUpdate() As Task
-        'If Not TcpClient.Connected And authenticated Then
-        'Try
-        '    Dim waitForConnect As Boolean = Await connect()
-        'Catch ex As Exception
+        If Not authenticated Then
+            Try
+                connect()
+            Catch ex As Exception
 
-        'End Try
-        'Else
-        If doRecv Then
+            End Try
+        ElseIf doRecv Then
             doRecv = False
             Try
                 Await recvTCP()
@@ -126,6 +125,7 @@ Module Comms
     End Sub
 
     Private Async Function SendTCP(sendData As String, keepAlive As Boolean) As Task
+        '.AppSettings["awsAccessKeyId"]
         'If tcpClient.Connected Then
         '    Try
         '        Dim sendText As String
@@ -147,6 +147,14 @@ Module Comms
         '    End Try
         '    keepAliveCount = 0
         'End If
+    End Function
+
+
+    Private Function BuildClient(accessKey As String, secretKey As String) As AmazonDynamoDBClient
+        Dim credentials = New BasicAWSCredentials(accessKey:=accessKey, secretKey:=secretKey)
+        Dim config = New AmazonDynamoDBConfig()
+        config.RegionEndpoint = RegionEndpoint.USEast1
+        Return New AmazonDynamoDBClient(credentials, config)
     End Function
 
     Private Async Function recvTCP() As Task

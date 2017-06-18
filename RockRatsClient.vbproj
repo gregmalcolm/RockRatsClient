@@ -94,6 +94,9 @@
   <PropertyGroup>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <UserSecretsId>c06e09b4-d7f2-4d68-8940-217c7f6ef334 658483a0-c468-4867-08928-1a874b0c1e64</UserSecretsId>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AWSSDK.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
       <HintPath>packages\AWSSDK.Core.3.3.14\lib\net45\AWSSDK.Core.dll</HintPath>
@@ -155,6 +158,7 @@
       <HintPath>packages\System.AppContext.4.3.0\lib\net46\System.AppContext.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Console, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Console.4.3.0\lib\net46\System.Console.dll</HintPath>
     </Reference>
@@ -287,7 +291,9 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="AppSettingsSecret.config" />
+    <None Include="AppSettingsSecret.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="My Project\app.manifest" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
