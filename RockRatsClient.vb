@@ -136,6 +136,7 @@ Public Class RockRatsClient
     End Sub
 
     Friend Sub logOutput(logText As String)
+        Debug.WriteLine(logText)
         Try
             If noLogDups <> logText Then
                 logOut.AppendText(Now().ToString + " - " + logText + vbNewLine)
@@ -250,12 +251,11 @@ Public Class RockRatsClient
     End Function
 
     Private Sub UpdSoftData_Click(sender As Object, e As EventArgs) Handles UpdSoftData.Click
-
         For Each row As DataGridViewRow In SoftDataGrid.Rows
-            'Dim waitForCompletion As Boolean = Comms.sendUpdate("", "", "", selSystem.SelectedItem.ToString + ":" + row.Cells(0).Value.ToString + ":" + row.Cells(2).Value.ToString + ":" + row.Cells(1).Value.ToString)
+            Dim waitForCompletion As Boolean = Comms.sendUpdate("", "", "", selSystem.SelectedItem.ToString + ":" + row.Cells(0).Value.ToString + ":" + row.Cells(2).Value.ToString + ":" + row.Cells(1).Value.ToString)
         Next
         logOutput("Updated " + SoftDataGrid.Rows.Count.ToString + " Factions in " + selSystem.SelectedItem.ToString)
-        SoftDataGrid.Rows.Clear()
+        'SoftDataGrid.Rows.Clear()
         Call Global.RockRatsClient.procOCRTextChg()
     End Sub
 

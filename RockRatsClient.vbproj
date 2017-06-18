@@ -291,7 +291,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="AppSettingsSecret.config">
+    <None Include="AppSettingsSecrets.config">
       <SubType>Designer</SubType>
     </None>
     <None Include="My Project\app.manifest" />
