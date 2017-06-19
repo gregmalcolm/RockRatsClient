@@ -53,8 +53,6 @@ Partial Class RockRatsClient
         Me.Version = New System.Windows.Forms.Label()
         Me.Label15 = New System.Windows.Forms.Label()
         Me.Label16 = New System.Windows.Forms.Label()
-        Me.Label13 = New System.Windows.Forms.Label()
-        Me.Label14 = New System.Windows.Forms.Label()
         Me.Label12 = New System.Windows.Forms.Label()
         Me.Label11 = New System.Windows.Forms.Label()
         Me.LogTab = New System.Windows.Forms.TabPage()
@@ -348,8 +346,6 @@ Partial Class RockRatsClient
         Me.HelpTab.Controls.Add(Me.Version)
         Me.HelpTab.Controls.Add(Me.Label15)
         Me.HelpTab.Controls.Add(Me.Label16)
-        Me.HelpTab.Controls.Add(Me.Label13)
-        Me.HelpTab.Controls.Add(Me.Label14)
         Me.HelpTab.Controls.Add(Me.Label12)
         Me.HelpTab.Controls.Add(Me.Label11)
         Me.HelpTab.Location = New System.Drawing.Point(4, 22)
@@ -366,7 +362,7 @@ Partial Class RockRatsClient
         Me.Version.Name = "Version"
         Me.Version.Size = New System.Drawing.Size(78, 13)
         Me.Version.TabIndex = 21
-        Me.Version.Text = "Version 2.5.0.4"
+        Me.Version.Text = "Version 1.0.0.0"
         '
         'Label15
         '
@@ -387,26 +383,6 @@ Partial Class RockRatsClient
         Me.Label16.Size = New System.Drawing.Size(70, 18)
         Me.Label16.TabIndex = 4
         Me.Label16.Text = "Soft Data"
-        '
-        'Label13
-        '
-        Me.Label13.AutoSize = True
-        Me.Label13.Location = New System.Drawing.Point(60, 166)
-        Me.Label13.Name = "Label13"
-        Me.Label13.Size = New System.Drawing.Size(86, 13)
-        Me.Label13.TabIndex = 3
-        Me.Label13.Text = "Not implemented"
-        Me.Label13.TextAlign = System.Drawing.ContentAlignment.TopCenter
-        '
-        'Label14
-        '
-        Me.Label14.AutoSize = True
-        Me.Label14.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label14.Location = New System.Drawing.Point(248, 143)
-        Me.Label14.Name = "Label14"
-        Me.Label14.Size = New System.Drawing.Size(84, 18)
-        Me.Label14.TabIndex = 2
-        Me.Label14.Text = "Connection"
         '
         'Label12
         '
@@ -909,8 +885,6 @@ Partial Class RockRatsClient
     Friend WithEvents Version As Label
     Friend WithEvents Label15 As Label
     Friend WithEvents Label16 As Label
-    Friend WithEvents Label13 As Label
-    Friend WithEvents Label14 As Label
     Friend WithEvents Label12 As Label
     Friend WithEvents Label11 As Label
     Friend WithEvents LogTab As TabPage

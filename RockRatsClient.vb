@@ -322,4 +322,8 @@ Public Class RockRatsClient
     Private Sub Label12_Click(sender As Object, e As EventArgs) Handles Label12.Click
 
     End Sub
+
+    Private Sub SoftDataTab_Click(sender As Object, e As EventArgs) Handles SoftDataTab.Click
+
+    End Sub
 End Class

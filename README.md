@@ -3,6 +3,19 @@ Rock Rat Client
 
 This is a blatant rip off of SEPPClient for use with Rock Rats faction in Elite Dangerous. Thanks to Hamouras for original code/
 
+AWS Configuration
+-----------------
+
+A aws configuration file is needed to send data to the server. 
+
+1) Copy AppSettingsSecrets.config.example to:
+
+
+C:\Secrets\AppSettingsSecrets.config
+
+2) Fill out the approriate AWS credentials
+
+
 OCR Setup
 ---------
 

@@ -230,7 +230,7 @@ Module Files
             elements = line.Split(stringSeparators, StringSplitOptions.None)
             For Each s As String In elements
                 If InStr(s, "|StarSystem|:") > 0 Then
-                    systemName = Trim(Replace(Mid(s, 15), "|", ""))
+                    systemName = UCase(Trim(Replace(Mid(s, 15), "|", "")))
                 ElseIf InStr(s, "|StationName|:") > 0 And uType = "5" Then
                     stationName = Trim(Replace(Mid(s, 16), "|", ""))
                 ElseIf InStr(s, "|SystemAllegiance|:") > 0 Then
