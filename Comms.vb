@@ -46,7 +46,7 @@ Module Comms
 7 : 6 : HIP 54844 :   ROCK RATS : BUREAU OF HIP 53923 MOVEMENT : ALLIED HIP 53923 AUTOCRACY : NATURAL MEHIT LIBERTY PARTY : SAVINCATES BLUE MAJOR & CO : HIP 53923 JET DYNAMIC SOLUTIONS
 7 : 5 : HIP 56321 :   ROCK RATS : PEOPLE'S HIP 56321 CONFEDERACY : ARAWOTYAN GALACTIC LIMITED : SOCIAL NIU HSING LEAGUE : DEMOCRATS OF HIP 57080
 7 : 6 : HIP 54346 :   ROCK RATS : HIP 54346 SILVER BRIDGE COMMS : FIRBON VISION COMPANY : NUNGGUL CONFEDERACY : SOCIAL PATAKAKA LABOUR : 80 LEONIS VALUES PARTY
-7 : 5 : HIP 55823 :   ROCK RATS : ARAWOTYAN GALACTIC LIMITED : TSIM BIKO BLUE FORTUNE PA'NRS : HIP 57112 BLUE ALLIED EXCHANGE : ARAWOTYAN CRIMSON VISION CORP
+7 : 5 : HIP 55823 :   ROCK RATS : ARAWOTYAN GALACTIC LIMITED : TSIM BIKO BLUE FORTUNE PARTNERS : HIP 57112 BLUE ALLIED EXCHANGE : ARAWOTYAN CRIMSON VISION CORP.
 7 : 6 : AAKUMAN :   ROCK RATS : AAKUMAN PRISON COLONY : AAKUMAN CRIMSON RAIDERS : 4 A1 VIRGINIS BLUE MAFIA : CO-OPERATIVE OF AAKUMAN : AAKUMAN HOLDINGS
 7 : 6 : HIP 53737 :   ROCK RATS : YIN YIN PURPLE CREW : MANT SILVER MAJOR LTD : YIN YIN MONARCHY : YIN YIN BLUE ADVANCED LTD : MANT SOCIETY"
         Return transmission
@@ -136,39 +136,18 @@ Module Comms
             Await SendFactionItemToAws(data)
         End If
         '.AppSettings["awsAccessKeyId"]
-        'If tcpClient.Connected Then
-        '    Try
-        '        Dim sendText As String
-        '        If keepAlive Then
-        '            sendText = sendData
-        '        Else
-        '            sendText = Parameters.getParameter("Username") + ":" + Parameters.getParameter("SiteKey") + "!" + sendData
-        '        End If
-        '        Dim networkStream As NetworkStream = TcpClient.GetStream()
-        '        If networkStream.CanWrite And networkStream.CanRead Then
-        '            bytesSent = bytesSent + Len(sendText)
-        '            Dim sendBytes As [Byte]() = Encoding.ASCII.GetBytes(sendText & vbNewLine)
-        '            Await networkStream.WriteAsync(sendBytes, 0, sendBytes.Length)
-        '        Else
-        '            streamError(networkStream)
-        '        End If
-        '    Catch ex As Exception
-
-        '    End Try
-        '    keepAliveCount = 0
-        'End If
-
     End Function
 
     Private Async Function SendFactionItemToAws(data As String) As Task
         RockRatsClient.logOutput("Transmitting to AWS: " & data)
 
-        Dim tickTime = DateTime.UtcNow - New TimeSpan(17)
+        Dim utc = DateTime.UtcNow
+        Dim tickTime = DateTime.UtcNow - New TimeSpan(17, 0, 0)
         Dim entryDate = String.Format("{0:yyyy-MM-dd}", tickTime)
 
         Dim items = Split(data, ":")
 
-        If items.Length < 5 Then
+        If items.Length < 6 Then
             RockRatsClient.logOutput("Error: bad packet")
 
             Throw New System.Exception("Bad packet")
@@ -178,6 +157,8 @@ Module Comms
         Dim faction = Trim(items(2))
         Dim state = Trim(items(3))
         Dim influence = Trim(items(4))
+        Dim updateType = Trim(items(5))
+        Dim commander = RockRatsClient.CommanderName.Text
 
         Dim id = "" & system & "-" & faction & "-" & entryDate
 
@@ -205,6 +186,9 @@ Module Comms
             }},
             {"influence", New AttributeValue() With {
                 .N = influence
+            }},
+            {"updateType", New AttributeValue() With {
+                .S = updateType
             }}
         }
 
@@ -214,21 +198,21 @@ Module Comms
             })
         End If
 
-        Await awsClient.PutItemAsync(
+        If Not String.IsNullOrWhiteSpace(commander) Then
+            attributes.Add("commander", New AttributeValue() With {
+                .S = commander
+            })
+        End If
+
+        Dim response = Await awsClient.PutItemAsync(
             tableName:="rock-rat-factions",
             item:=attributes)
 
-
-        'Dim response = awsClient.PutItem(
-        '    tableName:="rock-rat-factions",
-        '    item:=New Dictionary(Of String, AttributeValue)() From {
-        '    {"id", New AttributeValue() With {
-        '        .S = "Chertan-Sock Rats-2017-06-16"
-        '    }},
-        '    {"faction", New AttributeValue() With {
-        '        .S = "This is a test."
-        '    }}
-        '})
+        If response.HttpStatusCode >= 300 Then
+            RockRatsClient.logOutput("FAILED! (HTTP CODE = " & response.HttpStatusCode & ")")
+        Else
+            RockRatsClient.logOutput("SUCCESS! (HTTP CODE = " & response.HttpStatusCode & ")")
+        End If
     End Function
 
 
@@ -240,22 +224,6 @@ Module Comms
     End Function
 
     Private Async Function recvTCP() As Task
-        'If tcpClient.Connected And tcpClient.ReceiveBufferSize > 0 Then
-        '    Dim networkStream As NetworkStream = tcpClient.GetStream()
-        '    If networkStream.CanWrite And networkStream.CanRead Then
-        '        Dim returndata As String = ""
-        '        Try
-        '            Dim bytes(tcpClient.ReceiveBufferSize) As Byte
-        '            Await networkStream.ReadAsync(bytes, 0, CInt(tcpClient.ReceiveBufferSize))
-        '            returndata = Trim(SoftData.whitelistChars(Encoding.ASCII.GetString(bytes)))
-        '            bytesRecv = bytesRecv + Len(returndata)
-        '            procReturnData(returndata)
-        '        Catch ex As Exception
-        '        End Try
-        '    Else
-        '        streamError(networkStream)
-        '    End If
-        'End If
         If (Not dataIsLoaded) Then
             Dim data As String
             data = phoneyTCPData()
@@ -314,22 +282,6 @@ Module Comms
         End If
         RockRatsClient.ConnStatus2.Text = "Sent: " + hSent + "  Recv: " + hRecv
     End Sub
-
-    Private Sub streamError(networkStream As NetworkStream)
-        'RockRatsClient.logOutput("Connection Failed - Issue with stream")
-        'If Not networkStream.CanRead Then
-        '    RockRatsClient.ConnStatus1.Text = "cannot not write data to this stream"
-        '    RockRatsClient.ConnStatus1.ForeColor = Color.DarkRed
-        '    tcpClient.Close()
-        'Else
-        '    If Not networkStream.CanWrite Then
-        '        RockRatsClient.ConnStatus1.Text = "cannot read data from this stream"
-        '        RockRatsClient.ConnStatus1.ForeColor = Color.DarkRed
-        '        tcpClient.Close()
-        '    End If
-        'End If
-    End Sub
-
     Private Function getResponceDesc(rCode As String) As String
         Dim retValue As String = "Unknown Responce"
         For Each de As DictionaryEntry In responceCodes
