@@ -36,23 +36,23 @@ Partial Class viewImage
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel1.Location = New System.Drawing.Point(0, 0)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(1189, 770)
+        Me.Panel1.Size = New System.Drawing.Size(1189, 834)
         Me.Panel1.TabIndex = 1
         '
         'imgBox
         '
         Me.imgBox.Location = New System.Drawing.Point(0, 0)
         Me.imgBox.Name = "imgBox"
-        Me.imgBox.Size = New System.Drawing.Size(75, 102)
+        Me.imgBox.Size = New System.Drawing.Size(75, 111)
         Me.imgBox.TabIndex = 1
         Me.imgBox.TabStop = False
         '
         'viewImage
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.AutoScroll = True
-        Me.ClientSize = New System.Drawing.Size(1189, 770)
+        Me.ClientSize = New System.Drawing.Size(1189, 834)
         Me.Controls.Add(Me.Panel1)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "viewImage"
