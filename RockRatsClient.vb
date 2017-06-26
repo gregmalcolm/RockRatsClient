@@ -179,6 +179,7 @@ Public Class RockRatsClient
     End Sub
 
     Private Sub CaptureEDScreen_Click(sender As Object, e As EventArgs) Handles CaptureEDScreen.Click
+        StatusBox.Text = "OCR Scan in progress..."
         Dim bounds As Rectangle
         Dim screenshot As System.Drawing.Bitmap
         Dim graph As Graphics
@@ -191,6 +192,7 @@ Public Class RockRatsClient
     End Sub
 
     Private Sub PasteEDScreen_Click(sender As Object, e As EventArgs) Handles PasteEDScreen.Click
+        StatusBox.Text = "OCR Scan in progress..."
         Dim screenshot As System.Drawing.Bitmap
         If My.Computer.Clipboard.ContainsImage Then
             screenshot = CType(My.Computer.Clipboard.GetImage, Bitmap)
@@ -226,6 +228,7 @@ Public Class RockRatsClient
         End If
         EDCapture.Refresh()
         ocrWorking.Visible = False
+        StatusBox.Text = "OCR Finished"
         Call Global.RockRatsClient.procOCRTextChg()
     End Sub
 
@@ -256,7 +259,8 @@ Public Class RockRatsClient
         Next
         logOutput("Updated " + SoftDataGrid.Rows.Count.ToString + " Factions in " + selSystem.SelectedItem.ToString)
         'SoftDataGrid.Rows.Clear()
-        Call Global.RockRatsClient.procOCRTextChg()
+        StatusBox.Text = "Sending '" & selSystem.SelectedItem.ToString & "' data to server..."
+        'Call Global.RockRatsClient.procOCRTextChg()
     End Sub
 
     Private Async Sub commsTimer_Tick(sender As Object, e As EventArgs) Handles commsTimer.Tick
@@ -269,6 +273,9 @@ Public Class RockRatsClient
 
     Private Sub selSystem_SelectedIndexChanged(sender As Object, e As EventArgs) Handles selSystem.SelectedIndexChanged
         If selSystem.SelectedItem.ToString <> "" Then
+            SystemNameBox.Text = selSystem.SelectedItem.ToString
+            My.Computer.Clipboard.SetText(SystemNameBox.Text)
+            StatusBox.Text = "Copied '" & selSystem.SelectedItem.ToString & "' to clipboard!"
             Call Global.RockRatsClient.procSystemChange(selSystem.SelectedItem.ToString)
         End If
     End Sub

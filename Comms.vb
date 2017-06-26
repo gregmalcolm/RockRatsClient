@@ -210,8 +210,10 @@ Module Comms
 
         If response.HttpStatusCode >= 300 Then
             RockRatsClient.logOutput("FAILED! (HTTP CODE = " & response.HttpStatusCode & ")")
+            RockRatsClient.StatusBox.Text = "FAILED! Couldn't send '" & system & "' data"
         Else
             RockRatsClient.logOutput("SUCCESS! (HTTP CODE = " & response.HttpStatusCode & ")")
+            RockRatsClient.StatusBox.Text = "Success! Sent '" & system & "' data"
         End If
     End Function
 

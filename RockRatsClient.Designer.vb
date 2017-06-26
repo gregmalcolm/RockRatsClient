@@ -95,6 +95,8 @@ Partial Class RockRatsClient
         Me.Label1 = New System.Windows.Forms.Label()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.Tabs = New System.Windows.Forms.TabControl()
+        Me.SystemNameBox = New System.Windows.Forms.TextBox()
+        Me.StatusBox = New System.Windows.Forms.TextBox()
         CType(Me.EDCapture, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.resizeSlider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.HelpTab.SuspendLayout()
@@ -241,9 +243,9 @@ Partial Class RockRatsClient
         'CaptureEDScreen
         '
         Me.CaptureEDScreen.Enabled = False
-        Me.CaptureEDScreen.Location = New System.Drawing.Point(23, 295)
+        Me.CaptureEDScreen.Location = New System.Drawing.Point(8, 256)
         Me.CaptureEDScreen.Name = "CaptureEDScreen"
-        Me.CaptureEDScreen.Size = New System.Drawing.Size(77, 23)
+        Me.CaptureEDScreen.Size = New System.Drawing.Size(92, 62)
         Me.CaptureEDScreen.TabIndex = 23
         Me.CaptureEDScreen.Text = "Capture"
         Me.ToolTip1.SetToolTip(Me.CaptureEDScreen, "Capture the Image from your Main Screen")
@@ -252,9 +254,9 @@ Partial Class RockRatsClient
         'UpdSoftData
         '
         Me.UpdSoftData.Enabled = False
-        Me.UpdSoftData.Location = New System.Drawing.Point(395, 295)
+        Me.UpdSoftData.Location = New System.Drawing.Point(442, 295)
         Me.UpdSoftData.Name = "UpdSoftData"
-        Me.UpdSoftData.Size = New System.Drawing.Size(77, 23)
+        Me.UpdSoftData.Size = New System.Drawing.Size(77, 51)
         Me.UpdSoftData.TabIndex = 25
         Me.UpdSoftData.Text = "Update"
         Me.ToolTip1.SetToolTip(Me.UpdSoftData, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
@@ -284,9 +286,9 @@ Partial Class RockRatsClient
         'PasteEDScreen
         '
         Me.PasteEDScreen.Enabled = False
-        Me.PasteEDScreen.Location = New System.Drawing.Point(106, 295)
+        Me.PasteEDScreen.Location = New System.Drawing.Point(106, 285)
         Me.PasteEDScreen.Name = "PasteEDScreen"
-        Me.PasteEDScreen.Size = New System.Drawing.Size(75, 23)
+        Me.PasteEDScreen.Size = New System.Drawing.Size(75, 33)
         Me.PasteEDScreen.TabIndex = 33
         Me.PasteEDScreen.Text = "Paste"
         Me.ToolTip1.SetToolTip(Me.PasteEDScreen, "Paste an Image from your Clipboard")
@@ -307,7 +309,7 @@ Partial Class RockRatsClient
         'BlackAndWhile
         '
         Me.BlackAndWhile.AutoSize = True
-        Me.BlackAndWhile.Location = New System.Drawing.Point(61, 260)
+        Me.BlackAndWhile.Location = New System.Drawing.Point(106, 262)
         Me.BlackAndWhile.Name = "BlackAndWhile"
         Me.BlackAndWhile.Size = New System.Drawing.Size(78, 17)
         Me.BlackAndWhile.TabIndex = 39
@@ -328,7 +330,7 @@ Partial Class RockRatsClient
         Me.resizeSlider.TickFrequency = 2
         Me.ToolTip1.SetToolTip(Me.resizeSlider, "Resize the image prior to OCR processing" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "This can improve OCR accuracy but at a " &
         "slight delay")
-        Me.resizeSlider.Value = 4
+        Me.resizeSlider.Value = 12
         '
         'tailLogs
         '
@@ -526,7 +528,10 @@ Partial Class RockRatsClient
         '
         'SoftDataTab
         '
+        Me.SoftDataTab.Controls.Add(Me.StatusBox)
+        Me.SoftDataTab.Controls.Add(Me.Label7)
         Me.SoftDataTab.Controls.Add(Me.onTop)
+        Me.SoftDataTab.Controls.Add(Me.SystemNameBox)
         Me.SoftDataTab.Controls.Add(Me.resizeValue)
         Me.SoftDataTab.Controls.Add(Me.resizeSlider)
         Me.SoftDataTab.Controls.Add(Me.BlackAndWhile)
@@ -537,7 +542,6 @@ Partial Class RockRatsClient
         Me.SoftDataTab.Controls.Add(Me.infTotal)
         Me.SoftDataTab.Controls.Add(Me.Label10)
         Me.SoftDataTab.Controls.Add(Me.Label8)
-        Me.SoftDataTab.Controls.Add(Me.Label7)
         Me.SoftDataTab.Controls.Add(Me.selSystem)
         Me.SoftDataTab.Controls.Add(Me.UpdSoftData)
         Me.SoftDataTab.Controls.Add(Me.CaptureEDScreen)
@@ -551,12 +555,11 @@ Partial Class RockRatsClient
         '
         'onTop
         '
-        Me.onTop.AutoSize = True
-        Me.onTop.Location = New System.Drawing.Point(300, 301)
+        Me.onTop.Location = New System.Drawing.Point(11, 0)
         Me.onTop.Name = "onTop"
-        Me.onTop.Size = New System.Drawing.Size(60, 30)
+        Me.onTop.Size = New System.Drawing.Size(159, 23)
         Me.onTop.TabIndex = 42
-        Me.onTop.Text = "Always" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "on Top"
+        Me.onTop.Text = "Always on Top"
         Me.onTop.UseVisualStyleBackColor = True
         '
         'resizeValue
@@ -566,7 +569,7 @@ Partial Class RockRatsClient
         Me.resizeValue.Name = "resizeValue"
         Me.resizeValue.Size = New System.Drawing.Size(65, 13)
         Me.resizeValue.TabIndex = 41
-        Me.resizeValue.Text = "Resize: 2.0x"
+        Me.resizeValue.Text = "Resize: 4.0x"
         '
         'SoftDataGrid
         '
@@ -576,10 +579,10 @@ Partial Class RockRatsClient
         Me.SoftDataGrid.AllowUserToResizeRows = False
         Me.SoftDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.SoftDataGrid.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Faction, Me.Influence, Me.State, Me.Found})
-        Me.SoftDataGrid.Location = New System.Drawing.Point(245, 20)
+        Me.SoftDataGrid.Location = New System.Drawing.Point(245, 29)
         Me.SoftDataGrid.Name = "SoftDataGrid"
         Me.SoftDataGrid.RowHeadersWidth = 4
-        Me.SoftDataGrid.Size = New System.Drawing.Size(358, 270)
+        Me.SoftDataGrid.Size = New System.Drawing.Size(358, 261)
         Me.SoftDataGrid.TabIndex = 37
         '
         'Faction
@@ -633,7 +636,7 @@ Partial Class RockRatsClient
         'Label10
         '
         Me.Label10.AutoSize = True
-        Me.Label10.Location = New System.Drawing.Point(406, 323)
+        Me.Label10.Location = New System.Drawing.Point(439, 349)
         Me.Label10.Name = "Label10"
         Me.Label10.Size = New System.Drawing.Size(54, 13)
         Me.Label10.TabIndex = 31
@@ -642,16 +645,17 @@ Partial Class RockRatsClient
         'Label8
         '
         Me.Label8.AutoSize = True
-        Me.Label8.Location = New System.Drawing.Point(36, 323)
+        Me.Label8.Location = New System.Drawing.Point(3, 323)
         Me.Label8.Name = "Label8"
-        Me.Label8.Size = New System.Drawing.Size(128, 13)
+        Me.Label8.Size = New System.Drawing.Size(207, 39)
         Me.Label8.TabIndex = 30
-        Me.Label8.Text = "2. Capture (Multiple times)"
+        Me.Label8.Text = "2. Capture (Multiple times)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "TIP: Zoom out all the way on System Map." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "It helps t" &
+    "he OCR out."
         '
         'Label7
         '
         Me.Label7.AutoSize = True
-        Me.Label7.Location = New System.Drawing.Point(59, 20)
+        Me.Label7.Location = New System.Drawing.Point(8, 23)
         Me.Label7.Name = "Label7"
         Me.Label7.Size = New System.Drawing.Size(86, 13)
         Me.Label7.TabIndex = 29
@@ -839,6 +843,23 @@ Partial Class RockRatsClient
         Me.Tabs.Size = New System.Drawing.Size(630, 397)
         Me.Tabs.TabIndex = 5
         '
+        'SystemNameBox
+        '
+        Me.SystemNameBox.Location = New System.Drawing.Point(245, 3)
+        Me.SystemNameBox.Name = "SystemNameBox"
+        Me.SystemNameBox.ReadOnly = True
+        Me.SystemNameBox.Size = New System.Drawing.Size(154, 20)
+        Me.SystemNameBox.TabIndex = 43
+        '
+        'StatusBox
+        '
+        Me.StatusBox.Location = New System.Drawing.Point(245, 296)
+        Me.StatusBox.Multiline = True
+        Me.StatusBox.Name = "StatusBox"
+        Me.StatusBox.ReadOnly = True
+        Me.StatusBox.Size = New System.Drawing.Size(191, 66)
+        Me.StatusBox.TabIndex = 44
+        '
         'RockRatsClient
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -946,4 +967,6 @@ Partial Class RockRatsClient
     Friend WithEvents Label1 As Label
     Friend WithEvents Label6 As Label
     Friend WithEvents Tabs As TabControl
+    Friend WithEvents SystemNameBox As TextBox
+    Friend WithEvents StatusBox As TextBox
 End Class
