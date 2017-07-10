@@ -136,6 +136,17 @@ Public Class RockRatsClient
         toggleTailLog()
     End Sub
 
+    Public Sub LogEverywhere(message As String)
+        StatusLog(message)
+        logOutput(message)
+    End Sub
+    Public Sub StatusLog(message As String)
+        If Not String.IsNullOrEmpty(StatusBox.Text) Then
+            message = vbNewLine & message
+        End If
+        StatusBox.AppendText(message)
+    End Sub
+
     Friend Sub logOutput(logText As String)
         Debug.WriteLine(logText)
         Try
@@ -152,7 +163,7 @@ Public Class RockRatsClient
         End Try
     End Sub
     Private Sub CaptureEDScreen_Click(sender As Object, e As EventArgs) Handles CaptureEDScreen.Click
-        StatusBox.Text = "OCR Scan in progress..."
+        StatusLog("OCR Scan in progress...")
         Dim bounds As Rectangle
         Dim screenshot As System.Drawing.Bitmap
         Dim graph As Graphics
@@ -165,7 +176,7 @@ Public Class RockRatsClient
     End Sub
 
     Private Sub PasteEDScreen_Click(sender As Object, e As EventArgs) Handles PasteEDScreen.Click
-        StatusBox.Text = "OCR Scan in progress..."
+        StatusLog("OCR Scan in progress...")
         Dim screenshot As System.Drawing.Bitmap
         If My.Computer.Clipboard.ContainsImage Then
             screenshot = CType(My.Computer.Clipboard.GetImage, Bitmap)
@@ -201,7 +212,7 @@ Public Class RockRatsClient
         End If
         EDCapture.Refresh()
         ocrWorking.Visible = False
-        StatusBox.Text = "OCR Finished"
+        StatusLog("OCR Finished")
         Call Global.RockRatsClient.procOCRTextChg()
     End Sub
 
@@ -227,21 +238,37 @@ Public Class RockRatsClient
     End Function
 
     Private Sub UpdSoftData_Click(sender As Object, e As EventArgs) Handles UpdSoftData.Click
+        If selSystem.SelectedItem IsNot Nothing Then
+            If Not SoftData.hasUserFinishedOCRing() Then
+                Dim ok = MsgBox("The influence total looks off. Are you sure you want update the server?", MsgBoxStyle.OkCancel)
+                If ok <> MsgBoxResult.Ok Then
+                    Return
+                End If
+            End If
+        End If
+        StatusLog("Sending '" & selSystem.SelectedItem.ToString & "' data to server...")
+        Dim factionsSent As Integer = 0
+        Dim done As Boolean = False
         For Each row As DataGridViewRow In SoftDataGrid.Rows
             If row.Cells(0).Value IsNot Nothing Then
-                If row.Cells(0).Value.ToString.Trim <> "" Then
-                    For c = 1 To 2
-                        If row.Cells(c).Value Is Nothing Then
-                            row.Cells(c).Value = ""
+                If row.Cells(1).Value IsNot Nothing Then
+                    If row.Cells(0).Value.ToString.Trim <> "" Then
+                        If IsNumeric(row.Cells(1).Value.ToString) Then
+                            If row.Cells(2).Value Is Nothing Then
+                                row.Cells(2).Value = ""
+                            End If
+                            Dim cwaitForCompletion As Boolean = Comms.sendUpdate("", "", "", selSystem.SelectedItem.ToString + ":" + row.Cells(0).Value.ToString.ToUpper + ":" + row.Cells(2).Value.ToString + ":" + row.Cells(1).Value.ToString + ":OCR")
+                            factionsSent += 1
+                        Else
+                            LogEverywhere("Skipping " & row.Cells(0).Value.ToString & " because the infuence given is not a number")
                         End If
-                    Next c
-                    Dim cwaitForCompletion As Boolean = Comms.sendUpdate("", "", "", selSystem.SelectedItem.ToString + ":" + row.Cells(0).Value.ToString.ToUpper + ":" + row.Cells(2).Value.ToString + ":" + row.Cells(1).Value.ToString + ":OCR")
+                    End If
+                Else
+                    LogEverywhere("Skipping " & row.Cells(0).Value.ToString & " because no influence was present")
                 End If
             End If
         Next
-        logOutput("Updated " + SoftDataGrid.Rows.Count.ToString + " Factions in " + selSystem.SelectedItem.ToString)
-        'SoftDataGrid.Rows.Clear()
-        StatusBox.Text = "Sending '" & selSystem.SelectedItem.ToString & "' data to server..."
+        logOutput("Updated " & factionsSent & "/" & (SoftDataGrid.Rows.Count - 1).ToString & " Factions in " & selSystem.SelectedItem.ToString)
         'Call Global.RockRatsClient.procOCRTextChg()
     End Sub
 
@@ -257,8 +284,9 @@ Public Class RockRatsClient
         If selSystem.SelectedItem.ToString <> "" Then
             SystemNameBox.Text = selSystem.SelectedItem.ToString
             My.Computer.Clipboard.SetText(SystemNameBox.Text)
-            StatusBox.Text = "Copied '" & selSystem.SelectedItem.ToString & "' to clipboard!"
+            StatusLog("Copied '" & selSystem.SelectedItem.ToString & "' to clipboard!")
             Call Global.RockRatsClient.procSystemChange(selSystem.SelectedItem.ToString)
+            SoftDataGrid.Select()
         End If
     End Sub
 
@@ -330,5 +358,25 @@ Public Class RockRatsClient
 
     Private Sub StatusBox_TextChanged(sender As Object, e As EventArgs) Handles StatusBox.TextChanged
 
+    End Sub
+
+    Private Sub viewWebTracker_Click(sender As Object, e As EventArgs) Handles viewWebTracker.Click
+        Dim webAddress As String = "http://rock-rats-bgs-tracker.s3-website-us-east-1.amazonaws.com/"
+        Process.Start(webAddress)
+    End Sub
+
+    Private Sub statusLabel_Click(sender As Object, e As EventArgs) Handles statusLabel.Click
+
+    End Sub
+
+    Private Sub NextSystem_Click(sender As Object, e As EventArgs) Handles NextSystem.Click
+
+        If selSystem.SelectedIndex < 0 Then
+            selSystem.SelectedIndex = 1
+        ElseIf selSystem.SelectedIndex = selSystem.Items.Count - 1 Then
+            StatusLog("No more systems!")
+        Else
+            selSystem.SelectedIndex = selSystem.SelectedIndex + 1
+        End If
     End Sub
 End Class

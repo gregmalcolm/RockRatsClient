@@ -10,6 +10,7 @@ Module SoftData
     Private allStates As New Hashtable()
     Private numFactions As Integer = 0
     Private exeDir As String = AppDomain.CurrentDomain.BaseDirectory
+    Private influenceAccountedFor As Double = 0.0
 
     Friend Sub procEDScreen(bitmapImage As System.Drawing.Bitmap)
         Try
@@ -100,17 +101,18 @@ Module SoftData
         If procOCRTextChange Then
             Dim i As Double = 0
             For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
-                Dim n As Double
+                Dim n As Double = 0.0
                 Try
                     n = Val(row.Cells(1).Value.ToString)
                 Catch ex As Exception
-                    n = -1
+                    ' Don't care
                 End Try
                 i = i + n
             Next
 
-            RockRatsClient.infTotalVal.Text = i.ToString
-            If i > 99.8 And i <= 100.1 Then
+            influenceAccountedFor = i
+            RockRatsClient.infTotalVal.Text = influenceAccountedFor.ToString
+            If hasUserFinishedOCRing() Then
                 RockRatsClient.CaptureEDScreen.Enabled = False
                 RockRatsClient.PasteEDScreen.Enabled = False
                 RockRatsClient.UpdSoftData.Enabled = True
@@ -125,6 +127,10 @@ Module SoftData
             End If
         End If
     End Sub
+
+    Public Function hasUserFinishedOCRing() As Boolean
+        Return influenceAccountedFor > 99.8 And influenceAccountedFor <= 100.1
+    End Function
 
     Friend Sub procSystemChange(systemName As String)
         If systemName <> selectedSystem Then
@@ -272,20 +278,23 @@ Module SoftData
         Try
             Dim elements() As String
             Dim stringSeparators() As String = {":"}
+            Dim selectedItem = RockRatsClient.selSystem.SelectedItem
 
-            If UCase(systemName) = UCase(RockRatsClient.selSystem.SelectedItem.ToString) Then
-                elements = factionData.Split(stringSeparators, StringSplitOptions.None)
-                For i = 0 To numFactions
-                    systemFactions(i) = ""
-                Next
-                numFactions = 0
-                For i = 1 To elements.GetUpperBound(0)
-                    systemFactions(numFactions) = whitelistChars(Trim(UCase(elements(i))))
-                    numFactions = numFactions + 1
-                Next
-                For i = 0 To numFactions - 1
-                    updDataGridRow(systemFactions(i), "", "", False)
-                Next
+            If selectedItem IsNot Nothing Then
+                If UCase(systemName) = UCase(selectedItem.ToString) Then
+                    elements = factionData.Split(stringSeparators, StringSplitOptions.None)
+                    For i = 0 To numFactions
+                        systemFactions(i) = ""
+                    Next
+                    numFactions = 0
+                    For i = 1 To elements.GetUpperBound(0)
+                        systemFactions(numFactions) = whitelistChars(Trim(UCase(elements(i))))
+                        numFactions = numFactions + 1
+                    Next
+                    For i = 0 To numFactions - 1
+                        updDataGridRow(systemFactions(i), "", "", False)
+                    Next
+                End If
             End If
         Catch ex As Exception
             RockRatsClient.logOutput("Operation failed: ex=" & ex.Message)

@@ -38,17 +38,17 @@ Module Comms
         Dim transmission =
 "1
 4 : 11 :   CHERTAN : VARPAS : SAVINCATES : BJIRUP : FIRBON : HIP 54844 : HIP 56321 : HIP 54346 : HIP 55823 : AAKUMAN : HIP 53737
-7 : 5 : CHERTAN :   ROCK RATS : ORDER OF CHERTAN : CHERTAN DOMINION : CHERTAN TRAVEL INC : UNION OF CHERTAN INDEPENDANTS
-7 : 5 : VARPAS :   ROCK RATS : VARPAS CONFEDERACY : VARPAS DRUG EMPIRE : VARPAS PURPLE POWER CO : VARPAS DYNASTY
-7 : 6 : SAVINCATES :   ROCK RATS : NATURAL MEHIT LIBERTY PARTY : SAVINCATES BLUE MAJOR & CO : SAVINCATES NOBLEMENT : SAVINCATES CO-OPERATIVE : SAVINCATES COUNCIL
-7 : 7 : BJIRUP :   ROCK RATS : REVOLUTIONARY PARTY OF BJIRUP : UNIFIED ATIUS : HIP 55118 GENERAL CORP : NATURAL MEHIT LIBERTY PARTY : BJIRUP CRIMSON LIFE LTD : NOBLES OF BJIRUP
-7 : 5 : FIRBON :   ROCK RATS : FIRBON VISION COMPANY : CO-OP OF FIRBON : DRUG EMPIRE OF FIRBON : HIP 54346 SILVER COMMS
-7 : 6 : HIP 54844 :   ROCK RATS : BUREAU OF HIP 53923 MOVEMENT : ALLIED HIP 53923 AUTOCRACY : NATURAL MEHIT LIBERTY PARTY : SAVINCATES BLUE MAJOR & CO : HIP 53923 JET DYNAMIC SOLUTIONS
-7 : 5 : HIP 56321 :   ROCK RATS : PEOPLE'S HIP 56321 CONFEDERACY : ARAWOTYAN GALACTIC LIMITED : SOCIAL NIU HSING LEAGUE : DEMOCRATS OF HIP 57080
-7 : 6 : HIP 54346 :   ROCK RATS : HIP 54346 SILVER BRIDGE COMMS : FIRBON VISION COMPANY : NUNGGUL CONFEDERACY : SOCIAL PATAKAKA LABOUR : 80 LEONIS VALUES PARTY
-7 : 5 : HIP 55823 :   ROCK RATS : ARAWOTYAN GALACTIC LIMITED : TSIM BIKO BLUE FORTUNE PARTNERS : HIP 57112 BLUE ALLIED EXCHANGE : ARAWOTYAN CRIMSON VISION CORP.
-7 : 6 : AAKUMAN :   ROCK RATS : AAKUMAN PRISON COLONY : AAKUMAN CRIMSON RAIDERS : 4 A1 VIRGINIS BLUE MAFIA : CO-OPERATIVE OF AAKUMAN : AAKUMAN HOLDINGS
-7 : 6 : HIP 53737 :   ROCK RATS : YIN YIN PURPLE CREW : MANT SILVER MAJOR LTD : YIN YIN MONARCHY : YIN YIN BLUE ADVANCED LTD : MANT SOCIETY"
+7 : 5 : CHERTAN :   ROCK RATS : UNION OF CHERTAN INDEPENDANTS : CHERTAN TRAVEL INC : ORDER OF CHERTAN : CHERTAN DOMINION
+7 : 5 : VARPAS :   VARPAS CONFEDERACY : VARPAS PURPLE POWER CO : ROCK RATS : VARPAS DYNASTY : VARPAS DRUG EMPIRE
+7 : 6 : SAVINCATES :   NATURAL MEHIT LIBERTY PARTY : ROCK RATS : SAVINCATES BLUE MAJOR & CO : SAVINCATES NOBLEMENT : SAVINCATES COUNCIL : SAVINCATES CO-OPERATIVE
+7 : 7 : BJIRUP :   REVOLUTIONARY PARTY OF BJIRUP : UNIFIED ATIUS : ROCK RATS : HIP 55118 GENERAL CORP : NATURAL MEHIT LIBERTY PARTY : BJIRUP CRIMSON LIFE LTD : NOBLES OF BJIRUP
+7 : 5 : FIRBON :   CO-OP OF FIRBON : FIRBON VISION COMPANY : ROCK RATS : HIP 54346 SILVER COMMS : DRUG EMPIRE OF FIRBON
+7 : 6 : HIP 54844 :   NATURAL MEHIT LIBERTY PARTY : SAVINCATES BLUE MAJOR & CO : BUREAU OF HIP 53923 MOVEMENT : ROCK RATS : ALLIED HIP 53923 AUTOCRACY : HIP 53923 JET DYNAMIC SOLUTIONS
+7 : 5 : HIP 56321 :   PEOPLE'S HIP 56321 CONFEDERACY : SOCIAL NIU HSING LEAGUE : DEMOCRATS OF HIP 57080 : TSIM BIKO BLUE FORTUNE PARTNERS : ROCK RATS : ARAWOTYAN GALACTIC LIMITED
+7 : 6 : HIP 54346 :   HIP 54346 SILVER BRIDGE COMMS : ROCK RATS : FIRBON VISION COMPANY : SOCIAL PATAKAKA LABOUR : NUNGGUL CONFEDERACY : 80 LEONIS VALUES PARTY
+7 : 5 : HIP 55823 :   ARAWOTYAN GALACTIC LIMITED : TSIM BIKO BLUE FORTUNE PARTNERS : ROCK RATS : HIP 57112 BLUE ALLIED EXCHANGE : ARAWOTYAN CRIMSON VISION CORP.
+7 : 6 : AAKUMAN :   AAKUMAN PRISON COLONY : AAKUMAN CRIMSON RAIDERS : ROCK RATS : 4 A1 VIRGINIS BLUE MAFIA : CO-OPERATIVE OF AAKUMAN : AAKUMAN HOLDINGS
+7 : 6 : HIP 53737 :   YIN YIN PURPLE CREW : ROCK RATS : MANT SILVER MAJOR LTD : YIN YIN BLUE ADVANCED LTD : YIN YIN MONARCHY : MANT SOCIETY"
         Return transmission
     End Function
 
@@ -78,7 +78,7 @@ Module Comms
             End If
             Return True
         Catch ex As Exception
-            Debug.WriteLine(ex.Message)
+            RockRatsClient.logOutput("Update failed: " & ex.Message)
             Return False
         End Try
     End Function
@@ -95,7 +95,7 @@ Module Comms
             Try
                 Await recvTCP()
             Catch ex As Exception
-                Debug.WriteLine(ex.Message)
+                RockRatsClient.logOutput("Recv failed: " & ex.Message)
             End Try
         Else
             doRecv = True
@@ -120,7 +120,7 @@ Module Comms
                         Await sendDataUpdate(sendData)
                     End If
                 Catch ex As Exception
-                    Debug.WriteLine(ex.Message)
+                    RockRatsClient.logOutput("SendData failed: " & ex.Message)
                 End Try
             End If
         End If
@@ -139,7 +139,7 @@ Module Comms
     End Function
 
     Private Async Function SendFactionItemToAws(data As String) As Task
-        RockRatsClient.logOutput("Transmitting to AWS: " & data)
+        RockRatsClient.logOutput("Transmitting to AWS:   " & data)
 
         Dim utc = DateTime.UtcNow
         Dim tickTime = DateTime.UtcNow - New TimeSpan(17, 0, 0)
@@ -204,17 +204,24 @@ Module Comms
             })
         End If
 
-        Dim response = Await awsClient.PutItemAsync(
+
+        Try
+            Dim response = Await awsClient.PutItemAsync(
             tableName:="rock-rat-factions",
             item:=attributes)
 
-        If response.HttpStatusCode >= 300 Then
-            RockRatsClient.logOutput("FAILED! (HTTP CODE = " & response.HttpStatusCode & ")")
-            RockRatsClient.StatusBox.Text = "FAILED! Couldn't send '" & system & "' data"
-        Else
-            RockRatsClient.logOutput("SUCCESS! (HTTP CODE = " & response.HttpStatusCode & ")")
-            RockRatsClient.StatusBox.Text = "Success! Sent '" & system & "' data"
-        End If
+            If response.HttpStatusCode >= 300 Then
+                RockRatsClient.LogEverywhere("FAILED! Couldn't send '" & system & " - " & faction & "' data")
+                RockRatsClient.logOutput("FAILED! (HTTP CODE = " & response.HttpStatusCode & ")")
+            Else
+                RockRatsClient.LogEverywhere("SUCCESS! Sent '" & system & " - " & faction & "' data")
+                RockRatsClient.logOutput("(HTTP CODE = " & response.HttpStatusCode & ")")
+            End If
+        Catch ex As Exception
+            RockRatsClient.LogEverywhere("FAILED! Couldn't send '" & system & " - " & faction & "' data")
+            RockRatsClient.logOutput("Error: " & ex.Message)
+        End Try
+
     End Function
 
 

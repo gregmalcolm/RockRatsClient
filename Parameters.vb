@@ -10,7 +10,7 @@
         defaultValues.Add("HostPort", "4526")
         defaultValues.Add("UpdateSiteActivity", "O")
         defaultValues.Add("BlackAndWhile", "False")
-        defaultValues.Add("resizeValue", "4")
+        defaultValues.Add("resizeValue", "12")
         defaultValues.Add("overScan", "100")
     End Sub
 

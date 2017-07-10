@@ -49,6 +49,7 @@ Partial Class RockRatsClient
         Me.infTotalVal = New System.Windows.Forms.Label()
         Me.BlackAndWhile = New System.Windows.Forms.CheckBox()
         Me.resizeSlider = New System.Windows.Forms.TrackBar()
+        Me.viewWebTracker = New System.Windows.Forms.Button()
         Me.HelpTab = New System.Windows.Forms.TabPage()
         Me.Version = New System.Windows.Forms.Label()
         Me.Label15 = New System.Windows.Forms.Label()
@@ -85,15 +86,16 @@ Partial Class RockRatsClient
         Me.onTop = New System.Windows.Forms.CheckBox()
         Me.resizeValue = New System.Windows.Forms.Label()
         Me.SoftDataGrid = New System.Windows.Forms.DataGridView()
+        Me.Faction = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Influence = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.State = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Found = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         Me.ocrWorking = New System.Windows.Forms.Panel()
         Me.statusLabel = New System.Windows.Forms.Label()
         Me.Label10 = New System.Windows.Forms.Label()
         Me.Label8 = New System.Windows.Forms.Label()
         Me.Tabs = New System.Windows.Forms.TabControl()
-        Me.Faction = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Influence = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.State = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Found = New System.Windows.Forms.DataGridViewCheckBoxColumn()
+        Me.NextSystem = New System.Windows.Forms.Button()
         CType(Me.EDCapture, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.resizeSlider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.HelpTab.SuspendLayout()
@@ -241,7 +243,7 @@ Partial Class RockRatsClient
         Me.EDCapture.BackColor = System.Drawing.Color.Transparent
         Me.EDCapture.Location = New System.Drawing.Point(8, 67)
         Me.EDCapture.Name = "EDCapture"
-        Me.EDCapture.Size = New System.Drawing.Size(187, 132)
+        Me.EDCapture.Size = New System.Drawing.Size(194, 132)
         Me.EDCapture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.EDCapture.TabIndex = 0
         Me.EDCapture.TabStop = False
@@ -252,7 +254,7 @@ Partial Class RockRatsClient
         Me.CaptureEDScreen.Enabled = False
         Me.CaptureEDScreen.Location = New System.Drawing.Point(8, 256)
         Me.CaptureEDScreen.Name = "CaptureEDScreen"
-        Me.CaptureEDScreen.Size = New System.Drawing.Size(92, 62)
+        Me.CaptureEDScreen.Size = New System.Drawing.Size(103, 62)
         Me.CaptureEDScreen.TabIndex = 23
         Me.CaptureEDScreen.Text = "Capture"
         Me.ToolTip1.SetToolTip(Me.CaptureEDScreen, "Capture the Image from your Main Screen")
@@ -261,9 +263,9 @@ Partial Class RockRatsClient
         'UpdSoftData
         '
         Me.UpdSoftData.Enabled = False
-        Me.UpdSoftData.Location = New System.Drawing.Point(526, 252)
+        Me.UpdSoftData.Location = New System.Drawing.Point(526, 243)
         Me.UpdSoftData.Name = "UpdSoftData"
-        Me.UpdSoftData.Size = New System.Drawing.Size(77, 64)
+        Me.UpdSoftData.Size = New System.Drawing.Size(77, 47)
         Me.UpdSoftData.TabIndex = 25
         Me.UpdSoftData.Text = "Update"
         Me.ToolTip1.SetToolTip(Me.UpdSoftData, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
@@ -275,15 +277,16 @@ Partial Class RockRatsClient
         Me.selSystem.FormattingEnabled = True
         Me.selSystem.Location = New System.Drawing.Point(8, 40)
         Me.selSystem.Name = "selSystem"
-        Me.selSystem.Size = New System.Drawing.Size(187, 21)
+        Me.selSystem.Size = New System.Drawing.Size(198, 21)
         Me.selSystem.TabIndex = 28
+        Me.selSystem.TabStop = False
         Me.ToolTip1.SetToolTip(Me.selSystem, "Select the system for Soft Data update")
         '
         'infTotal
         '
         Me.infTotal.AutoSize = True
         Me.infTotal.ForeColor = System.Drawing.Color.DarkRed
-        Me.infTotal.Location = New System.Drawing.Point(525, 323)
+        Me.infTotal.Location = New System.Drawing.Point(525, 297)
         Me.infTotal.Name = "infTotal"
         Me.infTotal.Size = New System.Drawing.Size(78, 13)
         Me.infTotal.TabIndex = 32
@@ -293,9 +296,9 @@ Partial Class RockRatsClient
         'PasteEDScreen
         '
         Me.PasteEDScreen.Enabled = False
-        Me.PasteEDScreen.Location = New System.Drawing.Point(106, 285)
+        Me.PasteEDScreen.Location = New System.Drawing.Point(117, 285)
         Me.PasteEDScreen.Name = "PasteEDScreen"
-        Me.PasteEDScreen.Size = New System.Drawing.Size(75, 33)
+        Me.PasteEDScreen.Size = New System.Drawing.Size(89, 33)
         Me.PasteEDScreen.TabIndex = 33
         Me.PasteEDScreen.Text = "Paste"
         Me.ToolTip1.SetToolTip(Me.PasteEDScreen, "Paste an Image from your Clipboard")
@@ -306,7 +309,7 @@ Partial Class RockRatsClient
         Me.infTotalVal.AutoSize = True
         Me.infTotalVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.infTotalVal.ForeColor = System.Drawing.Color.DarkRed
-        Me.infTotalVal.Location = New System.Drawing.Point(552, 341)
+        Me.infTotalVal.Location = New System.Drawing.Point(552, 311)
         Me.infTotalVal.Name = "infTotalVal"
         Me.infTotalVal.Size = New System.Drawing.Size(16, 18)
         Me.infTotalVal.TabIndex = 36
@@ -316,7 +319,7 @@ Partial Class RockRatsClient
         'BlackAndWhile
         '
         Me.BlackAndWhile.AutoSize = True
-        Me.BlackAndWhile.Location = New System.Drawing.Point(106, 262)
+        Me.BlackAndWhile.Location = New System.Drawing.Point(117, 262)
         Me.BlackAndWhile.Name = "BlackAndWhile"
         Me.BlackAndWhile.Size = New System.Drawing.Size(78, 17)
         Me.BlackAndWhile.TabIndex = 39
@@ -338,6 +341,16 @@ Partial Class RockRatsClient
         Me.ToolTip1.SetToolTip(Me.resizeSlider, "Resize the image prior to OCR processing" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "This can improve OCR accuracy but at a " &
         "slight delay")
         Me.resizeSlider.Value = 12
+        '
+        'viewWebTracker
+        '
+        Me.viewWebTracker.Location = New System.Drawing.Point(480, 3)
+        Me.viewWebTracker.Name = "viewWebTracker"
+        Me.viewWebTracker.Size = New System.Drawing.Size(125, 20)
+        Me.viewWebTracker.TabIndex = 45
+        Me.viewWebTracker.Text = "View Web Tracker"
+        Me.ToolTip1.SetToolTip(Me.viewWebTracker, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
+        Me.viewWebTracker.UseVisualStyleBackColor = True
         '
         'HelpTab
         '
@@ -660,7 +673,9 @@ Partial Class RockRatsClient
         '
         'SoftDataTab
         '
+        Me.SoftDataTab.Controls.Add(Me.NextSystem)
         Me.SoftDataTab.Controls.Add(Me.StatusBox)
+        Me.SoftDataTab.Controls.Add(Me.viewWebTracker)
         Me.SoftDataTab.Controls.Add(Me.SystemNameBox)
         Me.SoftDataTab.Controls.Add(Me.Label7)
         Me.SoftDataTab.Controls.Add(Me.onTop)
@@ -687,11 +702,12 @@ Partial Class RockRatsClient
         '
         'StatusBox
         '
-        Me.StatusBox.Location = New System.Drawing.Point(216, 236)
+        Me.StatusBox.Location = New System.Drawing.Point(216, 225)
         Me.StatusBox.Multiline = True
         Me.StatusBox.Name = "StatusBox"
         Me.StatusBox.ReadOnly = True
-        Me.StatusBox.Size = New System.Drawing.Size(301, 126)
+        Me.StatusBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
+        Me.StatusBox.Size = New System.Drawing.Size(301, 137)
         Me.StatusBox.TabIndex = 44
         '
         'SystemNameBox
@@ -715,7 +731,7 @@ Partial Class RockRatsClient
         '
         Me.onTop.Location = New System.Drawing.Point(11, 0)
         Me.onTop.Name = "onTop"
-        Me.onTop.Size = New System.Drawing.Size(159, 23)
+        Me.onTop.Size = New System.Drawing.Size(134, 23)
         Me.onTop.TabIndex = 42
         Me.onTop.Text = "Always on Top"
         Me.onTop.UseVisualStyleBackColor = True
@@ -737,8 +753,34 @@ Partial Class RockRatsClient
         Me.SoftDataGrid.Location = New System.Drawing.Point(216, 29)
         Me.SoftDataGrid.Name = "SoftDataGrid"
         Me.SoftDataGrid.RowHeadersWidth = 4
-        Me.SoftDataGrid.Size = New System.Drawing.Size(387, 201)
+        Me.SoftDataGrid.Size = New System.Drawing.Size(387, 190)
         Me.SoftDataGrid.TabIndex = 37
+        '
+        'Faction
+        '
+        Me.Faction.HeaderText = "Faction"
+        Me.Faction.MaxInputLength = 250
+        Me.Faction.Name = "Faction"
+        Me.Faction.Width = 170
+        '
+        'Influence
+        '
+        Me.Influence.HeaderText = "Influence"
+        Me.Influence.MaxInputLength = 5
+        Me.Influence.Name = "Influence"
+        Me.Influence.Width = 55
+        '
+        'State
+        '
+        Me.State.HeaderText = "State"
+        Me.State.Name = "State"
+        Me.State.Width = 76
+        '
+        'Found
+        '
+        Me.Found.HeaderText = "Found"
+        Me.Found.Name = "Found"
+        Me.Found.Width = 50
         '
         'ocrWorking
         '
@@ -747,7 +789,7 @@ Partial Class RockRatsClient
         Me.ocrWorking.Controls.Add(Me.statusLabel)
         Me.ocrWorking.Location = New System.Drawing.Point(8, 81)
         Me.ocrWorking.Name = "ocrWorking"
-        Me.ocrWorking.Size = New System.Drawing.Size(187, 100)
+        Me.ocrWorking.Size = New System.Drawing.Size(194, 100)
         Me.ocrWorking.TabIndex = 34
         Me.ocrWorking.Visible = False
         '
@@ -765,7 +807,7 @@ Partial Class RockRatsClient
         'Label10
         '
         Me.Label10.AutoSize = True
-        Me.Label10.Location = New System.Drawing.Point(525, 236)
+        Me.Label10.Location = New System.Drawing.Point(525, 227)
         Me.Label10.Name = "Label10"
         Me.Label10.Size = New System.Drawing.Size(54, 13)
         Me.Label10.TabIndex = 31
@@ -795,31 +837,15 @@ Partial Class RockRatsClient
         Me.Tabs.Size = New System.Drawing.Size(630, 397)
         Me.Tabs.TabIndex = 5
         '
-        'Faction
+        'NextSystem
         '
-        Me.Faction.HeaderText = "Faction"
-        Me.Faction.MaxInputLength = 250
-        Me.Faction.Name = "Faction"
-        Me.Faction.Width = 170
-        '
-        'Influence
-        '
-        Me.Influence.HeaderText = "Influence"
-        Me.Influence.MaxInputLength = 5
-        Me.Influence.Name = "Influence"
-        Me.Influence.Width = 55
-        '
-        'State
-        '
-        Me.State.HeaderText = "State"
-        Me.State.Name = "State"
-        Me.State.Width = 76
-        '
-        'Found
-        '
-        Me.Found.HeaderText = "Found"
-        Me.Found.Name = "Found"
-        Me.Found.Width = 50
+        Me.NextSystem.Location = New System.Drawing.Point(525, 331)
+        Me.NextSystem.Name = "NextSystem"
+        Me.NextSystem.Size = New System.Drawing.Size(78, 31)
+        Me.NextSystem.TabIndex = 46
+        Me.NextSystem.Text = "Next System"
+        Me.ToolTip1.SetToolTip(Me.NextSystem, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
+        Me.NextSystem.UseVisualStyleBackColor = True
         '
         'RockRatsClient
         '
@@ -832,6 +858,7 @@ Partial Class RockRatsClient
         Me.MaximizeBox = False
         Me.Name = "RockRatsClient"
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Rock Rats Client"
         CType(Me.EDCapture, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.resizeSlider, System.ComponentModel.ISupportInitialize).EndInit()
@@ -922,8 +949,10 @@ Partial Class RockRatsClient
     Friend WithEvents CaptureEDScreen As Button
     Friend WithEvents EDCapture As PictureBox
     Friend WithEvents Tabs As TabControl
+    Friend WithEvents viewWebTracker As Button
     Friend WithEvents Faction As DataGridViewTextBoxColumn
     Friend WithEvents Influence As DataGridViewTextBoxColumn
     Friend WithEvents State As DataGridViewTextBoxColumn
     Friend WithEvents Found As DataGridViewCheckBoxColumn
+    Friend WithEvents NextSystem As Button
 End Class
