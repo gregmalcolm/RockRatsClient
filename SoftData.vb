@@ -81,12 +81,14 @@ Module SoftData
     Friend Sub updDataGridRow(factionName As String, influence As String, state As String, found As Boolean)
         Dim doInsert As Boolean = True
         For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
-            If row.Cells(0).Value.ToString = factionName Then
-                RockRatsClient.SoftDataGrid.Rows(row.Index).Cells(1).Value = influence
-                RockRatsClient.SoftDataGrid.Rows(row.Index).Cells(2).Value = state
-                RockRatsClient.SoftDataGrid.Rows(row.Index).Cells(3).Value = found
-                doInsert = False
-                Exit For
+            If row.Cells(0).Value IsNot Nothing Then
+                If row.Cells(0).Value.ToString = factionName Then
+                    RockRatsClient.SoftDataGrid.Rows(row.Index).Cells(1).Value = influence
+                    RockRatsClient.SoftDataGrid.Rows(row.Index).Cells(2).Value = state
+                    RockRatsClient.SoftDataGrid.Rows(row.Index).Cells(3).Value = found
+                    doInsert = False
+                    Exit For
+                End If
             End If
         Next
         If doInsert Then
@@ -117,7 +119,7 @@ Module SoftData
             Else
                 RockRatsClient.CaptureEDScreen.Enabled = True
                 RockRatsClient.PasteEDScreen.Enabled = True
-                RockRatsClient.UpdSoftData.Enabled = False
+                RockRatsClient.UpdSoftData.Enabled = True
                 RockRatsClient.infTotal.ForeColor = Color.DarkRed
                 RockRatsClient.infTotalVal.ForeColor = Color.DarkRed
             End If
@@ -128,7 +130,7 @@ Module SoftData
         If systemName <> selectedSystem Then
             RockRatsClient.CaptureEDScreen.Enabled = True
             RockRatsClient.PasteEDScreen.Enabled = True
-            RockRatsClient.UpdSoftData.Enabled = False
+            RockRatsClient.UpdSoftData.Enabled = True
             RockRatsClient.SoftDataGrid.Rows.Clear()
             procOCRTextChg()
             Comms.getSystemFactions(systemName)
@@ -286,6 +288,7 @@ Module SoftData
                 Next
             End If
         Catch ex As Exception
+            RockRatsClient.logOutput("Operation failed: ex=" & ex.Message)
             Return False
         End Try
         Return True

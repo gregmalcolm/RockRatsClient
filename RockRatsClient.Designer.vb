@@ -39,6 +39,7 @@ Partial Class RockRatsClient
         Me.JournalFolder = New System.Windows.Forms.TextBox()
         Me.BrowserForDir = New System.Windows.Forms.Button()
         Me.SaveJournalDir = New System.Windows.Forms.Button()
+        Me.tailLogs = New System.Windows.Forms.Button()
         Me.EDCapture = New System.Windows.Forms.PictureBox()
         Me.CaptureEDScreen = New System.Windows.Forms.Button()
         Me.UpdSoftData = New System.Windows.Forms.Button()
@@ -48,7 +49,6 @@ Partial Class RockRatsClient
         Me.infTotalVal = New System.Windows.Forms.Label()
         Me.BlackAndWhile = New System.Windows.Forms.CheckBox()
         Me.resizeSlider = New System.Windows.Forms.TrackBar()
-        Me.tailLogs = New System.Windows.Forms.Button()
         Me.HelpTab = New System.Windows.Forms.TabPage()
         Me.Version = New System.Windows.Forms.Label()
         Me.Label15 = New System.Windows.Forms.Label()
@@ -64,21 +64,6 @@ Partial Class RockRatsClient
         Me.Label9 = New System.Windows.Forms.Label()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.Label2 = New System.Windows.Forms.Label()
-        Me.ChatTab = New System.Windows.Forms.TabPage()
-        Me.chatOut = New System.Windows.Forms.RichTextBox()
-        Me.SoftDataTab = New System.Windows.Forms.TabPage()
-        Me.onTop = New System.Windows.Forms.CheckBox()
-        Me.resizeValue = New System.Windows.Forms.Label()
-        Me.SoftDataGrid = New System.Windows.Forms.DataGridView()
-        Me.Faction = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Influence = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.State = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Found = New System.Windows.Forms.DataGridViewCheckBoxColumn()
-        Me.ocrWorking = New System.Windows.Forms.Panel()
-        Me.statusLabel = New System.Windows.Forms.Label()
-        Me.Label10 = New System.Windows.Forms.Label()
-        Me.Label8 = New System.Windows.Forms.Label()
-        Me.Label7 = New System.Windows.Forms.Label()
         Me.StatusTab = New System.Windows.Forms.TabPage()
         Me.SystemsList = New System.Windows.Forms.ListBox()
         Me.Panel3 = New System.Windows.Forms.Panel()
@@ -88,15 +73,27 @@ Partial Class RockRatsClient
         Me.SystemLabel = New System.Windows.Forms.Label()
         Me.ShipLabel = New System.Windows.Forms.Label()
         Me.CommanderLabel = New System.Windows.Forms.Label()
-        Me.ConnStatus2 = New System.Windows.Forms.Label()
         Me.FileStatus = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.ConnStatus1 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.Label6 = New System.Windows.Forms.Label()
-        Me.Tabs = New System.Windows.Forms.TabControl()
-        Me.SystemNameBox = New System.Windows.Forms.TextBox()
+        Me.SoftDataTab = New System.Windows.Forms.TabPage()
         Me.StatusBox = New System.Windows.Forms.TextBox()
+        Me.SystemNameBox = New System.Windows.Forms.TextBox()
+        Me.Label7 = New System.Windows.Forms.Label()
+        Me.onTop = New System.Windows.Forms.CheckBox()
+        Me.resizeValue = New System.Windows.Forms.Label()
+        Me.SoftDataGrid = New System.Windows.Forms.DataGridView()
+        Me.ocrWorking = New System.Windows.Forms.Panel()
+        Me.statusLabel = New System.Windows.Forms.Label()
+        Me.Label10 = New System.Windows.Forms.Label()
+        Me.Label8 = New System.Windows.Forms.Label()
+        Me.Tabs = New System.Windows.Forms.TabControl()
+        Me.Faction = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Influence = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.State = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Found = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         CType(Me.EDCapture, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.resizeSlider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.HelpTab.SuspendLayout()
@@ -104,12 +101,11 @@ Partial Class RockRatsClient
         Me.SettingsTab.SuspendLayout()
         Me.Panel2.SuspendLayout()
         Me.Panel1.SuspendLayout()
-        Me.ChatTab.SuspendLayout()
+        Me.StatusTab.SuspendLayout()
+        Me.Panel3.SuspendLayout()
         Me.SoftDataTab.SuspendLayout()
         CType(Me.SoftDataGrid, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ocrWorking.SuspendLayout()
-        Me.StatusTab.SuspendLayout()
-        Me.Panel3.SuspendLayout()
         Me.Tabs.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -229,6 +225,17 @@ Partial Class RockRatsClient
         "og")
         Me.SaveJournalDir.UseVisualStyleBackColor = True
         '
+        'tailLogs
+        '
+        Me.tailLogs.Enabled = False
+        Me.tailLogs.Location = New System.Drawing.Point(66, 282)
+        Me.tailLogs.Name = "tailLogs"
+        Me.tailLogs.Size = New System.Drawing.Size(270, 63)
+        Me.tailLogs.TabIndex = 24
+        Me.tailLogs.Text = "Run"
+        Me.ToolTip1.SetToolTip(Me.tailLogs, "Process new Journal Entries")
+        Me.tailLogs.UseVisualStyleBackColor = True
+        '
         'EDCapture
         '
         Me.EDCapture.BackColor = System.Drawing.Color.Transparent
@@ -254,9 +261,9 @@ Partial Class RockRatsClient
         'UpdSoftData
         '
         Me.UpdSoftData.Enabled = False
-        Me.UpdSoftData.Location = New System.Drawing.Point(442, 295)
+        Me.UpdSoftData.Location = New System.Drawing.Point(526, 252)
         Me.UpdSoftData.Name = "UpdSoftData"
-        Me.UpdSoftData.Size = New System.Drawing.Size(77, 51)
+        Me.UpdSoftData.Size = New System.Drawing.Size(77, 64)
         Me.UpdSoftData.TabIndex = 25
         Me.UpdSoftData.Text = "Update"
         Me.ToolTip1.SetToolTip(Me.UpdSoftData, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
@@ -276,7 +283,7 @@ Partial Class RockRatsClient
         '
         Me.infTotal.AutoSize = True
         Me.infTotal.ForeColor = System.Drawing.Color.DarkRed
-        Me.infTotal.Location = New System.Drawing.Point(525, 295)
+        Me.infTotal.Location = New System.Drawing.Point(525, 323)
         Me.infTotal.Name = "infTotal"
         Me.infTotal.Size = New System.Drawing.Size(78, 13)
         Me.infTotal.TabIndex = 32
@@ -299,7 +306,7 @@ Partial Class RockRatsClient
         Me.infTotalVal.AutoSize = True
         Me.infTotalVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.infTotalVal.ForeColor = System.Drawing.Color.DarkRed
-        Me.infTotalVal.Location = New System.Drawing.Point(552, 313)
+        Me.infTotalVal.Location = New System.Drawing.Point(552, 341)
         Me.infTotalVal.Name = "infTotalVal"
         Me.infTotalVal.Size = New System.Drawing.Size(16, 18)
         Me.infTotalVal.TabIndex = 36
@@ -331,17 +338,6 @@ Partial Class RockRatsClient
         Me.ToolTip1.SetToolTip(Me.resizeSlider, "Resize the image prior to OCR processing" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "This can improve OCR accuracy but at a " &
         "slight delay")
         Me.resizeSlider.Value = 12
-        '
-        'tailLogs
-        '
-        Me.tailLogs.Enabled = False
-        Me.tailLogs.Location = New System.Drawing.Point(66, 282)
-        Me.tailLogs.Name = "tailLogs"
-        Me.tailLogs.Size = New System.Drawing.Size(270, 63)
-        Me.tailLogs.TabIndex = 24
-        Me.tailLogs.Text = "Run"
-        Me.ToolTip1.SetToolTip(Me.tailLogs, "Process new Journal Entries")
-        Me.tailLogs.UseVisualStyleBackColor = True
         '
         'HelpTab
         '
@@ -506,161 +502,6 @@ Partial Class RockRatsClient
         Me.Label2.TabIndex = 0
         Me.Label2.Text = "Connection Details"
         '
-        'ChatTab
-        '
-        Me.ChatTab.Controls.Add(Me.chatOut)
-        Me.ChatTab.Location = New System.Drawing.Point(4, 22)
-        Me.ChatTab.Name = "ChatTab"
-        Me.ChatTab.Size = New System.Drawing.Size(622, 371)
-        Me.ChatTab.TabIndex = 5
-        Me.ChatTab.Text = "Chat"
-        Me.ChatTab.UseVisualStyleBackColor = True
-        '
-        'chatOut
-        '
-        Me.chatOut.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.chatOut.Location = New System.Drawing.Point(0, 0)
-        Me.chatOut.Name = "chatOut"
-        Me.chatOut.ReadOnly = True
-        Me.chatOut.Size = New System.Drawing.Size(622, 371)
-        Me.chatOut.TabIndex = 0
-        Me.chatOut.Text = ""
-        '
-        'SoftDataTab
-        '
-        Me.SoftDataTab.Controls.Add(Me.StatusBox)
-        Me.SoftDataTab.Controls.Add(Me.Label7)
-        Me.SoftDataTab.Controls.Add(Me.onTop)
-        Me.SoftDataTab.Controls.Add(Me.SystemNameBox)
-        Me.SoftDataTab.Controls.Add(Me.resizeValue)
-        Me.SoftDataTab.Controls.Add(Me.resizeSlider)
-        Me.SoftDataTab.Controls.Add(Me.BlackAndWhile)
-        Me.SoftDataTab.Controls.Add(Me.SoftDataGrid)
-        Me.SoftDataTab.Controls.Add(Me.infTotalVal)
-        Me.SoftDataTab.Controls.Add(Me.ocrWorking)
-        Me.SoftDataTab.Controls.Add(Me.PasteEDScreen)
-        Me.SoftDataTab.Controls.Add(Me.infTotal)
-        Me.SoftDataTab.Controls.Add(Me.Label10)
-        Me.SoftDataTab.Controls.Add(Me.Label8)
-        Me.SoftDataTab.Controls.Add(Me.selSystem)
-        Me.SoftDataTab.Controls.Add(Me.UpdSoftData)
-        Me.SoftDataTab.Controls.Add(Me.CaptureEDScreen)
-        Me.SoftDataTab.Controls.Add(Me.EDCapture)
-        Me.SoftDataTab.Location = New System.Drawing.Point(4, 22)
-        Me.SoftDataTab.Name = "SoftDataTab"
-        Me.SoftDataTab.Size = New System.Drawing.Size(622, 371)
-        Me.SoftDataTab.TabIndex = 3
-        Me.SoftDataTab.Text = "Soft Data"
-        Me.SoftDataTab.UseVisualStyleBackColor = True
-        '
-        'onTop
-        '
-        Me.onTop.Location = New System.Drawing.Point(11, 0)
-        Me.onTop.Name = "onTop"
-        Me.onTop.Size = New System.Drawing.Size(159, 23)
-        Me.onTop.TabIndex = 42
-        Me.onTop.Text = "Always on Top"
-        Me.onTop.UseVisualStyleBackColor = True
-        '
-        'resizeValue
-        '
-        Me.resizeValue.AutoSize = True
-        Me.resizeValue.Location = New System.Drawing.Point(49, 237)
-        Me.resizeValue.Name = "resizeValue"
-        Me.resizeValue.Size = New System.Drawing.Size(65, 13)
-        Me.resizeValue.TabIndex = 41
-        Me.resizeValue.Text = "Resize: 4.0x"
-        '
-        'SoftDataGrid
-        '
-        Me.SoftDataGrid.AllowUserToAddRows = False
-        Me.SoftDataGrid.AllowUserToDeleteRows = False
-        Me.SoftDataGrid.AllowUserToOrderColumns = True
-        Me.SoftDataGrid.AllowUserToResizeRows = False
-        Me.SoftDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.SoftDataGrid.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Faction, Me.Influence, Me.State, Me.Found})
-        Me.SoftDataGrid.Location = New System.Drawing.Point(245, 29)
-        Me.SoftDataGrid.Name = "SoftDataGrid"
-        Me.SoftDataGrid.RowHeadersWidth = 4
-        Me.SoftDataGrid.Size = New System.Drawing.Size(358, 261)
-        Me.SoftDataGrid.TabIndex = 37
-        '
-        'Faction
-        '
-        Me.Faction.HeaderText = "Faction"
-        Me.Faction.MaxInputLength = 250
-        Me.Faction.Name = "Faction"
-        Me.Faction.Width = 170
-        '
-        'Influence
-        '
-        Me.Influence.HeaderText = "Influence"
-        Me.Influence.MaxInputLength = 5
-        Me.Influence.Name = "Influence"
-        Me.Influence.Width = 55
-        '
-        'State
-        '
-        Me.State.HeaderText = "State"
-        Me.State.Name = "State"
-        Me.State.Width = 76
-        '
-        'Found
-        '
-        Me.Found.HeaderText = "Found"
-        Me.Found.Name = "Found"
-        Me.Found.Width = 50
-        '
-        'ocrWorking
-        '
-        Me.ocrWorking.BackColor = System.Drawing.Color.WhiteSmoke
-        Me.ocrWorking.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.ocrWorking.Controls.Add(Me.statusLabel)
-        Me.ocrWorking.Location = New System.Drawing.Point(8, 81)
-        Me.ocrWorking.Name = "ocrWorking"
-        Me.ocrWorking.Size = New System.Drawing.Size(187, 100)
-        Me.ocrWorking.TabIndex = 34
-        Me.ocrWorking.Visible = False
-        '
-        'statusLabel
-        '
-        Me.statusLabel.AutoSize = True
-        Me.statusLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.statusLabel.ForeColor = System.Drawing.Color.DarkGreen
-        Me.statusLabel.Location = New System.Drawing.Point(37, 38)
-        Me.statusLabel.Name = "statusLabel"
-        Me.statusLabel.Size = New System.Drawing.Size(79, 20)
-        Me.statusLabel.TabIndex = 0
-        Me.statusLabel.Text = "Working..."
-        '
-        'Label10
-        '
-        Me.Label10.AutoSize = True
-        Me.Label10.Location = New System.Drawing.Point(439, 349)
-        Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(54, 13)
-        Me.Label10.TabIndex = 31
-        Me.Label10.Text = "3. Update"
-        '
-        'Label8
-        '
-        Me.Label8.AutoSize = True
-        Me.Label8.Location = New System.Drawing.Point(3, 323)
-        Me.Label8.Name = "Label8"
-        Me.Label8.Size = New System.Drawing.Size(207, 39)
-        Me.Label8.TabIndex = 30
-        Me.Label8.Text = "2. Capture (Multiple times)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "TIP: Zoom out all the way on System Map." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "It helps t" &
-    "he OCR out."
-        '
-        'Label7
-        '
-        Me.Label7.AutoSize = True
-        Me.Label7.Location = New System.Drawing.Point(8, 23)
-        Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(86, 13)
-        Me.Label7.TabIndex = 29
-        Me.Label7.Text = "1. Select System"
-        '
         'StatusTab
         '
         Me.StatusTab.Controls.Add(Me.SystemsList)
@@ -690,7 +531,6 @@ Partial Class RockRatsClient
         Me.Panel3.Controls.Add(Me.SystemLabel)
         Me.Panel3.Controls.Add(Me.ShipLabel)
         Me.Panel3.Controls.Add(Me.CommanderLabel)
-        Me.Panel3.Controls.Add(Me.ConnStatus2)
         Me.Panel3.Controls.Add(Me.tailLogs)
         Me.Panel3.Controls.Add(Me.FileStatus)
         Me.Panel3.Controls.Add(Me.Label3)
@@ -761,16 +601,6 @@ Partial Class RockRatsClient
         Me.CommanderLabel.TabIndex = 26
         Me.CommanderLabel.Text = "Commander:"
         '
-        'ConnStatus2
-        '
-        Me.ConnStatus2.AutoSize = True
-        Me.ConnStatus2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ConnStatus2.Location = New System.Drawing.Point(35, 151)
-        Me.ConnStatus2.Name = "ConnStatus2"
-        Me.ConnStatus2.Size = New System.Drawing.Size(77, 15)
-        Me.ConnStatus2.TabIndex = 25
-        Me.ConnStatus2.Text = "ConnStatus2"
-        '
         'FileStatus
         '
         Me.FileStatus.Anchor = System.Windows.Forms.AnchorStyles.Top
@@ -828,11 +658,133 @@ Partial Class RockRatsClient
         Me.Label6.TabIndex = 11
         Me.Label6.Text = "RockRats Systems"
         '
+        'SoftDataTab
+        '
+        Me.SoftDataTab.Controls.Add(Me.StatusBox)
+        Me.SoftDataTab.Controls.Add(Me.SystemNameBox)
+        Me.SoftDataTab.Controls.Add(Me.Label7)
+        Me.SoftDataTab.Controls.Add(Me.onTop)
+        Me.SoftDataTab.Controls.Add(Me.resizeValue)
+        Me.SoftDataTab.Controls.Add(Me.resizeSlider)
+        Me.SoftDataTab.Controls.Add(Me.BlackAndWhile)
+        Me.SoftDataTab.Controls.Add(Me.SoftDataGrid)
+        Me.SoftDataTab.Controls.Add(Me.infTotalVal)
+        Me.SoftDataTab.Controls.Add(Me.ocrWorking)
+        Me.SoftDataTab.Controls.Add(Me.PasteEDScreen)
+        Me.SoftDataTab.Controls.Add(Me.infTotal)
+        Me.SoftDataTab.Controls.Add(Me.Label10)
+        Me.SoftDataTab.Controls.Add(Me.Label8)
+        Me.SoftDataTab.Controls.Add(Me.selSystem)
+        Me.SoftDataTab.Controls.Add(Me.UpdSoftData)
+        Me.SoftDataTab.Controls.Add(Me.CaptureEDScreen)
+        Me.SoftDataTab.Controls.Add(Me.EDCapture)
+        Me.SoftDataTab.Location = New System.Drawing.Point(4, 22)
+        Me.SoftDataTab.Name = "SoftDataTab"
+        Me.SoftDataTab.Size = New System.Drawing.Size(622, 371)
+        Me.SoftDataTab.TabIndex = 3
+        Me.SoftDataTab.Text = "OCR"
+        Me.SoftDataTab.UseVisualStyleBackColor = True
+        '
+        'StatusBox
+        '
+        Me.StatusBox.Location = New System.Drawing.Point(216, 236)
+        Me.StatusBox.Multiline = True
+        Me.StatusBox.Name = "StatusBox"
+        Me.StatusBox.ReadOnly = True
+        Me.StatusBox.Size = New System.Drawing.Size(301, 126)
+        Me.StatusBox.TabIndex = 44
+        '
+        'SystemNameBox
+        '
+        Me.SystemNameBox.Location = New System.Drawing.Point(216, 3)
+        Me.SystemNameBox.Name = "SystemNameBox"
+        Me.SystemNameBox.ReadOnly = True
+        Me.SystemNameBox.Size = New System.Drawing.Size(154, 20)
+        Me.SystemNameBox.TabIndex = 43
+        '
+        'Label7
+        '
+        Me.Label7.AutoSize = True
+        Me.Label7.Location = New System.Drawing.Point(8, 23)
+        Me.Label7.Name = "Label7"
+        Me.Label7.Size = New System.Drawing.Size(86, 13)
+        Me.Label7.TabIndex = 29
+        Me.Label7.Text = "1. Select System"
+        '
+        'onTop
+        '
+        Me.onTop.Location = New System.Drawing.Point(11, 0)
+        Me.onTop.Name = "onTop"
+        Me.onTop.Size = New System.Drawing.Size(159, 23)
+        Me.onTop.TabIndex = 42
+        Me.onTop.Text = "Always on Top"
+        Me.onTop.UseVisualStyleBackColor = True
+        '
+        'resizeValue
+        '
+        Me.resizeValue.AutoSize = True
+        Me.resizeValue.Location = New System.Drawing.Point(49, 237)
+        Me.resizeValue.Name = "resizeValue"
+        Me.resizeValue.Size = New System.Drawing.Size(65, 13)
+        Me.resizeValue.TabIndex = 41
+        Me.resizeValue.Text = "Resize: 4.0x"
+        '
+        'SoftDataGrid
+        '
+        Me.SoftDataGrid.AllowUserToOrderColumns = True
+        Me.SoftDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.SoftDataGrid.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Faction, Me.Influence, Me.State, Me.Found})
+        Me.SoftDataGrid.Location = New System.Drawing.Point(216, 29)
+        Me.SoftDataGrid.Name = "SoftDataGrid"
+        Me.SoftDataGrid.RowHeadersWidth = 4
+        Me.SoftDataGrid.Size = New System.Drawing.Size(387, 201)
+        Me.SoftDataGrid.TabIndex = 37
+        '
+        'ocrWorking
+        '
+        Me.ocrWorking.BackColor = System.Drawing.Color.WhiteSmoke
+        Me.ocrWorking.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.ocrWorking.Controls.Add(Me.statusLabel)
+        Me.ocrWorking.Location = New System.Drawing.Point(8, 81)
+        Me.ocrWorking.Name = "ocrWorking"
+        Me.ocrWorking.Size = New System.Drawing.Size(187, 100)
+        Me.ocrWorking.TabIndex = 34
+        Me.ocrWorking.Visible = False
+        '
+        'statusLabel
+        '
+        Me.statusLabel.AutoSize = True
+        Me.statusLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.statusLabel.ForeColor = System.Drawing.Color.DarkGreen
+        Me.statusLabel.Location = New System.Drawing.Point(37, 38)
+        Me.statusLabel.Name = "statusLabel"
+        Me.statusLabel.Size = New System.Drawing.Size(79, 20)
+        Me.statusLabel.TabIndex = 0
+        Me.statusLabel.Text = "Working..."
+        '
+        'Label10
+        '
+        Me.Label10.AutoSize = True
+        Me.Label10.Location = New System.Drawing.Point(525, 236)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(54, 13)
+        Me.Label10.TabIndex = 31
+        Me.Label10.Text = "3. Update"
+        '
+        'Label8
+        '
+        Me.Label8.AutoSize = True
+        Me.Label8.Location = New System.Drawing.Point(3, 323)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(207, 39)
+        Me.Label8.TabIndex = 30
+        Me.Label8.Text = "2. Capture (Multiple times)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "TIP: Zoom out all the way on System Map." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "It helps t" &
+    "he OCR out."
+        '
         'Tabs
         '
-        Me.Tabs.Controls.Add(Me.StatusTab)
         Me.Tabs.Controls.Add(Me.SoftDataTab)
-        Me.Tabs.Controls.Add(Me.ChatTab)
+        Me.Tabs.Controls.Add(Me.StatusTab)
         Me.Tabs.Controls.Add(Me.SettingsTab)
         Me.Tabs.Controls.Add(Me.LogTab)
         Me.Tabs.Controls.Add(Me.HelpTab)
@@ -843,22 +795,31 @@ Partial Class RockRatsClient
         Me.Tabs.Size = New System.Drawing.Size(630, 397)
         Me.Tabs.TabIndex = 5
         '
-        'SystemNameBox
+        'Faction
         '
-        Me.SystemNameBox.Location = New System.Drawing.Point(245, 3)
-        Me.SystemNameBox.Name = "SystemNameBox"
-        Me.SystemNameBox.ReadOnly = True
-        Me.SystemNameBox.Size = New System.Drawing.Size(154, 20)
-        Me.SystemNameBox.TabIndex = 43
+        Me.Faction.HeaderText = "Faction"
+        Me.Faction.MaxInputLength = 250
+        Me.Faction.Name = "Faction"
+        Me.Faction.Width = 170
         '
-        'StatusBox
+        'Influence
         '
-        Me.StatusBox.Location = New System.Drawing.Point(245, 296)
-        Me.StatusBox.Multiline = True
-        Me.StatusBox.Name = "StatusBox"
-        Me.StatusBox.ReadOnly = True
-        Me.StatusBox.Size = New System.Drawing.Size(191, 66)
-        Me.StatusBox.TabIndex = 44
+        Me.Influence.HeaderText = "Influence"
+        Me.Influence.MaxInputLength = 5
+        Me.Influence.Name = "Influence"
+        Me.Influence.Width = 55
+        '
+        'State
+        '
+        Me.State.HeaderText = "State"
+        Me.State.Name = "State"
+        Me.State.Width = 76
+        '
+        'Found
+        '
+        Me.Found.HeaderText = "Found"
+        Me.Found.Name = "Found"
+        Me.Found.Width = 50
         '
         'RockRatsClient
         '
@@ -882,16 +843,15 @@ Partial Class RockRatsClient
         Me.Panel2.PerformLayout()
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
-        Me.ChatTab.ResumeLayout(False)
+        Me.StatusTab.ResumeLayout(False)
+        Me.StatusTab.PerformLayout()
+        Me.Panel3.ResumeLayout(False)
+        Me.Panel3.PerformLayout()
         Me.SoftDataTab.ResumeLayout(False)
         Me.SoftDataTab.PerformLayout()
         CType(Me.SoftDataGrid, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ocrWorking.ResumeLayout(False)
         Me.ocrWorking.PerformLayout()
-        Me.StatusTab.ResumeLayout(False)
-        Me.StatusTab.PerformLayout()
-        Me.Panel3.ResumeLayout(False)
-        Me.Panel3.PerformLayout()
         Me.Tabs.ResumeLayout(False)
         Me.ResumeLayout(False)
 
@@ -926,30 +886,6 @@ Partial Class RockRatsClient
     Friend WithEvents Label5 As Label
     Friend WithEvents Label4 As Label
     Friend WithEvents Label2 As Label
-    Friend WithEvents ChatTab As TabPage
-    Friend WithEvents chatOut As RichTextBox
-    Friend WithEvents SoftDataTab As TabPage
-    Friend WithEvents onTop As CheckBox
-    Friend WithEvents resizeValue As Label
-    Friend WithEvents resizeSlider As TrackBar
-    Friend WithEvents BlackAndWhile As CheckBox
-    Friend WithEvents SoftDataGrid As DataGridView
-    Friend WithEvents Faction As DataGridViewTextBoxColumn
-    Friend WithEvents Influence As DataGridViewTextBoxColumn
-    Friend WithEvents State As DataGridViewTextBoxColumn
-    Friend WithEvents Found As DataGridViewCheckBoxColumn
-    Friend WithEvents infTotalVal As Label
-    Friend WithEvents ocrWorking As Panel
-    Friend WithEvents statusLabel As Label
-    Friend WithEvents PasteEDScreen As Button
-    Friend WithEvents infTotal As Label
-    Friend WithEvents Label10 As Label
-    Friend WithEvents Label8 As Label
-    Friend WithEvents Label7 As Label
-    Friend WithEvents selSystem As ComboBox
-    Friend WithEvents UpdSoftData As Button
-    Friend WithEvents CaptureEDScreen As Button
-    Friend WithEvents EDCapture As PictureBox
     Friend WithEvents StatusTab As TabPage
     Friend WithEvents SystemsList As ListBox
     Friend WithEvents Panel3 As Panel
@@ -959,14 +895,35 @@ Partial Class RockRatsClient
     Friend WithEvents SystemLabel As Label
     Friend WithEvents ShipLabel As Label
     Friend WithEvents CommanderLabel As Label
-    Friend WithEvents ConnStatus2 As Label
     Friend WithEvents tailLogs As Button
     Friend WithEvents FileStatus As Label
     Friend WithEvents Label3 As Label
     Friend WithEvents ConnStatus1 As Label
     Friend WithEvents Label1 As Label
     Friend WithEvents Label6 As Label
-    Friend WithEvents Tabs As TabControl
-    Friend WithEvents SystemNameBox As TextBox
+    Friend WithEvents SoftDataTab As TabPage
     Friend WithEvents StatusBox As TextBox
+    Friend WithEvents SystemNameBox As TextBox
+    Friend WithEvents Label7 As Label
+    Friend WithEvents onTop As CheckBox
+    Friend WithEvents resizeValue As Label
+    Friend WithEvents resizeSlider As TrackBar
+    Friend WithEvents BlackAndWhile As CheckBox
+    Friend WithEvents SoftDataGrid As DataGridView
+    Friend WithEvents infTotalVal As Label
+    Friend WithEvents ocrWorking As Panel
+    Friend WithEvents statusLabel As Label
+    Friend WithEvents PasteEDScreen As Button
+    Friend WithEvents infTotal As Label
+    Friend WithEvents Label10 As Label
+    Friend WithEvents Label8 As Label
+    Friend WithEvents selSystem As ComboBox
+    Friend WithEvents UpdSoftData As Button
+    Friend WithEvents CaptureEDScreen As Button
+    Friend WithEvents EDCapture As PictureBox
+    Friend WithEvents Tabs As TabControl
+    Friend WithEvents Faction As DataGridViewTextBoxColumn
+    Friend WithEvents Influence As DataGridViewTextBoxColumn
+    Friend WithEvents State As DataGridViewTextBoxColumn
+    Friend WithEvents Found As DataGridViewCheckBoxColumn
 End Class

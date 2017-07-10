@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports System.Deployment.Application
 
 Public Class RockRatsClient
     Private AppDataDir As String = Environment.GetEnvironmentVariable("USERPROFILE") + "\AppData\Local\RockRatsClient"
@@ -30,7 +31,6 @@ Public Class RockRatsClient
         SaveConnDetails.Enabled = False
         SaveJournalDir.Enabled = False
         SystemsList.Items.Clear()
-        ConnStatus2.Text = ""
         SystemName.Text = DataCache.getDataCache("Store", "LastSystem")
         ShipName.Text = DataCache.getDataCache("Store", "LastShip")
         CommanderName.Text = DataCache.getDataCache("Store", "LastCommander")
@@ -51,8 +51,9 @@ Public Class RockRatsClient
         Else
             RockRatsActivity.SelectedIndex = 3
         End If
-        Version.Text = "Version: " + clientVersion
-        logOutput("AppData: " + AppDataDir)
+        Version.Text = "Version: " & clientVersion
+        logOutput("Version: " & clientVersion)
+        logOutput("AppData: " & AppDataDir)
         Me.Refresh()                     ' Ensure the app is fully loaded before 
         LoadTimer.Enabled = True         ' opening comms - avoids possible exceptions.
     End Sub
@@ -150,34 +151,6 @@ Public Class RockRatsClient
             logOut.Text = "" ' Guess it's full - emptying is a harsh workaround but lets see if it ever happens
         End Try
     End Sub
-
-    Private Sub Tabs_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Tabs.SelectedIndexChanged
-        If Tabs.SelectedTab Is ChatTab Then
-            ChatTab.Text = "Chat"
-        ElseIf Tabs.SelectedTab Is LogTab Then
-            LogTab.Text = "Log"
-        End If
-    End Sub
-
-    Friend Sub chatOutput(chatText As String)
-        If Strings.Left(chatText, 4) = "From" Then
-            chatOut.SelectionColor = Color.DarkBlue
-        Else
-            chatOut.SelectionColor = Color.DarkGray
-        End If
-        Try
-            chatOut.AppendText(Now().ToString + " - " + chatText + vbNewLine)
-            If Tabs.SelectedTab Is ChatTab Then
-                ChatTab.Text = "Chat"
-            Else
-                ChatTab.Text = "Chat *"
-            End If
-        Catch ex As Exception
-            chatOut.Text = "" ' Guess it's full - emptying is a harsh workaround but lets see if it ever happens
-        End Try
-
-    End Sub
-
     Private Sub CaptureEDScreen_Click(sender As Object, e As EventArgs) Handles CaptureEDScreen.Click
         StatusBox.Text = "OCR Scan in progress..."
         Dim bounds As Rectangle
@@ -255,7 +228,16 @@ Public Class RockRatsClient
 
     Private Sub UpdSoftData_Click(sender As Object, e As EventArgs) Handles UpdSoftData.Click
         For Each row As DataGridViewRow In SoftDataGrid.Rows
-            Dim waitForCompletion As Boolean = Comms.sendUpdate("", "", "", selSystem.SelectedItem.ToString + ":" + row.Cells(0).Value.ToString + ":" + row.Cells(2).Value.ToString + ":" + row.Cells(1).Value.ToString + ":OCR")
+            If row.Cells(0).Value IsNot Nothing Then
+                If row.Cells(0).Value.ToString.Trim <> "" Then
+                    For c = 1 To 2
+                        If row.Cells(c).Value Is Nothing Then
+                            row.Cells(c).Value = ""
+                        End If
+                    Next c
+                    Dim cwaitForCompletion As Boolean = Comms.sendUpdate("", "", "", selSystem.SelectedItem.ToString + ":" + row.Cells(0).Value.ToString.ToUpper + ":" + row.Cells(2).Value.ToString + ":" + row.Cells(1).Value.ToString + ":OCR")
+                End If
+            End If
         Next
         logOutput("Updated " + SoftDataGrid.Rows.Count.ToString + " Factions in " + selSystem.SelectedItem.ToString)
         'SoftDataGrid.Rows.Clear()
@@ -315,7 +297,11 @@ Public Class RockRatsClient
     End Sub
 
     Friend Function getVersion() As String
-        Return clientVersion
+        If ApplicationDeployment.IsNetworkDeployed Then
+            Return ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString
+        Else
+            Return Application.ProductVersion
+        End If
     End Function
 
     Private Sub RockRatsActivity_SelectedIndexChanged(sender As Object, e As EventArgs) Handles RockRatsActivity.SelectedIndexChanged
@@ -331,6 +317,18 @@ Public Class RockRatsClient
     End Sub
 
     Private Sub SoftDataTab_Click(sender As Object, e As EventArgs) Handles SoftDataTab.Click
+
+    End Sub
+
+    Private Sub Panel3_Paint(sender As Object, e As PaintEventArgs) Handles Panel3.Paint
+
+    End Sub
+
+    Private Sub Version_Click(sender As Object, e As EventArgs) Handles Version.Click
+
+    End Sub
+
+    Private Sub StatusBox_TextChanged(sender As Object, e As EventArgs) Handles StatusBox.TextChanged
 
     End Sub
 End Class

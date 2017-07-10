@@ -241,16 +241,12 @@ Module Comms
         For Each line As String In elements
             If Left(line, 1) = "9" Then
                 RockRatsClient.ConnStatus1.Text = "Unable to Authenticate"
-                RockRatsClient.ConnStatus2.Text = "Check Username and Site Key"
                 RockRatsClient.logOutput("Connection Failed - Invalid Username or Site Key")
                 RockRatsClient.ConnStatus1.ForeColor = Color.DarkRed
-                RockRatsClient.ConnStatus2.ForeColor = Color.DarkRed
             ElseIf Left(line, 1) = "1" Then
                 authenticated = True
-                RockRatsClient.logOutput("Connected to " + getParameter("HostAddress"))
                 RockRatsClient.ConnStatus1.Text = "Connected"
                 RockRatsClient.ConnStatus1.ForeColor = Color.DarkGreen
-                RockRatsClient.ConnStatus2.ForeColor = Color.DarkGreen
                 RockRatsClient.toggleTailLog()
                 getSystems()
             ElseIf Left(line, 1) = "4" Then
@@ -282,7 +278,6 @@ Module Comms
         Else
             hRecv = CType(bytesRecv, String) + "B"
         End If
-        RockRatsClient.ConnStatus2.Text = "Sent: " + hSent + "  Recv: " + hRecv
     End Sub
     Private Function getResponceDesc(rCode As String) As String
         Dim retValue As String = "Unknown Responce"

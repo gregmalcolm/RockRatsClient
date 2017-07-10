@@ -252,7 +252,7 @@ Module Files
 
             If uSubType = "0" And waitForCords <> "" Then
                 Try
-                    Dim dist As Double = distFromEleu(coords(0), coords(1), coords(2))
+                    Dim dist As Double = distFromChertan(coords(0), coords(1), coords(2))
                     waitForCompletion = processActivity(waitForCords, "6", "2", sTimeStamp, ":" + dist.ToString + ":" + systemName)
                     waitForCords = ""
                 Catch inEx As Exception
@@ -345,7 +345,7 @@ Module Files
             Next
 
             If chatChannel <> "npc" Then
-                RockRatsClient.chatOutput(chatType + " -  " + chatText)
+                'RockRatsClient.chatOutput(chatType + " -  " + chatText)
             End If
             Return True
         Catch ex As Exception
@@ -353,11 +353,11 @@ Module Files
         End Try
     End Function
 
-    Private Function distFromEleu(x As Integer, y As Integer, z As Integer) As Integer
-        Dim eleuX As Integer = -30 ' -29.656
-        Dim eleuY As Integer = 33  '  32.688
-        Dim eleuZ As Integer = 105 ' 104.844
-        Dim dist As Integer = CInt(Math.Round(Math.Sqrt(Math.Pow((eleuX - x), 2) + Math.Pow((eleuY - y), 2) + Math.Pow((eleuZ - z), 2))))
+    Private Function distFromChertan(x As Integer, y As Integer, z As Integer) As Integer
+        Dim chertanX As Integer = 58  '  58.34375
+        Dim chertanY As Integer = 150 ' 149.5625
+        Dim chertanZ As Integer = -38 ' -38.34375
+        Dim dist As Integer = CInt(Math.Round(Math.Sqrt(Math.Pow((chertanX - x), 2) + Math.Pow((chertanY - y), 2) + Math.Pow((chertanZ - z), 2))))
         Return dist
     End Function
 
