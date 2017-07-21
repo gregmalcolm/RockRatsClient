@@ -50,6 +50,7 @@ Partial Class RockRatsClient
         Me.BlackAndWhile = New System.Windows.Forms.CheckBox()
         Me.resizeSlider = New System.Windows.Forms.TrackBar()
         Me.viewWebTracker = New System.Windows.Forms.Button()
+        Me.NextSystem = New System.Windows.Forms.Button()
         Me.HelpTab = New System.Windows.Forms.TabPage()
         Me.Version = New System.Windows.Forms.Label()
         Me.Label15 = New System.Windows.Forms.Label()
@@ -95,7 +96,6 @@ Partial Class RockRatsClient
         Me.Label10 = New System.Windows.Forms.Label()
         Me.Label8 = New System.Windows.Forms.Label()
         Me.Tabs = New System.Windows.Forms.TabControl()
-        Me.NextSystem = New System.Windows.Forms.Button()
         CType(Me.EDCapture, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.resizeSlider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.HelpTab.SuspendLayout()
@@ -351,6 +351,16 @@ Partial Class RockRatsClient
         Me.viewWebTracker.Text = "View Web Tracker"
         Me.ToolTip1.SetToolTip(Me.viewWebTracker, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
         Me.viewWebTracker.UseVisualStyleBackColor = True
+        '
+        'NextSystem
+        '
+        Me.NextSystem.Location = New System.Drawing.Point(525, 331)
+        Me.NextSystem.Name = "NextSystem"
+        Me.NextSystem.Size = New System.Drawing.Size(78, 31)
+        Me.NextSystem.TabIndex = 46
+        Me.NextSystem.Text = "Next System"
+        Me.ToolTip1.SetToolTip(Me.NextSystem, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
+        Me.NextSystem.UseVisualStyleBackColor = True
         '
         'HelpTab
         '
@@ -715,7 +725,7 @@ Partial Class RockRatsClient
         Me.SystemNameBox.Location = New System.Drawing.Point(216, 3)
         Me.SystemNameBox.Name = "SystemNameBox"
         Me.SystemNameBox.ReadOnly = True
-        Me.SystemNameBox.Size = New System.Drawing.Size(154, 20)
+        Me.SystemNameBox.Size = New System.Drawing.Size(138, 20)
         Me.SystemNameBox.TabIndex = 43
         '
         'Label7
@@ -836,16 +846,6 @@ Partial Class RockRatsClient
         Me.Tabs.SelectedIndex = 0
         Me.Tabs.Size = New System.Drawing.Size(630, 397)
         Me.Tabs.TabIndex = 5
-        '
-        'NextSystem
-        '
-        Me.NextSystem.Location = New System.Drawing.Point(525, 331)
-        Me.NextSystem.Name = "NextSystem"
-        Me.NextSystem.Size = New System.Drawing.Size(78, 31)
-        Me.NextSystem.TabIndex = 46
-        Me.NextSystem.Text = "Next System"
-        Me.ToolTip1.SetToolTip(Me.NextSystem, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
-        Me.NextSystem.UseVisualStyleBackColor = True
         '
         'RockRatsClient
         '
