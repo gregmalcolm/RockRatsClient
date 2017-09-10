@@ -51,6 +51,7 @@ Partial Class RockRatsClient
         Me.resizeSlider = New System.Windows.Forms.TrackBar()
         Me.viewWebTracker = New System.Windows.Forms.Button()
         Me.NextSystem = New System.Windows.Forms.Button()
+        Me.AddButton = New System.Windows.Forms.Button()
         Me.HelpTab = New System.Windows.Forms.TabPage()
         Me.Version = New System.Windows.Forms.Label()
         Me.Label15 = New System.Windows.Forms.Label()
@@ -344,11 +345,11 @@ Partial Class RockRatsClient
         '
         'viewWebTracker
         '
-        Me.viewWebTracker.Location = New System.Drawing.Point(480, 3)
+        Me.viewWebTracker.Location = New System.Drawing.Point(516, 3)
         Me.viewWebTracker.Name = "viewWebTracker"
-        Me.viewWebTracker.Size = New System.Drawing.Size(125, 20)
+        Me.viewWebTracker.Size = New System.Drawing.Size(89, 20)
         Me.viewWebTracker.TabIndex = 45
-        Me.viewWebTracker.Text = "View Web Tracker"
+        Me.viewWebTracker.Text = "Web Tracker"
         Me.ToolTip1.SetToolTip(Me.viewWebTracker, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
         Me.viewWebTracker.UseVisualStyleBackColor = True
         '
@@ -361,6 +362,17 @@ Partial Class RockRatsClient
         Me.NextSystem.Text = "Next System"
         Me.ToolTip1.SetToolTip(Me.NextSystem, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
         Me.NextSystem.UseVisualStyleBackColor = True
+        '
+        'AddButton
+        '
+        Me.AddButton.Enabled = False
+        Me.AddButton.Location = New System.Drawing.Point(360, 3)
+        Me.AddButton.Name = "AddButton"
+        Me.AddButton.Size = New System.Drawing.Size(48, 20)
+        Me.AddButton.TabIndex = 47
+        Me.AddButton.Text = "Add"
+        Me.ToolTip1.SetToolTip(Me.AddButton, "Add the entered system name to the list of official Rock Rat Systems")
+        Me.AddButton.UseVisualStyleBackColor = True
         '
         'HelpTab
         '
@@ -683,6 +695,7 @@ Partial Class RockRatsClient
         '
         'SoftDataTab
         '
+        Me.SoftDataTab.Controls.Add(Me.AddButton)
         Me.SoftDataTab.Controls.Add(Me.NextSystem)
         Me.SoftDataTab.Controls.Add(Me.StatusBox)
         Me.SoftDataTab.Controls.Add(Me.viewWebTracker)
@@ -724,7 +737,6 @@ Partial Class RockRatsClient
         '
         Me.SystemNameBox.Location = New System.Drawing.Point(216, 3)
         Me.SystemNameBox.Name = "SystemNameBox"
-        Me.SystemNameBox.ReadOnly = True
         Me.SystemNameBox.Size = New System.Drawing.Size(138, 20)
         Me.SystemNameBox.TabIndex = 43
         '
@@ -955,4 +967,5 @@ Partial Class RockRatsClient
     Friend WithEvents State As DataGridViewTextBoxColumn
     Friend WithEvents Found As DataGridViewCheckBoxColumn
     Friend WithEvents NextSystem As Button
+    Friend WithEvents AddButton As Button
 End Class

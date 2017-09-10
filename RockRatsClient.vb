@@ -282,7 +282,7 @@ Public Class RockRatsClient
 
     Private Sub selSystem_SelectedIndexChanged(sender As Object, e As EventArgs) Handles selSystem.SelectedIndexChanged
         If selSystem.SelectedItem.ToString <> "" Then
-            SystemNameBox.Text = selSystem.SelectedItem.ToString
+            ResetSystemNameBox(selSystem.SelectedItem.ToString)
             My.Computer.Clipboard.SetText(SystemNameBox.Text)
             StatusLog("Copied '" & selSystem.SelectedItem.ToString & "' to clipboard!")
             Call Global.RockRatsClient.procSystemChange(selSystem.SelectedItem.ToString)
@@ -378,5 +378,28 @@ Public Class RockRatsClient
         Else
             selSystem.SelectedIndex = selSystem.SelectedIndex + 1
         End If
+    End Sub
+
+    Private Sub ResetSystemNameBox(systemName As String)
+        SystemNameBox.Text = systemName
+        AddButton.Enabled = False
+    End Sub
+
+    Private Sub AddButton_Click(sender As Object, e As EventArgs) Handles AddButton.Click
+        Dim systemName As String
+        systemName = SystemNameBox.Text.ToUpper()
+
+        If MessageBox.Show("Add " & systemName & " to the list of systems we're updating?", "Orly?", MessageBoxButtons.OKCancel) = DialogResult.OK Then
+            If Comms.addSystemToRoster(systemName) Then
+                LogEverywhere("Successfully added " & systemName & "to the Rock Rat kn own systems list!")
+                selSystem.SelectedIndex = selSystem.Items.Count - 1
+            Else
+                LogEverywhere("Failed to add the system, sorry!")
+            End If
+        End If
+    End Sub
+
+    Private Sub SystemNameBox_TextChanged(sender As Object, e As EventArgs) Handles SystemNameBox.TextChanged
+        AddButton.Enabled = True
     End Sub
 End Class

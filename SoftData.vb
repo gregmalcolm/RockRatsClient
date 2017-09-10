@@ -302,7 +302,6 @@ Module SoftData
         End Try
         Return True
     End Function
-
     Friend Function whitelistChars(cleanString As String) As String
         Try
             Dim ch As Char, ln As Integer, x As Integer = 0
@@ -324,5 +323,13 @@ Module SoftData
 
     Friend Function getNumFactions() As Integer
         Return numFactions
+    End Function
+
+    Public Function addSystem(systemName As String) As String
+        Dim cleanSystemName As String = SoftData.whitelistChars(Trim(systemName))
+        RockRatsClient.SystemsList.Items.Add(cleanSystemName)
+        RockRatsClient.selSystem.Items.Add(cleanSystemName)
+
+        Return cleanSystemName
     End Function
 End Module

@@ -344,4 +344,10 @@ Module Comms
         responceCodes.Add("8", "Soft Data Updated")
         responceCodes.Add("-", "Unknown command")
     End Sub
+
+    Public Function addSystemToRoster(systemName As String) As Boolean
+        SoftData.addSystem(systemName)
+        'systemFactions.Add(systemName, factionData)
+        Return True
+    End Function
 End Module
