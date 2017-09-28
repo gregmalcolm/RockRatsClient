@@ -383,23 +383,40 @@ Public Class RockRatsClient
     Private Sub ResetSystemNameBox(systemName As String)
         SystemNameBox.Text = systemName
         AddButton.Enabled = False
+        RemoveButton.Enabled = True
     End Sub
 
-    Private Sub AddButton_Click(sender As Object, e As EventArgs) Handles AddButton.Click
+    Private Async Sub AddButton_Click(sender As Object, e As EventArgs) Handles AddButton.Click
         Dim systemName As String
         systemName = SystemNameBox.Text.ToUpper()
 
+        StatusLog("Adding the System Name to the server...")
         If MessageBox.Show("Add " & systemName & " to the list of systems we're updating?", "Orly?", MessageBoxButtons.OKCancel) = DialogResult.OK Then
-            If Comms.addSystemToRoster(systemName) Then
-                LogEverywhere("Successfully added " & systemName & "to the Rock Rat kn own systems list!")
+            If Await Comms.AddSystemToRoster(systemName) Then
+                StatusLog("Successfully added " & systemName & "to the Rock Rat known systems list!")
                 selSystem.SelectedIndex = selSystem.Items.Count - 1
             Else
-                LogEverywhere("Failed to add the system, sorry!")
+                StatusLog("Failed to add the system, sorry!")
             End If
         End If
     End Sub
 
     Private Sub SystemNameBox_TextChanged(sender As Object, e As EventArgs) Handles SystemNameBox.TextChanged
         AddButton.Enabled = True
+        RemoveButton.Enabled = False
+    End Sub
+
+    Private Async Sub RemoveButton_Click(sender As Object, e As EventArgs) Handles RemoveButton.Click
+        Dim systemName As String
+        systemName = SystemNameBox.Text.ToUpper()
+
+        StatusLog("Removing the System Name to the server...")
+        If MessageBox.Show("So... you want to remove " & systemName & " from the list of systems we're updating?", "Huh?", MessageBoxButtons.OKCancel) = DialogResult.OK Then
+            If Await Comms.RemoveSystemFromRoster(systemName) Then
+                StatusLog("Successfully removed " & systemName & "from the Rock Rat known systems list!")
+            Else
+                StatusLog("Failed to remove the system, sorry!")
+            End If
+        End If
     End Sub
 End Class

@@ -97,6 +97,7 @@ Partial Class RockRatsClient
         Me.Label10 = New System.Windows.Forms.Label()
         Me.Label8 = New System.Windows.Forms.Label()
         Me.Tabs = New System.Windows.Forms.TabControl()
+        Me.RemoveButton = New System.Windows.Forms.Button()
         CType(Me.EDCapture, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.resizeSlider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.HelpTab.SuspendLayout()
@@ -695,6 +696,7 @@ Partial Class RockRatsClient
         '
         'SoftDataTab
         '
+        Me.SoftDataTab.Controls.Add(Me.RemoveButton)
         Me.SoftDataTab.Controls.Add(Me.AddButton)
         Me.SoftDataTab.Controls.Add(Me.NextSystem)
         Me.SoftDataTab.Controls.Add(Me.StatusBox)
@@ -859,6 +861,17 @@ Partial Class RockRatsClient
         Me.Tabs.Size = New System.Drawing.Size(630, 397)
         Me.Tabs.TabIndex = 5
         '
+        'RemoveButton
+        '
+        Me.RemoveButton.Enabled = False
+        Me.RemoveButton.Location = New System.Drawing.Point(414, 3)
+        Me.RemoveButton.Name = "RemoveButton"
+        Me.RemoveButton.Size = New System.Drawing.Size(56, 20)
+        Me.RemoveButton.TabIndex = 48
+        Me.RemoveButton.Text = "Remove"
+        Me.ToolTip1.SetToolTip(Me.RemoveButton, "Add the entered system name to the list of official Rock Rat Systems")
+        Me.RemoveButton.UseVisualStyleBackColor = True
+        '
         'RockRatsClient
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -968,4 +981,5 @@ Partial Class RockRatsClient
     Friend WithEvents Found As DataGridViewCheckBoxColumn
     Friend WithEvents NextSystem As Button
     Friend WithEvents AddButton As Button
+    Friend WithEvents RemoveButton As Button
 End Class

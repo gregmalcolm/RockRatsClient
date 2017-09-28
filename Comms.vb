@@ -140,7 +140,7 @@ Module Comms
     End Function
 
     Private Async Function SendFactionItemToAws(data As String) As Task
-        RockRatsClient.logOutput("Transmitting to AWS:   " & data)
+        RockRatsClient.logOutput("Transmitting Report to AWS:   " & data)
 
         Dim utc = DateTime.UtcNow
         Dim tickTime = DateTime.UtcNow - New TimeSpan(18, 0, 0)
@@ -205,11 +205,10 @@ Module Comms
             })
         End If
 
-
         Try
             Dim response = Await awsClient.PutItemAsync(
-            tableName:="rock-rat-factions",
-            item:=attributes)
+                tableName:="rock-rat-factions",
+                item:=attributes)
 
             If response.HttpStatusCode >= 300 Then
                 RockRatsClient.LogEverywhere("FAILED! Couldn't send '" & system & " - " & faction & "' data")
@@ -224,7 +223,76 @@ Module Comms
         End Try
 
     End Function
+    Private Async Function AddFactionNameToAws(systemName As String) As Task
+        RockRatsClient.logOutput("Transmitting Add System Name ('" + systemName + "') to AWS: ")
 
+        Dim utc = DateTime.UtcNow
+        Dim entryDateTime = String.Format("{0:yyyy-MM-dd hh:mm:ss}", utc)
+        Dim commander = RockRatsClient.CommanderName.Text
+
+        Try
+            Dim attributes = New Dictionary(Of String, AttributeValue)() From {
+                {"system", New AttributeValue() With {
+                    .S = systemName
+                }},
+                {"datetime", New AttributeValue() With {
+                    .S = entryDateTime
+                }}
+            }
+
+            If Not String.IsNullOrWhiteSpace(commander) Then
+                attributes.Add("commander", New AttributeValue() With {
+                .S = commander
+            })
+            End If
+
+            Dim response = Await awsClient.PutItemAsync(
+                tableName:="rock-rat-systems",
+                item:=attributes)
+
+            If response.HttpStatusCode >= 300 Then
+                RockRatsClient.LogEverywhere("FAILED! Couldn't add the new System Name to AWS")
+                RockRatsClient.logOutput("FAILED! (HTTP CODE = " & response.HttpStatusCode & ")")
+            Else
+                RockRatsClient.LogEverywhere("SUCCESS! Added the new System Name to AWS")
+                RockRatsClient.logOutput("(HTTP CODE = " & response.HttpStatusCode & ")")
+            End If
+        Catch ex As Exception
+            RockRatsClient.LogEverywhere("FAILED! Couldn't add the new System Name to AWS")
+            RockRatsClient.logOutput("Error: " & ex.Message)
+        End Try
+    End Function
+
+    Private Async Function RemoveFactionNameFromAws(systemName As String) As Task
+        RockRatsClient.logOutput("Transmitting Add System Name ('" + systemName + "') to AWS: ")
+
+        Dim utc = DateTime.UtcNow
+        Dim entryDateTime = String.Format("{0:yyyy-MM-dd hh:mm:ss}", utc)
+        Dim commander = RockRatsClient.CommanderName.Text
+
+        Try
+            Dim attributes = New Dictionary(Of String, AttributeValue)() From {
+                {"system", New AttributeValue() With {
+                    .S = systemName
+                }}
+            }
+
+            Dim response = Await awsClient.DeleteItemAsync(
+                tableName:="rock-rat-systems",
+                key:=attributes)
+
+            If response.HttpStatusCode >= 300 Then
+                RockRatsClient.LogEverywhere("FAILED! Couldn't remove the System Name from AWS")
+                RockRatsClient.logOutput("FAILED! (HTTP CODE = " & response.HttpStatusCode & ")")
+            Else
+                RockRatsClient.LogEverywhere("SUCCESS! Removed the System Name from AWS")
+                RockRatsClient.logOutput("(HTTP CODE = " & response.HttpStatusCode & ")")
+            End If
+        Catch ex As Exception
+            RockRatsClient.LogEverywhere("FAILED! Couldn't remove the System Name from AWS")
+            RockRatsClient.logOutput("Error: " & ex.Message)
+        End Try
+    End Function
 
     Private Function BuildClient(accessKey As String, secretKey As String) As AmazonDynamoDBClient
         Dim credentials = New BasicAWSCredentials(accessKey:=accessKey, secretKey:=secretKey)
@@ -345,9 +413,26 @@ Module Comms
         responceCodes.Add("-", "Unknown command")
     End Sub
 
-    Public Function addSystemToRoster(systemName As String) As Boolean
-        SoftData.addSystem(systemName)
-        'systemFactions.Add(systemName, factionData)
+    Public Async Function AddSystemToRoster(systemName As String) As Task(Of Boolean)
+        Try
+            Await AddFactionNameToAws(systemName)
+            SoftData.AddSystem(systemName)
+        Catch ex As Exception
+            Return False
+        End Try
+
         Return True
     End Function
+
+    Public Async Function RemoveSystemFromRoster(systemName As String) As Task(Of Boolean)
+        Try
+            Await RemoveFactionNameFromAws(systemName)
+            SoftData.removeSystem(systemName)
+        Catch ex As Exception
+            Return False
+        End Try
+
+        Return True
+    End Function
+
 End Module

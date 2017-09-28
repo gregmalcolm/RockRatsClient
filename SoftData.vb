@@ -325,10 +325,17 @@ Module SoftData
         Return numFactions
     End Function
 
-    Public Function addSystem(systemName As String) As String
+    Public Function AddSystem(systemName As String) As String
         Dim cleanSystemName As String = SoftData.whitelistChars(Trim(systemName))
         RockRatsClient.SystemsList.Items.Add(cleanSystemName)
         RockRatsClient.selSystem.Items.Add(cleanSystemName)
+
+        Return cleanSystemName
+    End Function
+    Public Function RemoveSystem(systemName As String) As String
+        Dim cleanSystemName As String = SoftData.whitelistChars(Trim(systemName))
+        RockRatsClient.selSystem.Items.Remove(cleanSystemName)
+        RockRatsClient.SystemsList.Items.Remove(cleanSystemName)
 
         Return cleanSystemName
     End Function

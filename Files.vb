@@ -490,7 +490,7 @@ Module Files
         ReDim RockRatsSystems(CInt(elements(1)))
         RockRatsClient.SystemsList.Items.Clear()
         For index = 2 To elements.GetUpperBound(0)
-            Dim cleanSystemName As String = SoftData.addSystem(elements(index))
+            Dim cleanSystemName As String = SoftData.AddSystem(elements(index))
             RockRatsSystems(index - 1) = cleanSystemName
 
             getSystemFactions(cleanSystemName)
