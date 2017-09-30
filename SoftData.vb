@@ -139,7 +139,7 @@ Module SoftData
             RockRatsClient.UpdSoftData.Enabled = True
             RockRatsClient.SoftDataGrid.Rows.Clear()
             procOCRTextChg()
-            Comms.getSystemFactions(systemName)
+            Comms.GetSystemFactions(systemName)
             selectedSystem = systemName
         End If
     End Sub
@@ -297,7 +297,7 @@ Module SoftData
                 End If
             End If
         Catch ex As Exception
-            RockRatsClient.logOutput("Operation failed: ex=" & ex.Message)
+            RockRatsClient.LogOutput("Operation failed: ex=" & ex.Message)
             Return False
         End Try
         Return True

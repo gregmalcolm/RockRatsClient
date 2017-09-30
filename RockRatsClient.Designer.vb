@@ -52,6 +52,7 @@ Partial Class RockRatsClient
         Me.viewWebTracker = New System.Windows.Forms.Button()
         Me.NextSystem = New System.Windows.Forms.Button()
         Me.AddButton = New System.Windows.Forms.Button()
+        Me.RemoveButton = New System.Windows.Forms.Button()
         Me.HelpTab = New System.Windows.Forms.TabPage()
         Me.Version = New System.Windows.Forms.Label()
         Me.Label15 = New System.Windows.Forms.Label()
@@ -78,7 +79,7 @@ Partial Class RockRatsClient
         Me.CommanderLabel = New System.Windows.Forms.Label()
         Me.FileStatus = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
-        Me.ConnStatus1 = New System.Windows.Forms.Label()
+        Me.ConnStatus = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.SoftDataTab = New System.Windows.Forms.TabPage()
@@ -97,7 +98,6 @@ Partial Class RockRatsClient
         Me.Label10 = New System.Windows.Forms.Label()
         Me.Label8 = New System.Windows.Forms.Label()
         Me.Tabs = New System.Windows.Forms.TabControl()
-        Me.RemoveButton = New System.Windows.Forms.Button()
         CType(Me.EDCapture, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.resizeSlider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.HelpTab.SuspendLayout()
@@ -277,6 +277,7 @@ Partial Class RockRatsClient
         '
         Me.selSystem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.selSystem.FormattingEnabled = True
+        Me.selSystem.Items.AddRange(New Object() {"Loading..."})
         Me.selSystem.Location = New System.Drawing.Point(8, 40)
         Me.selSystem.Name = "selSystem"
         Me.selSystem.Size = New System.Drawing.Size(198, 21)
@@ -374,6 +375,17 @@ Partial Class RockRatsClient
         Me.AddButton.Text = "Add"
         Me.ToolTip1.SetToolTip(Me.AddButton, "Add the entered system name to the list of official Rock Rat Systems")
         Me.AddButton.UseVisualStyleBackColor = True
+        '
+        'RemoveButton
+        '
+        Me.RemoveButton.Enabled = False
+        Me.RemoveButton.Location = New System.Drawing.Point(414, 3)
+        Me.RemoveButton.Name = "RemoveButton"
+        Me.RemoveButton.Size = New System.Drawing.Size(56, 20)
+        Me.RemoveButton.TabIndex = 48
+        Me.RemoveButton.Text = "Remove"
+        Me.ToolTip1.SetToolTip(Me.RemoveButton, "Add the entered system name to the list of official Rock Rat Systems")
+        Me.RemoveButton.UseVisualStyleBackColor = True
         '
         'HelpTab
         '
@@ -570,7 +582,7 @@ Partial Class RockRatsClient
         Me.Panel3.Controls.Add(Me.tailLogs)
         Me.Panel3.Controls.Add(Me.FileStatus)
         Me.Panel3.Controls.Add(Me.Label3)
-        Me.Panel3.Controls.Add(Me.ConnStatus1)
+        Me.Panel3.Controls.Add(Me.ConnStatus)
         Me.Panel3.Controls.Add(Me.Label1)
         Me.Panel3.Location = New System.Drawing.Point(9, 12)
         Me.Panel3.Name = "Panel3"
@@ -659,18 +671,18 @@ Partial Class RockRatsClient
         Me.Label3.TabIndex = 22
         Me.Label3.Text = "Journal Status"
         '
-        'ConnStatus1
+        'ConnStatus
         '
-        Me.ConnStatus1.Anchor = System.Windows.Forms.AnchorStyles.Top
-        Me.ConnStatus1.AutoSize = True
-        Me.ConnStatus1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ConnStatus1.ForeColor = System.Drawing.Color.DarkCyan
-        Me.ConnStatus1.Location = New System.Drawing.Point(35, 125)
-        Me.ConnStatus1.Name = "ConnStatus1"
-        Me.ConnStatus1.Size = New System.Drawing.Size(88, 15)
-        Me.ConnStatus1.TabIndex = 21
-        Me.ConnStatus1.Text = "Not Connected"
-        Me.ConnStatus1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        Me.ConnStatus.Anchor = System.Windows.Forms.AnchorStyles.Top
+        Me.ConnStatus.AutoSize = True
+        Me.ConnStatus.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.ConnStatus.ForeColor = System.Drawing.Color.DarkCyan
+        Me.ConnStatus.Location = New System.Drawing.Point(35, 125)
+        Me.ConnStatus.Name = "ConnStatus"
+        Me.ConnStatus.Size = New System.Drawing.Size(88, 15)
+        Me.ConnStatus.TabIndex = 21
+        Me.ConnStatus.Text = "Not Connected"
+        Me.ConnStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'Label1
         '
@@ -861,17 +873,6 @@ Partial Class RockRatsClient
         Me.Tabs.Size = New System.Drawing.Size(630, 397)
         Me.Tabs.TabIndex = 5
         '
-        'RemoveButton
-        '
-        Me.RemoveButton.Enabled = False
-        Me.RemoveButton.Location = New System.Drawing.Point(414, 3)
-        Me.RemoveButton.Name = "RemoveButton"
-        Me.RemoveButton.Size = New System.Drawing.Size(56, 20)
-        Me.RemoveButton.TabIndex = 48
-        Me.RemoveButton.Text = "Remove"
-        Me.ToolTip1.SetToolTip(Me.RemoveButton, "Add the entered system name to the list of official Rock Rat Systems")
-        Me.RemoveButton.UseVisualStyleBackColor = True
-        '
         'RockRatsClient
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -950,7 +951,7 @@ Partial Class RockRatsClient
     Friend WithEvents tailLogs As Button
     Friend WithEvents FileStatus As Label
     Friend WithEvents Label3 As Label
-    Friend WithEvents ConnStatus1 As Label
+    Friend WithEvents ConnStatus As Label
     Friend WithEvents Label1 As Label
     Friend WithEvents Label6 As Label
     Friend WithEvents SoftDataTab As TabPage

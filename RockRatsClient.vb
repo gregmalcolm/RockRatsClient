@@ -18,7 +18,7 @@ Public Class RockRatsClient
         End If
         Parameters.initDefaultParameters()  ' Call this first to set default values
         Files.initJournalCodes()
-        Comms.initCommsCodes()
+        Comms.InitCommsCodes()
         Username.Text = Parameters.getParameter("Username")
         SiteKey.Text = Parameters.getParameter("SiteKey")
         JournalFolder.Text = Parameters.getParameter("JournalDirectory")
@@ -52,18 +52,15 @@ Public Class RockRatsClient
             RockRatsActivity.SelectedIndex = 3
         End If
         Version.Text = "Version: " & clientVersion
-        logOutput("Version: " & clientVersion)
-        logOutput("AppData: " & AppDataDir)
+        LogOutput("Version: " & clientVersion)
+        LogOutput("AppData: " & AppDataDir)
         Me.Refresh()                     ' Ensure the app is fully loaded before 
         LoadTimer.Enabled = True         ' opening comms - avoids possible exceptions.
     End Sub
 
-    Private Async Sub LoadTimer_Tick(sender As Object, e As EventArgs) Handles LoadTimer.Tick
+    Private Sub LoadTimer_Tick(sender As Object, e As EventArgs) Handles LoadTimer.Tick
         LoadTimer.Enabled = False
-        ConnStatus1.Text = "Connecting..."
-        ConnStatus1.Refresh()
-        Me.Refresh()
-        Dim CanConnect As Boolean = Await Comms.TestConn()
+        ConnStatus.Text = "Connecting..."
         commsTimer.Enabled = True
     End Sub
 
@@ -82,11 +79,6 @@ Public Class RockRatsClient
         TestConnection.Enabled = True
     End Sub
 
-    Private Async Sub TestConnection_Click(sender As Object, e As EventArgs) Handles TestConnection.Click
-        Dim CanConnect As Boolean = Await TestConn()
-        TestConnection.Enabled = False
-    End Sub
-
     Private Sub BrowserForDir_Click(sender As Object, e As EventArgs) Handles BrowserForDir.Click
         If FolderBrowser.ShowDialog() = DialogResult.OK Then
             JournalFolder.Text = FolderBrowser.SelectedPath
@@ -95,19 +87,19 @@ Public Class RockRatsClient
 
     Friend Sub toggleTailLog()
         If tailTimer.Enabled = False Then
-            logOutput("Startup Journal Monitor")
+            LogOutput("Startup Journal Monitor")
             If Files.idLastJournal() Then
                 tailTimer.Enabled = True
                 tailLogs.Text = "Stop"
             Else
-                logOutput("Unable to identify Journal Logs")
+                LogOutput("Unable to identify Journal Logs")
             End If
         Else
             tailTimer.Enabled = False
             tailLogs.Text = "Run"
             FileStatus.Text = "Idle"
             Files.stopJournal()
-            logOutput("Shutdown Journal Monitor")
+            LogOutput("Shutdown Journal Monitor")
         End If
         tailLogs.Enabled = True
     End Sub
@@ -138,7 +130,7 @@ Public Class RockRatsClient
 
     Public Sub LogEverywhere(message As String)
         StatusLog(message)
-        logOutput(message)
+        LogOutput(message)
     End Sub
     Public Sub StatusLog(message As String)
         If Not String.IsNullOrEmpty(StatusBox.Text) Then
@@ -147,7 +139,7 @@ Public Class RockRatsClient
         StatusBox.AppendText(message)
     End Sub
 
-    Friend Sub logOutput(logText As String)
+    Friend Sub LogOutput(logText As String)
         Debug.WriteLine(logText)
         Try
             If noLogDups <> logText Then
@@ -257,7 +249,7 @@ Public Class RockRatsClient
                             If row.Cells(2).Value Is Nothing Then
                                 row.Cells(2).Value = ""
                             End If
-                            Dim cwaitForCompletion As Boolean = Comms.sendUpdate("", "", "", selSystem.SelectedItem.ToString + ":" + row.Cells(0).Value.ToString.ToUpper + ":" + row.Cells(2).Value.ToString + ":" + row.Cells(1).Value.ToString + ":OCR")
+                            Dim cwaitForCompletion As Boolean = Comms.SendUpdate("", "", "", selSystem.SelectedItem.ToString + ":" + row.Cells(0).Value.ToString.ToUpper + ":" + row.Cells(2).Value.ToString + ":" + row.Cells(1).Value.ToString + ":OCR")
                             factionsSent += 1
                         Else
                             LogEverywhere("Skipping " & row.Cells(0).Value.ToString & " because the infuence given is not a number")
@@ -268,13 +260,13 @@ Public Class RockRatsClient
                 End If
             End If
         Next
-        logOutput("Updated " & factionsSent & "/" & (SoftDataGrid.Rows.Count - 1).ToString & " Factions in " & selSystem.SelectedItem.ToString)
+        LogOutput("Updated " & factionsSent & "/" & (SoftDataGrid.Rows.Count - 1).ToString & " Factions in " & selSystem.SelectedItem.ToString)
         'Call Global.RockRatsClient.procOCRTextChg()
     End Sub
 
     Private Async Sub commsTimer_Tick(sender As Object, e As EventArgs) Handles commsTimer.Tick
         Try
-            Await Comms.procUpdate()
+            Await Comms.ProcUpdate()
         Catch ex As Exception
 
         End Try

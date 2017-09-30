@@ -34,7 +34,7 @@ Module Files
             If tmpJournal <> currentJournal Then
                 currentJournal = tmpJournal
                 lastMaxOffset = 0
-                RockRatsClient.logOutput("Tailing: " + fileName)
+                RockRatsClient.LogOutput("Tailing: " + fileName)
             End If
             RockRatsClient.FileStatus.ForeColor = Color.DarkGreen
             RockRatsClient.FileStatus.Text = "Tailing: " + fileName
@@ -419,11 +419,11 @@ Module Files
         Dim localCache As String = DataRow + ":" + sTimeStamp
         If DataCache.getDataCache(cCat, cKey) <> localCache Then
             If DataCache.setDataCache(cCat, cKey, localCache) Then
-                Dim waitForCompletion As Boolean = Comms.sendUpdate(uType, uSubType, DataRow, "")
-                RockRatsClient.logOutput("Sending " + cCat + " Update for " + cKey)
+                Dim waitForCompletion As Boolean = Comms.SendUpdate(uType, uSubType, DataRow, "")
+                RockRatsClient.LogOutput("Sending " + cCat + " Update for " + cKey)
             End If
         Else
-            RockRatsClient.logOutput("Skipping " + cCat + " Update for " + cKey + " - Duplicate Data")
+            RockRatsClient.LogOutput("Skipping " + cCat + " Update for " + cKey + " - Duplicate Data")
         End If
         Return True
     End Function
@@ -493,9 +493,9 @@ Module Files
             Dim cleanSystemName As String = SoftData.AddSystem(elements(index))
             RockRatsSystems(index - 1) = cleanSystemName
 
-            getSystemFactions(cleanSystemName)
+            GetSystemFactions(cleanSystemName)
         Next
-        RockRatsClient.logOutput("Downloaded " + elements(1) + " RockRats Systems")
+        RockRatsClient.LogOutput("Downloaded " + elements(1) + " RockRats Systems")
     End Sub
 
     Friend Sub initJournalCodes()
