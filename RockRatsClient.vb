@@ -8,7 +8,7 @@ Public Class RockRatsClient
 
     Private Sub tailTimer_Tick(sender As Object, e As EventArgs) Handles tailTimer.Tick
         tailTimer.Enabled = False
-        Dim waitForCompletion As Boolean = Files.tailJournal()
+        Dim waitForCompletion As Boolean = Files.TailJournal()
         tailTimer.Enabled = True
     End Sub
 
@@ -17,7 +17,7 @@ Public Class RockRatsClient
             My.Computer.FileSystem.CreateDirectory(AppDataDir)
         End If
         Parameters.initDefaultParameters()  ' Call this first to set default values
-        Files.initJournalCodes()
+        Files.InitJournalCodes()
         Comms.InitCommsCodes()
         Username.Text = Parameters.getParameter("Username")
         SiteKey.Text = Parameters.getParameter("SiteKey")
@@ -88,7 +88,7 @@ Public Class RockRatsClient
     Friend Sub toggleTailLog()
         If tailTimer.Enabled = False Then
             LogOutput("Startup Journal Monitor")
-            If Files.idLastJournal() Then
+            If Files.IdLastJournal() Then
                 tailTimer.Enabled = True
                 tailLogs.Text = "Stop"
             Else
@@ -98,7 +98,7 @@ Public Class RockRatsClient
             tailTimer.Enabled = False
             tailLogs.Text = "Run"
             FileStatus.Text = "Idle"
-            Files.stopJournal()
+            Files.StopJournal()
             LogOutput("Shutdown Journal Monitor")
         End If
         tailLogs.Enabled = True
@@ -188,24 +188,24 @@ Public Class RockRatsClient
             grBitmap.DrawImage(screenshot, 0, 0, procBitmap.Width + 1, procBitmap.Height + 1)
             If BlackAndWhile.Checked Then
                 Dim procImg As Bitmap = toGrayScale(procBitmap)
-                Call Global.RockRatsClient.procEDScreen(procImg)
+                Call Global.RockRatsClient.ProcEDScreen(procImg)
                 EDCapture.Image = procImg
             Else
-                Call Global.RockRatsClient.procEDScreen(procBitmap)
+                Call Global.RockRatsClient.ProcEDScreen(procBitmap)
                 EDCapture.Image = procBitmap
             End If
         ElseIf BlackAndWhile.Checked Then
             Dim procImg As Bitmap = toGrayScale(screenshot)
-            Call Global.RockRatsClient.procEDScreen(procImg)
+            Call Global.RockRatsClient.ProcEDScreen(procImg)
             EDCapture.Image = procImg
         Else
-            Call Global.RockRatsClient.procEDScreen(screenshot)
+            Call Global.RockRatsClient.ProcEDScreen(screenshot)
             EDCapture.Image = screenshot
         End If
         EDCapture.Refresh()
         ocrWorking.Visible = False
         StatusLog("OCR Finished")
-        Call Global.RockRatsClient.procOCRTextChg()
+        Call Global.RockRatsClient.ProcessOCRTextChg()
     End Sub
 
     Private Function toGrayScale(ByVal bmp As Bitmap) As Bitmap
@@ -231,7 +231,7 @@ Public Class RockRatsClient
 
     Private Sub UpdSoftData_Click(sender As Object, e As EventArgs) Handles UpdSoftData.Click
         If selSystem.SelectedItem IsNot Nothing Then
-            If Not SoftData.hasUserFinishedOCRing() Then
+            If Not SoftData.HasUserFinishedOCRing() Then
                 Dim ok = MsgBox("The influence total looks off. Are you sure you want update the server?", MsgBoxStyle.OkCancel)
                 If ok <> MsgBoxResult.Ok Then
                     Return
@@ -268,7 +268,7 @@ Public Class RockRatsClient
         Try
             Await Comms.ProcUpdate()
         Catch ex As Exception
-
+            LogEverywhere("update went boom")
         End Try
     End Sub
 
@@ -277,7 +277,7 @@ Public Class RockRatsClient
             ResetSystemNameBox(selSystem.SelectedItem.ToString)
             My.Computer.Clipboard.SetText(SystemNameBox.Text)
             StatusLog("Copied '" & selSystem.SelectedItem.ToString & "' to clipboard!")
-            Call Global.RockRatsClient.procSystemChange(selSystem.SelectedItem.ToString)
+            Call Global.RockRatsClient.ProcessSystemChange(selSystem.SelectedItem.ToString)
             SoftDataGrid.Select()
         End If
     End Sub
@@ -292,7 +292,7 @@ Public Class RockRatsClient
     End Sub
 
     Private Sub SoftDataGrid_CellValueChanged(sender As Object, e As DataGridViewCellEventArgs) Handles SoftDataGrid.CellValueChanged
-        Call Global.RockRatsClient.procOCRTextChg()
+        Call Global.RockRatsClient.ProcessOCRTextChg()
     End Sub
 
     Private Sub resizeSlider_Scroll(sender As Object, e As EventArgs) Handles resizeSlider.Scroll

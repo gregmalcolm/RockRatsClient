@@ -26,10 +26,11 @@ Module Comms
     Private sendCmdQueue As New Queue()
     Private sendSoftDataQueue As New Queue()
     Private lastSendTime As DateTime = DateTime.Now
-    Private isReceivingData As Boolean = False
+    Private isReceivingData As Boolean = True
     Private authenticated As Boolean = False
     Private dataIsLoaded As Boolean = False
     Private awsClient As AmazonDynamoDBClient
+    Private tickTime As Date = DateTime.UtcNow - New TimeSpan(18, 0, 0)
 
     Private Function Connect() As Boolean
         Dim accessKey = ConfigurationManager.AppSettings("awsAccessKeyId")
@@ -69,7 +70,6 @@ Module Comms
                 RockRatsClient.LogOutput("Recv failed: " & ex.Message)
             End Try
         Else
-            isReceivingData = True
             If authenticated Then
                 Try
                     Dim sendData As String = ""
@@ -113,7 +113,6 @@ Module Comms
         RockRatsClient.LogOutput("Transmitting Report to AWS:   " & data)
 
         Dim utc = DateTime.UtcNow
-        Dim tickTime = DateTime.UtcNow - New TimeSpan(18, 0, 0)
         Dim entryDate = String.Format("{0:yyyy-MM-dd}", tickTime)
 
         Dim items = Split(data, ":")
@@ -193,20 +192,63 @@ Module Comms
         End Try
 
     End Function
-    Private Async Function LoadSystemsFromAws() As Task
-        RockRatsClient.LogEverywhere("Downloading Systems...")
-
+    Private Async Function ReadSystemsFromAws() As Task
         Dim request = New ScanRequest() With {
             .TableName = "rock-rat-systems"
         }
         Dim response = Await awsClient.ScanAsync(request)
 
         RockRatsClient.selSystem.Items.Clear()
-        For Each item In response.Items.OrderBy(Function(x) x("datetime").S)
-            SoftData.AddSystem(item("system").S)
+        For Each sys In response.Items.OrderBy(Function(system) system("datetime").S)
+            SoftData.AddSystem(sys("system").S)
         Next
     End Function
 
+    Private Async Function ReadFactionsFromAws() As Task
+        Dim lastWeek = String.Format("{0:yyyy-MM-dd}", tickTime - New TimeSpan(24 * 7, 0, 0))
+        Dim request = New ScanRequest() With {
+            .TableName = "rock-rat-factions",
+            .IndexName = "date-index",
+            .FilterExpression = "#entrydate >= :lastweek",
+            .ExpressionAttributeNames = New Dictionary(Of String, String)() From {
+                {"#entrydate", "date"}
+            },
+            .ExpressionAttributeValues = New Dictionary(Of String, AttributeValue)() From {
+                {":lastweek", New AttributeValue() With {.S = lastWeek}}
+            },
+            .Limit = 5000
+        }
+        Dim response = Await awsClient.ScanAsync(request)
+
+        For Each systemName As String In RockRatsClient.SystemsList.Items
+            ReadFactionFromResults(response.Items, systemName)
+        Next
+    End Function
+    Private Sub ReadFactionFromResults(factionsData As List(Of Dictionary(Of String, AttributeValue)), systemName As String)
+        Dim systemFactions = factionsData.Where(Function(faction) faction("system").S.Equals(systemName))
+
+        Dim lastEntry = systemFactions _
+            .OrderBy(Function(faction) faction("date").S) _
+            .Select(Function(faction) faction("date").S) _
+            .Last()
+
+        Dim factionsList = systemFactions _
+            .Where(Function(faction) faction("date").S.Equals(lastEntry)) _
+            .OrderByDescending(Function(faction) faction("influence").N) _
+            .Select(Function(faction) New Faction() With {
+                .System = faction("system").S,
+                .FactionName = faction("faction").S,
+                .OldEntryDate = Date.ParseExact(faction("date").S, "yyyy-MM-dd", Nothing),
+                .OldCommander = If(faction.ContainsKey("commander"), faction("commander").S, Nothing),
+                .OldInfluence = If(faction.ContainsKey("influence"), Decimal.Parse(faction("influence").N), Nothing),
+                .OldState = If(faction.ContainsKey("state"), faction("state").S, Nothing),
+                .Downloaded = True
+            }) _
+            .ToList()
+
+        SoftData.AddFactions(systemName, factionsList)
+
+    End Sub
     Private Async Function AddFactionNameToAws(systemName As String) As Task
         RockRatsClient.LogOutput("Transmitting Add System Name ('" + systemName + "') to AWS: ")
 
@@ -286,41 +328,16 @@ Module Comms
 
     Private Async Function ReceiveData() As Task
         If (Not dataIsLoaded) Then
-            Await LoadSystemsFromAws()
-            'SoftData.AddSystem("CHERTAN")
+            RockRatsClient.LogEverywhere("Downloading Systems...")
+            Await ReadSystemsFromAws()
+            Await ReadFactionsFromAws()
+            RockRatsClient.LogEverywhere("Systems are ready!")
+            RockRatsClient.selSystem.Show()
             dataIsLoaded = True
         End If
     End Function
 
-    Private Sub ProcReturnData(rData As String)
-        Dim elements() As String
-        Dim stringSeparators() As String = {vbCrLf}
-        elements = rData.Split(stringSeparators, StringSplitOptions.None)
-        For Each line As String In elements
-            If Left(line, 1) = "9" Then
-                RockRatsClient.ConnStatus.Text = "Unable to Authenticate"
-                RockRatsClient.LogOutput("Connection Failed - Invalid Username or Site Key")
-                RockRatsClient.ConnStatus.ForeColor = Color.DarkRed
-            ElseIf Left(line, 1) = "1" Then
-                authenticated = True
-                RockRatsClient.ConnStatus.Text = "Connected"
-                RockRatsClient.ConnStatus.ForeColor = Color.DarkGreen
-                RockRatsClient.toggleTailLog()
-                GetSystems()
-            ElseIf Left(line, 1) = "4" Then
-                Files.setRockRatsSystems(line)
-            ElseIf Left(line, 1) = "7" Then
-                SetSystemFaction(Trim(line))
-            ElseIf Len(line) > 0 And Left(line, 1) <> "K" Then
-                Dim otherResponce As String = Trim(line)
-                If Len(otherResponce) > 0 Then
-                    RockRatsClient.LogOutput("    Server responded: " + GetResponceDesc(otherResponce))
-                End If
-            End If
-        Next
-    End Sub
-
-    Private Function GetResponceDesc(rCode As String) As String
+    Private Function GetResponseDesc(rCode As String) As String
         Dim retValue As String = "Unknown Responce"
         For Each de As DictionaryEntry In responceCodes
             If CType(de.Key, String) = Left(rCode, 1) Then
@@ -330,41 +347,6 @@ Module Comms
         Next de
         Return retValue
     End Function
-
-    Private Sub SetSystemFaction(line As String)
-        Dim elements() As String
-        Dim stringSeparators() As String = {":"}
-        elements = line.Split(stringSeparators, StringSplitOptions.None)
-        Dim systemName As String = Trim(UCase(elements(2)))
-        Dim factionData As String = elements(1).ToString
-        For i = 3 To elements.GetUpperBound(0)
-            factionData = factionData + ":" + Trim(UCase(elements(i)))
-        Next
-
-        If systemFactions.ContainsKey(systemName) Then
-            systemFactions.Remove(systemName)
-        End If
-        systemFactions.Add(systemName, factionData)
-        RockRatsClient.LogOutput("Downloaded " + elements(1).ToString + " " + systemName + " Factions")
-
-        SoftData.setFactions(systemName, factionData)
-    End Sub
-
-    Friend Sub GetSystemFactions(systemName As String)
-        Dim queueFaction As Boolean = True
-        For Each de As DictionaryEntry In systemFactions
-            If CType(de.Key, String) = UCase(systemName) Then
-                queueFaction = False
-                SoftData.setFactions(systemName, de.Value.ToString)
-                Exit For
-            End If
-        Next de
-        If queueFaction Then
-            sendCmdQueue.Enqueue("8:" + systemName)
-        End If
-
-    End Sub
-
     Friend Sub InitCommsCodes()
         responceCodes.Add("9", "Unable to Authenticate")
         responceCodes.Add("1", "Authenticated")

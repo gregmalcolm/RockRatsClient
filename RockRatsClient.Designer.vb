@@ -98,6 +98,7 @@ Partial Class RockRatsClient
         Me.Label10 = New System.Windows.Forms.Label()
         Me.Label8 = New System.Windows.Forms.Label()
         Me.Tabs = New System.Windows.Forms.TabControl()
+        Me.Label13 = New System.Windows.Forms.Label()
         CType(Me.EDCapture, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.resizeSlider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.HelpTab.SuspendLayout()
@@ -284,6 +285,7 @@ Partial Class RockRatsClient
         Me.selSystem.TabIndex = 28
         Me.selSystem.TabStop = False
         Me.ToolTip1.SetToolTip(Me.selSystem, "Select the system for Soft Data update")
+        Me.selSystem.Visible = False
         '
         'infTotal
         '
@@ -730,6 +732,7 @@ Partial Class RockRatsClient
         Me.SoftDataTab.Controls.Add(Me.UpdSoftData)
         Me.SoftDataTab.Controls.Add(Me.CaptureEDScreen)
         Me.SoftDataTab.Controls.Add(Me.EDCapture)
+        Me.SoftDataTab.Controls.Add(Me.Label13)
         Me.SoftDataTab.Location = New System.Drawing.Point(4, 22)
         Me.SoftDataTab.Name = "SoftDataTab"
         Me.SoftDataTab.Size = New System.Drawing.Size(622, 371)
@@ -873,6 +876,15 @@ Partial Class RockRatsClient
         Me.Tabs.Size = New System.Drawing.Size(630, 397)
         Me.Tabs.TabIndex = 5
         '
+        'Label13
+        '
+        Me.Label13.AutoSize = True
+        Me.Label13.Location = New System.Drawing.Point(17, 43)
+        Me.Label13.Name = "Label13"
+        Me.Label13.Size = New System.Drawing.Size(54, 13)
+        Me.Label13.TabIndex = 49
+        Me.Label13.Text = "Loading..."
+        '
         'RockRatsClient
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -983,4 +995,5 @@ Partial Class RockRatsClient
     Friend WithEvents NextSystem As Button
     Friend WithEvents AddButton As Button
     Friend WithEvents RemoveButton As Button
+    Friend WithEvents Label13 As Label
 End Class

@@ -237,6 +237,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationEvents.vb" />
+    <Compile Include="Faction.vb" />
     <Compile Include="RockRatsClient.Designer.vb">
       <DependentUpon>RockRatsClient.vb</DependentUpon>
     </Compile>

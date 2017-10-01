@@ -6,13 +6,14 @@ Module SoftData
     Private RockRatsOCR As Tesseract
     Private procOCRTextChange As Boolean = False
     Private selectedSystem As String = ""
-    Private systemFactions(20) As String
+    Private currentSystemFactionNames(20) As String
     Private allStates As New Hashtable()
     Private numFactions As Integer = 0
     Private exeDir As String = AppDomain.CurrentDomain.BaseDirectory
     Private influenceAccountedFor As Double = 0.0
+    Private systemFactions As New Dictionary(Of String, List(Of Faction))
 
-    Friend Sub procEDScreen(bitmapImage As System.Drawing.Bitmap)
+    Friend Sub ProcEDScreen(bitmapImage As System.Drawing.Bitmap)
         Try
             procOCRTextChange = False
             RockRatsOCR = New Tesseract() ' OcrEngineMode.TesseractCubeCombined
@@ -32,7 +33,7 @@ Module SoftData
                     If InStr(line, "RNMENT") = 0 Then
                         catchFaction = catchFaction + " " + Trim(line)
                     End If
-                    factionName = matchFaction(catchFaction)
+                    factionName = MatchFaction(catchFaction)
                     ' MsgBox(catchFaction + vbNewLine + factionName)
                     catchFaction = ""
                     influence = ""
@@ -43,12 +44,12 @@ Module SoftData
                     catchFaction = Mid(line, 10, Len(line) - 9)
                 End If
                 If (Strings.Left(line, 2) = "IN" Or Strings.Mid(line, 3, 2) = "FL") And factionName <> "" Then
-                    influenceVal = matchInfluence(Trim(line))
+                    influenceVal = MatchInfluence(Trim(line))
                     influence = Replace(influenceVal.ToString, ",", ".")
                 End If
                 If (Strings.Left(line, 2) = "ST" Or Strings.Mid(line, 3, 2) = "AT") And influence <> "" And factionName <> "" Then
-                    Dim s As String = matchState(Trim(line))
-                    addEDCaptureText(factionName, influence, s, influenceVal)
+                    Dim s As String = MatchState(Trim(line))
+                    AddEDCaptureText(factionName, influence, s, influenceVal)
                     factionName = ""
                     influence = ""
                     influenceVal = 0
@@ -60,7 +61,7 @@ Module SoftData
         procOCRTextChange = True
     End Sub
 
-    Private Sub addEDCaptureText(factionName As String, influence As String, state As String, influenceVal As Double)
+    Private Sub AddEDCaptureText(factionName As String, influence As String, state As String, influenceVal As Double)
         Dim doUpdate As Boolean = True
         For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
             If row.Cells(0).Value.ToString = factionName Then
@@ -75,11 +76,11 @@ Module SoftData
             If influenceVal > 0 Then
                 markFound = True
             End If
-            updDataGridRow(factionName, influence, state, markFound)
+            UpdateDataGridRow(factionName, influence, state, markFound)
         End If
     End Sub
 
-    Friend Sub updDataGridRow(factionName As String, influence As String, state As String, found As Boolean)
+    Friend Sub UpdateDataGridRow(factionName As String, influence As String, state As String, found As Boolean)
         Dim doInsert As Boolean = True
         For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
             If row.Cells(0).Value IsNot Nothing Then
@@ -97,7 +98,7 @@ Module SoftData
         End If
     End Sub
 
-    Friend Sub procOCRTextChg()
+    Friend Sub ProcessOCRTextChg()
         If procOCRTextChange Then
             Dim i As Double = 0
             For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
@@ -112,7 +113,7 @@ Module SoftData
 
             influenceAccountedFor = i
             RockRatsClient.infTotalVal.Text = influenceAccountedFor.ToString
-            If hasUserFinishedOCRing() Then
+            If HasUserFinishedOCRing() Then
                 RockRatsClient.CaptureEDScreen.Enabled = False
                 RockRatsClient.PasteEDScreen.Enabled = False
                 RockRatsClient.UpdSoftData.Enabled = True
@@ -128,23 +129,22 @@ Module SoftData
         End If
     End Sub
 
-    Public Function hasUserFinishedOCRing() As Boolean
+    Public Function HasUserFinishedOCRing() As Boolean
         Return influenceAccountedFor > 99.8 And influenceAccountedFor <= 100.1
     End Function
 
-    Friend Sub procSystemChange(systemName As String)
+    Friend Sub ProcessSystemChange(systemName As String)
         If systemName <> selectedSystem Then
             RockRatsClient.CaptureEDScreen.Enabled = True
             RockRatsClient.PasteEDScreen.Enabled = True
             RockRatsClient.UpdSoftData.Enabled = True
-            RockRatsClient.SoftDataGrid.Rows.Clear()
-            procOCRTextChg()
-            Comms.GetSystemFactions(systemName)
+            ProcessOCRTextChg()
+            LoadSystemFactions(systemName)
             selectedSystem = systemName
         End If
     End Sub
 
-    Private Function matchFaction(factionName As String) As String
+    Private Function MatchFaction(factionName As String) As String
         Dim retFaction As String = ""
         Dim findFaction As String = Trim(UCase(factionName))
         Dim factionMatched As Boolean = False
@@ -153,8 +153,8 @@ Module SoftData
         findFaction = Replace(findFaction, "  ", " ")
         findFaction = Trim(Replace(findFaction, ".", ""))
         For i = 0 To numFactions
-            If systemFactions(i) = findFaction Then
-                retFaction = systemFactions(i)
+            If currentSystemFactionNames(i) = findFaction Then
+                retFaction = currentSystemFactionNames(i)
                 factionMatched = True
                 Exit For
             End If
@@ -168,28 +168,28 @@ Module SoftData
             Dim s(numFactions) As Integer
             For i = 0 To numFactions - 1
                 s(i) = 0
-                If InStr(systemFactions(i), Left(findFaction, x)) > 0 Then
+                If InStr(currentSystemFactionNames(i), Left(findFaction, x)) > 0 Then
                     s(i) = s(i) + 9
                 End If
-                If InStr(systemFactions(i), Right(findFaction, x)) > 0 Then
+                If InStr(currentSystemFactionNames(i), Right(findFaction, x)) > 0 Then
                     s(i) = s(i) + 9
                 End If
-                If InStr(systemFactions(i), Left(findFaction, y)) > 0 Then
+                If InStr(currentSystemFactionNames(i), Left(findFaction, y)) > 0 Then
                     s(i) = s(i) + 7
                 End If
-                If InStr(systemFactions(i), Right(findFaction, y)) > 0 Then
+                If InStr(currentSystemFactionNames(i), Right(findFaction, y)) > 0 Then
                     s(i) = s(i) + 7
                 End If
-                If InStr(systemFactions(i), Left(findFaction, z)) > 0 Then
+                If InStr(currentSystemFactionNames(i), Left(findFaction, z)) > 0 Then
                     s(i) = s(i) + 5
                 End If
-                If InStr(systemFactions(i), Right(findFaction, z)) > 0 Then
+                If InStr(currentSystemFactionNames(i), Right(findFaction, z)) > 0 Then
                     s(i) = s(i) + 5
                 End If
-                If Left(systemFactions(i), e) = Left(findFaction, e) Then
+                If Left(currentSystemFactionNames(i), e) = Left(findFaction, e) Then
                     s(i) = s(i) + 3
                 End If
-                If Right(systemFactions(i), e) = Right(findFaction, e) Then
+                If Right(currentSystemFactionNames(i), e) = Right(findFaction, e) Then
                     s(i) = s(i) + 3
                 End If
             Next
@@ -202,13 +202,13 @@ Module SoftData
                 End If
             Next
             If maxI > -1 Then
-                retFaction = systemFactions(maxI)
+                retFaction = currentSystemFactionNames(maxI)
             End If
         End If
         Return retFaction
     End Function
 
-    Private Function matchInfluence(edInfluence As String) As Double
+    Private Function MatchInfluence(edInfluence As String) As Double
         Dim s As String = Strings.Left(edInfluence, Len(edInfluence) - 1)
         s = Trim(Mid(s, 12))
         Dim n As Double
@@ -220,7 +220,7 @@ Module SoftData
         Return n
     End Function
 
-    Private Function matchState(edState As String) As String
+    Private Function MatchState(edState As String) As String
         Dim s As String = Replace(edState, "_", "")
         s = Replace(s, "'", "")
         s = Replace(s, ".", "")
@@ -274,35 +274,19 @@ Module SoftData
         Return " "
     End Function
 
-    Friend Function setFactions(systemName As String, factionData As String) As Boolean
-        Try
-            Dim elements() As String
-            Dim stringSeparators() As String = {":"}
-            Dim selectedItem = RockRatsClient.selSystem.SelectedItem
-
-            If selectedItem IsNot Nothing Then
-                If UCase(systemName) = UCase(selectedItem.ToString) Then
-                    elements = factionData.Split(stringSeparators, StringSplitOptions.None)
-                    For i = 0 To numFactions
-                        systemFactions(i) = ""
-                    Next
-                    numFactions = 0
-                    For i = 1 To elements.GetUpperBound(0)
-                        systemFactions(numFactions) = whitelistChars(Trim(UCase(elements(i))))
-                        numFactions = numFactions + 1
-                    Next
-                    For i = 0 To numFactions - 1
-                        updDataGridRow(systemFactions(i), "", "", False)
-                    Next
-                End If
-            End If
-        Catch ex As Exception
-            RockRatsClient.LogOutput("Operation failed: ex=" & ex.Message)
-            Return False
-        End Try
-        Return True
+    Public Function AddFactions(systemName As String, factions As List(Of Faction)) As Boolean
+        systemFactions.Add(systemName, factions)
     End Function
-    Friend Function whitelistChars(cleanString As String) As String
+    Friend Sub LoadSystemFactions(systemName As String)
+        RockRatsClient.SoftDataGrid.Rows.Clear()
+
+        If systemFactions.ContainsKey(systemName) Then
+            For Each faction In systemFactions(systemName)
+                UpdateDataGridRow(faction.FactionName, faction.Influence.ToString(), faction.State, faction.Found)
+            Next
+        End If
+    End Sub
+    Friend Function WhitelistChars(cleanString As String) As String
         Try
             Dim ch As Char, ln As Integer, x As Integer = 0
             ln = cleanString.Length
@@ -321,19 +305,19 @@ Module SoftData
         Return cleanString
     End Function
 
-    Friend Function getNumFactions() As Integer
+    Friend Function GetNumFactions() As Integer
         Return numFactions
     End Function
 
     Public Function AddSystem(systemName As String) As String
-        Dim cleanSystemName As String = SoftData.whitelistChars(Trim(systemName))
+        Dim cleanSystemName As String = SoftData.WhitelistChars(Trim(systemName))
         RockRatsClient.SystemsList.Items.Add(cleanSystemName)
         RockRatsClient.selSystem.Items.Add(cleanSystemName)
 
         Return cleanSystemName
     End Function
     Public Function RemoveSystem(systemName As String) As String
-        Dim cleanSystemName As String = SoftData.whitelistChars(Trim(systemName))
+        Dim cleanSystemName As String = SoftData.WhitelistChars(Trim(systemName))
         RockRatsClient.selSystem.Items.Remove(cleanSystemName)
         RockRatsClient.SystemsList.Items.Remove(cleanSystemName)
 

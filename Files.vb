@@ -16,7 +16,7 @@ Module Files
     Private coords(3) As Integer
     Private waitForCords As String = ""
 
-    Friend Function idLastJournal() As Boolean
+    Friend Function IdLastJournal() As Boolean
         Dim JournalDir As String = getParameter("JournalDirectory")
 
         If Not Directory.Exists(JournalDir) Then
@@ -46,12 +46,12 @@ Module Files
         Return True
     End Function
 
-    Friend Sub stopJournal()
+    Friend Sub StopJournal()
         currentJournal = "NotInitalized"
         idleCounter = 0
     End Sub
 
-    Friend Function tailJournal() As Boolean
+    Friend Function TailJournal() As Boolean
         Dim waitForCompletion As Boolean
         If Not File.Exists(currentJournal) Then
             RockRatsClient.FileStatus.ForeColor = Color.DarkRed
@@ -63,12 +63,12 @@ Module Files
             Dim JournalFileStream = New FileStream(currentJournal, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
             Using reader As New StreamReader(JournalFileStream)
                 If lastMaxOffset = 0 Then
-                    waitForCompletion = tailJournalReadLines(reader, 1)
+                    waitForCompletion = TailJournalReadLines(reader, 1)
                 ElseIf reader.BaseStream.Length <> lastMaxOffset Then
-                    waitForCompletion = tailJournalReadLines(reader, lastMaxOffset)
+                    waitForCompletion = TailJournalReadLines(reader, lastMaxOffset)
                     idleCounter = 0
                 ElseIf idleCounter > 20 Then
-                    idLastJournal()
+                    IdLastJournal()
                     idleCounter = 0
                 Else
                     idleCounter = idleCounter + 1
@@ -82,13 +82,13 @@ Module Files
         End Try
     End Function
 
-    Private Function tailJournalReadLines(reader As StreamReader, Offset As Long) As Boolean
+    Private Function TailJournalReadLines(reader As StreamReader, Offset As Long) As Boolean
         Try
             Dim waitForCompletion As Boolean
             reader.BaseStream.Seek(Offset, SeekOrigin.Begin)
             Do
                 line = reader.ReadLine()
-                waitForCompletion = filterJournalLine(line)
+                waitForCompletion = FilterJournalLine(line)
             Loop Until line Is Nothing
             lastMaxOffset = reader.BaseStream.Length
             Return True
@@ -97,7 +97,7 @@ Module Files
         End Try
     End Function
 
-    Private Function filterJournalLine(line As String) As Boolean
+    Private Function FilterJournalLine(line As String) As Boolean
         ' Codes expected by the server
         '
         ' Codes
@@ -130,27 +130,27 @@ Module Files
             curLine = Trim(Replace(curLine, "}", ""))
             If InStr(curLine, "|event|:|Docked|") > 0 Then
                 If processDocked Then
-                    waitForCompletion = processJournalLine(curLine, "5", "3")
+                    waitForCompletion = ProcessJournalLine(curLine, "5", "3")
                 Else
                     processDocked = True
                 End If
             ElseIf InStr(curLine, "|event|:|Location|") > 0 Then
-                waitForCompletion = processJournalLine(curLine, "2", "0")
+                waitForCompletion = ProcessJournalLine(curLine, "2", "0")
             ElseIf InStr(curLine, "|event|:|FSDJump|,") > 0 Then
-                waitForCompletion = processJournalLine(curLine, "2", "1")
+                waitForCompletion = ProcessJournalLine(curLine, "2", "1")
             ElseIf InStr(curLine, "|event|:|LoadGame|,") > 0 Then
-                waitForCompletion = processJournalLine(curLine, "6", "2")
+                waitForCompletion = ProcessJournalLine(curLine, "6", "2")
             ElseIf InStr(curLine, "|event|:|Promotion|,") > 0 And procActivity <> "N" Then
-                waitForCompletion = processJournalLine(curLine, "6", "8")
+                waitForCompletion = ProcessJournalLine(curLine, "6", "8")
             ElseIf InStr(curLine, "|event|:|SendText|,") > 0 Then
-                waitForCompletion = processJournalLine(curLine, "7", "6")
+                waitForCompletion = ProcessJournalLine(curLine, "7", "6")
             ElseIf InStr(curLine, "|event|:|ReceiveText|,") > 0 Then
-                waitForCompletion = processJournalLine(curLine, "7", "7")
+                waitForCompletion = ProcessJournalLine(curLine, "7", "7")
             ElseIf InStr(curLine, "|event|:|ShipyardSwap|,") > 0 And (procActivity = "A" Or procActivity = "D") Then
                 processDocked = False
-                waitForCompletion = processJournalLine(curLine, "6", "4")
+                waitForCompletion = ProcessJournalLine(curLine, "6", "4")
             ElseIf InStr(curLine, "|event|:|ShipyardNew|,") > 0 And (procActivity = "A" Or procActivity = "D") Then
-                waitForCompletion = processJournalLine(curLine, "6", "5")
+                waitForCompletion = ProcessJournalLine(curLine, "6", "5")
             End If
             Return True
         Catch ex As Exception
@@ -159,7 +159,7 @@ Module Files
         Return False
     End Function
 
-    Private Function processJournalLine(line As String, uType As String, uSubType As String) As Boolean
+    Private Function ProcessJournalLine(line As String, uType As String, uSubType As String) As Boolean
         Try
             Dim waitForCompletion As Boolean
             Dim elapsedMinutes As Double = 100
@@ -183,12 +183,10 @@ Module Files
             Next
 
             If elapsedMinutes < 2 Then
-                If uType = "7" Then
-                    waitForCompletion = processJournalChatLine(line, uType, uSubType)
-                ElseIf uType = "6" Then
-                    waitForCompletion = processJournalActivityLine(line, uType, uSubType, sTimeStamp)
+                If uType = "6" Then
+                    waitForCompletion = ProcessJournalActivityLine(line, uType, uSubType, sTimeStamp)
                 Else
-                    waitForCompletion = processJournalSystemLine(line, uType, uSubType, sTimeStamp)
+                    waitForCompletion = ProcessJournalSystemLine(line, uType, uSubType, sTimeStamp)
                 End If
             End If
             Return True
@@ -197,7 +195,7 @@ Module Files
         End Try
     End Function
 
-    Private Function processJournalSystemLine(line As String, uType As String, uSubType As String, sTimeStamp As String) As Boolean
+    Private Function ProcessJournalSystemLine(line As String, uType As String, uSubType As String, sTimeStamp As String) As Boolean
         Try
             Dim waitForCompletion As Boolean
             Dim elements() As String
@@ -234,32 +232,32 @@ Module Files
                 ElseIf InStr(s, "|StationName|:") > 0 And uType = "5" Then
                     stationName = Trim(Replace(Mid(s, 16), "|", ""))
                 ElseIf InStr(s, "|SystemAllegiance|:") > 0 Then
-                    systemAllegiance = getAllegianceCode(Trim(Replace(Mid(s, 21), "|", "")))
+                    systemAllegiance = GetAllegianceCode(Trim(Replace(Mid(s, 21), "|", "")))
                 ElseIf InStr(s, "|SystemEconomy_Localised|:") > 0 Then
-                    systemEconomy = getEconomyCode(Trim(Replace(Mid(s, 28), "|", "")))
+                    systemEconomy = GetEconomyCode(Trim(Replace(Mid(s, 28), "|", "")))
                 ElseIf InStr(s, "|SystemGovernment_Localised|:") > 0 Then
-                    systemGovernment = getGovernmentCode(Trim(Replace(Mid(s, 31), "|", "")))
+                    systemGovernment = GetGovernmentCode(Trim(Replace(Mid(s, 31), "|", "")))
                 ElseIf InStr(s, "|SystemSecurity_Localised|:") > 0 Then
-                    systemSecurity = getSecurityCode(Trim(Replace(Mid(s, 29), "|", "")))
+                    systemSecurity = GetSecurityCode(Trim(Replace(Mid(s, 29), "|", "")))
                 ElseIf InStr(s, "|SystemFaction|:") > 0 Then
                     sFaction = Trim(Replace(Mid(s, 18), "|", ""))
                 ElseIf InStr(s, "|StationFaction|:") > 0 Then
                     sFaction = Trim(Replace(Mid(s, 19), "|", ""))
                 ElseIf InStr(s, "|FactionState|:") > 0 Then
-                    sFactionState = getStateCode(Trim(Replace(Mid(s, 17), "|", "")))
+                    sFactionState = GetStateCode(Trim(Replace(Mid(s, 17), "|", "")))
                 End If
             Next
 
             If uSubType = "0" And waitForCords <> "" Then
                 Try
-                    Dim dist As Double = distFromChertan(coords(0), coords(1), coords(2))
-                    waitForCompletion = processActivity(waitForCords, "6", "2", sTimeStamp, ":" + dist.ToString + ":" + systemName)
+                    Dim dist As Double = DistFromChertan(coords(0), coords(1), coords(2))
+                    waitForCompletion = ProcessActivity(waitForCords, "6", "2", sTimeStamp, ":" + dist.ToString + ":" + systemName)
                     waitForCords = ""
                 Catch inEx As Exception
 
                 End Try
             End If
-            waitForCompletion = processSystemUpdate(systemName, stationName, systemAllegiance, systemEconomy, systemGovernment, systemSecurity, sFaction, sFactionState, sTimeStamp, uType, uSubType)
+            waitForCompletion = ProcessSystemUpdate(systemName, stationName, systemAllegiance, systemEconomy, systemGovernment, systemSecurity, sFaction, sFactionState, sTimeStamp, uType, uSubType)
             If systemName <> "" Then
                 RockRatsClient.SystemName.Text = systemName
                 DataCache.setDataCache("Store", "LastSystem", systemName)
@@ -270,7 +268,7 @@ Module Files
         End Try
     End Function
 
-    Private Function processJournalActivityLine(line As String, uType As String, uSubType As String, sTimeStamp As String) As Boolean
+    Private Function ProcessJournalActivityLine(line As String, uType As String, uSubType As String, sTimeStamp As String) As Boolean
         Try
             Dim waitForCompletion As Boolean
             Dim elements() As String
@@ -308,9 +306,9 @@ Module Files
                 If uSubType = "2" Then
                     waitForCords = sShip
                 ElseIf uSubType = "8" Then
-                    waitForCompletion = processActivity(promoteType, uType, uSubType, sTimeStamp, ":" + promoteRank)
+                    waitForCompletion = ProcessActivity(promoteType, uType, uSubType, sTimeStamp, ":" + promoteRank)
                 Else
-                    waitForCompletion = processActivity(sShip, uType, uSubType, sTimeStamp, "")
+                    waitForCompletion = ProcessActivity(sShip, uType, uSubType, sTimeStamp, "")
                 End If
             End If
             If sShip <> "" Then
@@ -323,37 +321,8 @@ Module Files
         End Try
     End Function
 
-    Private Function processJournalChatLine(line As String, uType As String, uSubType As String) As Boolean
-        Try
-            Dim chatType As String = ""
-            Dim chatText As String = ""
-            Dim chatChannel As String = ""
-            Dim elements() As String
-            Dim stringSeparators() As String = {", "}
 
-            elements = line.Split(stringSeparators, StringSplitOptions.None)
-            For Each s As String In elements
-                If InStr(s, "|Message|:") > 0 And uType = "7" Then
-                    chatText = Trim(Replace(Mid(s, 12), "|", ""))
-                ElseIf InStr(s, "|To|:") > 0 And uSubType = "6" Then
-                    chatType = "To: " + Trim(Replace(Mid(s, 7), "|", ""))
-                ElseIf InStr(s, "|From_Localised|:") > 0 And uSubType = "7" Then
-                    chatType = "From: " + Trim(Replace(Mid(s, 19), "|", ""))
-                ElseIf InStr(s, "|Channel|:") > 0 And uSubType = "7" Then
-                    chatChannel = Trim(Replace(Mid(s, 12), "|", ""))
-                End If
-            Next
-
-            If chatChannel <> "npc" Then
-                'RockRatsClient.chatOutput(chatType + " -  " + chatText)
-            End If
-            Return True
-        Catch ex As Exception
-            Return False
-        End Try
-    End Function
-
-    Private Function distFromChertan(x As Integer, y As Integer, z As Integer) As Integer
+    Private Function DistFromChertan(x As Integer, y As Integer, z As Integer) As Integer
         Dim chertanX As Integer = 58  '  58.34375
         Dim chertanY As Integer = 150 ' 149.5625
         Dim chertanZ As Integer = -38 ' -38.34375
@@ -361,7 +330,7 @@ Module Files
         Return dist
     End Function
 
-    Private Function processActivity(cKey As String, uType As String, uSubType As String, sTimeStamp As String, uExtra As String) As Boolean
+    Private Function ProcessActivity(cKey As String, uType As String, uSubType As String, sTimeStamp As String, uExtra As String) As Boolean
         Try
             If cKey <> "" Then
                 Dim DataRow As String = cKey
@@ -370,7 +339,7 @@ Module Files
                 If uExtra <> "" Then
                     DataRow = DataRow + uExtra
                 End If
-                Dim waitForCompletion As Boolean = processUpdate(DataRow, sTimeStamp, cCat, cKey, uType, uSubType)
+                Dim waitForCompletion As Boolean = ProcessUpdate(DataRow, sTimeStamp, cCat, cKey, uType, uSubType)
             End If
             Return True
         Catch ex As Exception
@@ -378,7 +347,7 @@ Module Files
         End Try
     End Function
 
-    Private Function processSystemUpdate(systemName As String, stationName As String, systemAllegiance As String, systemEconomy As String, systemGovernment As String, systemSecurity As String, sFaction As String, sFactionState As String, sTimeStamp As String, uType As String, uSubType As String) As Boolean
+    Private Function ProcessSystemUpdate(systemName As String, stationName As String, systemAllegiance As String, systemEconomy As String, systemGovernment As String, systemSecurity As String, sFaction As String, sFactionState As String, sTimeStamp As String, uType As String, uSubType As String) As Boolean
         Try
             For index = 0 To RockRatsSystems.GetUpperBound(0)
                 If RockRatsSystems(index) = systemName Then
@@ -405,7 +374,7 @@ Module Files
                         cKey = stationName
                         DataRow = stationName + ":" + sFaction + ":" + systemName + ":" + systemAllegiance + ":" + systemEconomy + ":" + systemGovernment ' + ":" + systemSecurity
                     End If
-                    Dim waitForCompletion As Boolean = processUpdate(DataRow, sTimeStamp, cCat, cKey, uType, uSubType)
+                    Dim waitForCompletion As Boolean = ProcessUpdate(DataRow, sTimeStamp, cCat, cKey, uType, uSubType)
                     Exit For
                 End If
             Next
@@ -415,7 +384,7 @@ Module Files
         End Try
     End Function
 
-    Private Function processUpdate(DataRow As String, sTimeStamp As String, cCat As String, cKey As String, uType As String, uSubType As String) As Boolean
+    Private Function ProcessUpdate(DataRow As String, sTimeStamp As String, cCat As String, cKey As String, uType As String, uSubType As String) As Boolean
         Dim localCache As String = DataRow + ":" + sTimeStamp
         If DataCache.getDataCache(cCat, cKey) <> localCache Then
             If DataCache.setDataCache(cCat, cKey, localCache) Then
@@ -428,7 +397,7 @@ Module Files
         Return True
     End Function
 
-    Private Function getAllegianceCode(aText As String) As String
+    Private Function GetAllegianceCode(aText As String) As String
         Dim retValue As String = "3" ' 3 = None
         For Each de As DictionaryEntry In allegianceCodes
             If LCase(de.Key.ToString) = LCase(aText) Then
@@ -439,7 +408,7 @@ Module Files
         Return retValue
     End Function
 
-    Private Function getGovernmentCode(gText As String) As String
+    Private Function GetGovernmentCode(gText As String) As String
         Dim retValue As String = "13" ' 13 = None
         For Each de As DictionaryEntry In governmentCodes
             If LCase(de.Key.ToString) = LCase(gText) Then
@@ -450,7 +419,7 @@ Module Files
         Return retValue
     End Function
 
-    Private Function getEconomyCode(eText As String) As String
+    Private Function GetEconomyCode(eText As String) As String
         Dim retValue As String = "10" ' 10 = None
         For Each de As DictionaryEntry In economyCodes
             If LCase(de.Key.ToString) = LCase(eText) Then
@@ -461,7 +430,7 @@ Module Files
         Return retValue
     End Function
 
-    Private Function getSecurityCode(sText As String) As String
+    Private Function GetSecurityCode(sText As String) As String
         Dim retValue As String = "3" ' 3 = None
         For Each de As DictionaryEntry In securityCodes
             If LCase(de.Key.ToString) = LCase(sText) Then
@@ -472,7 +441,7 @@ Module Files
         Return retValue
     End Function
 
-    Private Function getStateCode(sText As String) As String
+    Private Function GetStateCode(sText As String) As String
         Dim retValue As String = "12" ' 12 = None
         For Each de As DictionaryEntry In stateCodes
             If LCase(de.Key.ToString) = LCase(sText) Then
@@ -483,7 +452,7 @@ Module Files
         Return retValue
     End Function
 
-    Friend Sub setRockRatsSystems(systems As String)
+    Friend Sub SetRockRatsSystems(systems As String)
         Dim elements() As String
         Dim stringSeparators() As String = {":"}
         elements = systems.Split(stringSeparators, StringSplitOptions.None)
@@ -493,12 +462,12 @@ Module Files
             Dim cleanSystemName As String = SoftData.AddSystem(elements(index))
             RockRatsSystems(index - 1) = cleanSystemName
 
-            GetSystemFactions(cleanSystemName)
+            SoftData.LoadSystemFactions(cleanSystemName)
         Next
         RockRatsClient.LogOutput("Downloaded " + elements(1) + " RockRats Systems")
     End Sub
 
-    Friend Sub initJournalCodes()
+    Friend Sub InitJournalCodes()
         ' Server Codes
         '
         'my @allegianceCodes = ("Independent", "Federation", "Empire", "None");
