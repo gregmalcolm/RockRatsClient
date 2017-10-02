@@ -227,27 +227,28 @@ Module Comms
     Private Sub ReadFactionFromResults(factionsData As List(Of Dictionary(Of String, AttributeValue)), systemName As String)
         Dim systemFactions = factionsData.Where(Function(faction) faction("system").S.Equals(systemName))
 
-        Dim lastEntry = systemFactions _
-            .OrderBy(Function(faction) faction("date").S) _
-            .Select(Function(faction) faction("date").S) _
-            .Last()
+        If systemFactions.Count > 0 Then
+            Dim lastEntry = systemFactions _
+                    .OrderBy(Function(faction) faction("date").S) _
+                    .Select(Function(faction) faction("date").S) _
+                    .Last()
 
-        Dim factionsList = systemFactions _
-            .Where(Function(faction) faction("date").S.Equals(lastEntry)) _
-            .OrderByDescending(Function(faction) faction("influence").N) _
-            .Select(Function(faction) New Faction() With {
-                .System = faction("system").S,
-                .FactionName = faction("faction").S,
-                .OldEntryDate = Date.ParseExact(faction("date").S, "yyyy-MM-dd", Nothing),
-                .OldCommander = If(faction.ContainsKey("commander"), faction("commander").S, Nothing),
-                .OldInfluence = If(faction.ContainsKey("influence"), Decimal.Parse(faction("influence").N), Nothing),
-                .OldState = If(faction.ContainsKey("state"), faction("state").S, Nothing),
-                .Downloaded = True
-            }) _
-            .ToList()
+            Dim factionsList = systemFactions _
+                .Where(Function(faction) faction("date").S.Equals(lastEntry)) _
+                .OrderByDescending(Function(faction) faction("influence").N) _
+                .Select(Function(faction) New Faction() With {
+                    .System = faction("system").S,
+                    .FactionName = faction("faction").S,
+                    .OldEntryDate = Date.ParseExact(faction("date").S, "yyyy-MM-dd", Nothing),
+                    .OldCommander = If(faction.ContainsKey("commander"), faction("commander").S, Nothing),
+                    .OldInfluence = If(faction.ContainsKey("influence"), Decimal.Parse(faction("influence").N), Nothing),
+                    .OldState = If(faction.ContainsKey("state"), faction("state").S, Nothing),
+                    .Downloaded = True
+                }) _
+                .ToList()
 
-        SoftData.AddFactions(systemName, factionsList)
-
+            SoftData.AddFactions(systemName, factionsList)
+        End If
     End Sub
     Private Async Function AddFactionNameToAws(systemName As String) As Task
         RockRatsClient.LogOutput("Transmitting Add System Name ('" + systemName + "') to AWS: ")

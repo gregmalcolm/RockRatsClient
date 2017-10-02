@@ -1,17 +1,17 @@
 ﻿Imports Emgu.CV
 Imports Emgu.CV.CvEnum
 Imports Emgu.CV.OCR
+Imports System.Text.RegularExpressions
 
 Module SoftData
     Private RockRatsOCR As Tesseract
     Private procOCRTextChange As Boolean = False
     Private selectedSystem As String = ""
-    Private currentSystemFactionNames(20) As String
     Private allStates As New Hashtable()
-    Private numFactions As Integer = 0
     Private exeDir As String = AppDomain.CurrentDomain.BaseDirectory
-    Private influenceAccountedFor As Double = 0.0
+    Private influenceAccountedFor As Decimal = 0
     Private systemFactions As New Dictionary(Of String, List(Of Faction))
+    Private factions As List(Of Faction)
 
     Friend Sub ProcEDScreen(bitmapImage As System.Drawing.Bitmap)
         Try
@@ -26,8 +26,11 @@ Module SoftData
             Dim catchFaction As String = ""
             Dim factionName As String = ""
             Dim influence As String = ""
-            Dim influenceVal As Double = 0
+            Dim influenceVal As Decimal = 0
             For Each line As String In elements
+                ' Uncommit to see OCR text
+                ' RockRatsClient.LogEverywhere(line)
+
                 ' line = whitelistChars(line)
                 If catchFaction <> "" Then
                     If InStr(line, "RNMENT") = 0 Then
@@ -61,7 +64,7 @@ Module SoftData
         procOCRTextChange = True
     End Sub
 
-    Private Sub AddEDCaptureText(factionName As String, influence As String, state As String, influenceVal As Double)
+    Private Sub AddEDCaptureText(factionName As String, influence As String, state As String, influenceVal As Decimal)
         Dim doUpdate As Boolean = True
         For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
             If row.Cells(0).Value.ToString = factionName Then
@@ -100,11 +103,11 @@ Module SoftData
 
     Friend Sub ProcessOCRTextChg()
         If procOCRTextChange Then
-            Dim i As Double = 0
+            Dim i As Decimal = 0
             For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
-                Dim n As Double = 0.0
+                Dim n As Decimal = 0
                 Try
-                    n = Val(row.Cells(1).Value.ToString)
+                    n = Decimal.Parse(row.Cells(1).Value.ToString)
                 Catch ex As Exception
                     ' Don't care
                 End Try
@@ -144,76 +147,68 @@ Module SoftData
         End If
     End Sub
 
-    Private Function MatchFaction(factionName As String) As String
-        Dim retFaction As String = ""
-        Dim findFaction As String = Trim(UCase(factionName))
+    Private Function MatchFaction(targetFaction As String) As String
+        Dim factionName As String = ""
+        targetFaction = Trim(UCase(targetFaction))
         Dim factionMatched As Boolean = False
-        findFaction = Replace(findFaction, ":", "")
-        findFaction = Replace(findFaction, "'", "")
-        findFaction = Replace(findFaction, "  ", " ")
-        findFaction = Trim(Replace(findFaction, ".", ""))
-        For i = 0 To numFactions
-            If currentSystemFactionNames(i) = findFaction Then
-                retFaction = currentSystemFactionNames(i)
+        targetFaction = Regex.Replace(targetFaction, "[,'\.]", String.Empty)
+        targetFaction = Trim(Replace(targetFaction, "  ", " "))
+        If factions IsNot Nothing Then
+            If factions.FirstOrDefault(Function(faction) faction.Equals(targetFaction)) IsNot Nothing Then
                 factionMatched = True
-                Exit For
-            End If
-        Next
-        If Not factionMatched Then
-            Dim l As Integer = Len(findFaction)
-            Dim x As Integer = CInt(Math.Round(l * 0.95))
-            Dim y As Integer = CInt(Math.Round(l * 0.85))
-            Dim z As Integer = CInt(Math.Round(l * 0.7))
-            Dim e As Integer = CInt(Math.Round(l * 0.3))
-            Dim s(numFactions) As Integer
-            For i = 0 To numFactions - 1
-                s(i) = 0
-                If InStr(currentSystemFactionNames(i), Left(findFaction, x)) > 0 Then
-                    s(i) = s(i) + 9
-                End If
-                If InStr(currentSystemFactionNames(i), Right(findFaction, x)) > 0 Then
-                    s(i) = s(i) + 9
-                End If
-                If InStr(currentSystemFactionNames(i), Left(findFaction, y)) > 0 Then
-                    s(i) = s(i) + 7
-                End If
-                If InStr(currentSystemFactionNames(i), Right(findFaction, y)) > 0 Then
-                    s(i) = s(i) + 7
-                End If
-                If InStr(currentSystemFactionNames(i), Left(findFaction, z)) > 0 Then
-                    s(i) = s(i) + 5
-                End If
-                If InStr(currentSystemFactionNames(i), Right(findFaction, z)) > 0 Then
-                    s(i) = s(i) + 5
-                End If
-                If Left(currentSystemFactionNames(i), e) = Left(findFaction, e) Then
-                    s(i) = s(i) + 3
-                End If
-                If Right(currentSystemFactionNames(i), e) = Right(findFaction, e) Then
-                    s(i) = s(i) + 3
-                End If
-            Next
-            Dim maxI As Integer = -1
-            Dim maxV As Integer = 0
-            For i = 0 To numFactions - 1
-                If s(i) > maxV Then
-                    maxV = s(i)
-                    maxI = i
-                End If
-            Next
-            If maxI > -1 Then
-                retFaction = currentSystemFactionNames(maxI)
+            Else
+                Dim nameLength As Integer = Len(targetFaction)
+                Dim x As Integer = CInt(Math.Round(nameLength * 0.95))
+                Dim y As Integer = CInt(Math.Round(nameLength * 0.85))
+                Dim z As Integer = CInt(Math.Round(nameLength * 0.7))
+                Dim e As Integer = CInt(Math.Round(nameLength * 0.3))
+                Dim scores = New Dictionary(Of String, Integer)
+                For Each faction In factions
+                    Dim score As Integer = 0
+                    If InStr(faction.FactionName, Left(targetFaction, x)) > 0 Then
+                        score = score + 9
+                    End If
+                    If InStr(faction.FactionName, Right(targetFaction, x)) > 0 Then
+                        score = score + 9
+                    End If
+                    If InStr(faction.FactionName, Left(targetFaction, y)) > 0 Then
+                        score = score + 7
+                    End If
+                    If InStr(faction.FactionName, Right(targetFaction, y)) > 0 Then
+                        score = score + 7
+                    End If
+                    If InStr(faction.FactionName, Left(targetFaction, z)) > 0 Then
+                        score = score + 5
+                    End If
+                    If InStr(faction.FactionName, Right(targetFaction, z)) > 0 Then
+                        score = score + 5
+                    End If
+                    If Left(faction.FactionName, e) = Left(targetFaction, e) Then
+                        score = score + 3
+                    End If
+                    If Right(faction.FactionName, e) = Right(targetFaction, e) Then
+                        score = score + 3
+                    End If
+                    scores.Add(faction.FactionName, score)
+                Next
+                Dim maxValue As Integer = 0
+                For Each score In scores
+                    If score.Value > maxValue Then
+                        maxValue = score.Value
+                        factionName = score.Key
+                    End If
+                Next
             End If
         End If
-        Return retFaction
+        Return factionName
     End Function
 
-    Private Function MatchInfluence(edInfluence As String) As Double
+    Private Function MatchInfluence(edInfluence As String) As Decimal
         Dim s As String = Strings.Left(edInfluence, Len(edInfluence) - 1)
         s = Trim(Mid(s, 12))
-        Dim n As Double
+        Dim n As Decimal
         Try
-            n = Val(s)
+            n = Decimal.Parse(s)
         Catch ex As Exception
             n = 0
         End Try
@@ -281,7 +276,8 @@ Module SoftData
         RockRatsClient.SoftDataGrid.Rows.Clear()
 
         If systemFactions.ContainsKey(systemName) Then
-            For Each faction In systemFactions(systemName)
+            factions = systemFactions(systemName)
+            For Each faction In factions
                 UpdateDataGridRow(faction.FactionName, faction.Influence.ToString(), faction.State, faction.Found)
             Next
         End If
@@ -303,10 +299,6 @@ Module SoftData
 
         End Try
         Return cleanString
-    End Function
-
-    Friend Function GetNumFactions() As Integer
-        Return numFactions
     End Function
 
     Public Function AddSystem(systemName As String) As String
