@@ -97,8 +97,8 @@ Partial Class RockRatsClient
         Me.statusLabel = New System.Windows.Forms.Label()
         Me.Label10 = New System.Windows.Forms.Label()
         Me.Label8 = New System.Windows.Forms.Label()
-        Me.Tabs = New System.Windows.Forms.TabControl()
         Me.Label13 = New System.Windows.Forms.Label()
+        Me.Tabs = New System.Windows.Forms.TabControl()
         CType(Me.EDCapture, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.resizeSlider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.HelpTab.SuspendLayout()
@@ -792,6 +792,7 @@ Partial Class RockRatsClient
         Me.SoftDataGrid.Location = New System.Drawing.Point(216, 29)
         Me.SoftDataGrid.Name = "SoftDataGrid"
         Me.SoftDataGrid.RowHeadersWidth = 4
+        Me.SoftDataGrid.ShowCellErrors = False
         Me.SoftDataGrid.Size = New System.Drawing.Size(387, 190)
         Me.SoftDataGrid.TabIndex = 37
         '
@@ -862,6 +863,15 @@ Partial Class RockRatsClient
         Me.Label8.Text = "2. Capture (Multiple times)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "TIP: Zoom out all the way on System Map." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "It helps t" &
     "he OCR out."
         '
+        'Label13
+        '
+        Me.Label13.AutoSize = True
+        Me.Label13.Location = New System.Drawing.Point(17, 43)
+        Me.Label13.Name = "Label13"
+        Me.Label13.Size = New System.Drawing.Size(54, 13)
+        Me.Label13.TabIndex = 49
+        Me.Label13.Text = "Loading..."
+        '
         'Tabs
         '
         Me.Tabs.Controls.Add(Me.SoftDataTab)
@@ -875,15 +885,6 @@ Partial Class RockRatsClient
         Me.Tabs.SelectedIndex = 0
         Me.Tabs.Size = New System.Drawing.Size(630, 397)
         Me.Tabs.TabIndex = 5
-        '
-        'Label13
-        '
-        Me.Label13.AutoSize = True
-        Me.Label13.Location = New System.Drawing.Point(17, 43)
-        Me.Label13.Name = "Label13"
-        Me.Label13.Size = New System.Drawing.Size(54, 13)
-        Me.Label13.TabIndex = 49
-        Me.Label13.Text = "Loading..."
         '
         'RockRatsClient
         '

@@ -4,8 +4,8 @@ Imports Emgu.CV.OCR
 Imports System.Text.RegularExpressions
 
 Module SoftData
-    Private RockRatsOCR As Tesseract
-    Private procOCRTextChange As Boolean = False
+    Private rockRatsOcr As Tesseract
+    Private processingOcrTextChange As Boolean = True
     Private selectedSystem As String = ""
     Private allStates As New Hashtable()
     Private exeDir As String = AppDomain.CurrentDomain.BaseDirectory
@@ -15,14 +15,15 @@ Module SoftData
 
     Friend Sub ProcEDScreen(bitmapImage As System.Drawing.Bitmap)
         Try
-            procOCRTextChange = False
-            RockRatsOCR = New Tesseract() ' OcrEngineMode.TesseractCubeCombined
-            RockRatsOCR.SetVariable("tessedit_char_whitelist", "QWERTYUIOPASDFGHJKLZXCVBNM.0987654321%:")
-            RockRatsOCR.Init(exeDir + "\tessdata", "eng", OcrEngineMode.TesseractOnly)
-            RockRatsOCR.Recognize(New Image(Of [Structure].Gray, Byte)(bitmapImage))
+            updateFactionsData()
+            processingOcrTextChange = True
+            rockRatsOcr = New Tesseract() ' OcrEngineMode.TesseractCubeCombined
+            rockRatsOcr.SetVariable("tessedit_char_whitelist", "QWERTYUIOPASDFGHJKLZXCVBNM.0987654321%:")
+            rockRatsOcr.Init(exeDir + "\tessdata", "eng", OcrEngineMode.TesseractOnly)
+            rockRatsOcr.Recognize(New Image(Of [Structure].Gray, Byte)(bitmapImage))
             Dim elements() As String
             Dim stringSeparators() As String = {vbCrLf}
-            elements = RockRatsOCR.GetText.Split(stringSeparators, StringSplitOptions.None)
+            elements = rockRatsOcr.GetText.Split(stringSeparators, StringSplitOptions.None)
             Dim catchFaction As String = ""
             Dim factionName As String = ""
             Dim influence As String = ""
@@ -61,17 +62,19 @@ Module SoftData
         Catch ex As Exception
             MsgBox("Something went wrong with OCR - Try Again")
         End Try
-        procOCRTextChange = True
+        processingOcrTextChange = False
     End Sub
 
     Private Sub AddEDCaptureText(factionName As String, influence As String, state As String, influenceVal As Decimal)
         Dim doUpdate As Boolean = True
         For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
-            If row.Cells(0).Value.ToString = factionName Then
-                If CBool(RockRatsClient.SoftDataGrid.Rows(row.Index).Cells(3).Value) Then
-                    doUpdate = False
+            If Not row.IsNewRow Then
+                If row.Cells(RockRatsClient.ColumnTypes.Faction).Value.ToString = factionName Then
+                    If CBool(row.Cells(RockRatsClient.ColumnTypes.Found).Value) Then
+                        doUpdate = False
+                    End If
+                    Exit For
                 End If
-                Exit For
             End If
         Next
         If doUpdate Then
@@ -86,13 +89,15 @@ Module SoftData
     Friend Sub UpdateDataGridRow(factionName As String, influence As String, state As String, found As Boolean)
         Dim doInsert As Boolean = True
         For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
-            If row.Cells(0).Value IsNot Nothing Then
-                If row.Cells(0).Value.ToString = factionName Then
-                    RockRatsClient.SoftDataGrid.Rows(row.Index).Cells(1).Value = influence
-                    RockRatsClient.SoftDataGrid.Rows(row.Index).Cells(2).Value = state
-                    RockRatsClient.SoftDataGrid.Rows(row.Index).Cells(3).Value = found
-                    doInsert = False
-                    Exit For
+            If Not row.IsNewRow Then
+                If row.Cells(RockRatsClient.ColumnTypes.Faction).Value IsNot Nothing Then
+                    If row.Cells(RockRatsClient.ColumnTypes.Faction).Value.ToString = factionName Then
+                        row.Cells(RockRatsClient.ColumnTypes.Influence).Value = influence
+                        row.Cells(RockRatsClient.ColumnTypes.State).Value = state
+                        row.Cells(RockRatsClient.ColumnTypes.Found).Value = found
+                        doInsert = False
+                        Exit For
+                    End If
                 End If
             End If
         Next
@@ -102,16 +107,21 @@ Module SoftData
     End Sub
 
     Friend Sub ProcessOCRTextChg()
-        If procOCRTextChange Then
+        If Not processingOcrTextChange Then
+            updateFactionsData()
             Dim i As Decimal = 0
             For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
-                Dim n As Decimal = 0
-                Try
-                    n = Decimal.Parse(row.Cells(1).Value.ToString)
-                Catch ex As Exception
-                    ' Don't care
-                End Try
-                i = i + n
+                If Not row.IsNewRow Then
+                    If Not row.IsNewRow Then
+                        Dim n As Decimal = 0
+                        Try
+                            n = Decimal.Parse(row.Cells(RockRatsClient.ColumnTypes.Influence).Value.ToString)
+                        Catch ex As Exception
+                            ' Don't care
+                        End Try
+                        i = i + n
+                    End If
+                End If
             Next
 
             influenceAccountedFor = i
@@ -142,6 +152,7 @@ Module SoftData
             RockRatsClient.PasteEDScreen.Enabled = True
             RockRatsClient.UpdSoftData.Enabled = True
             ProcessOCRTextChg()
+            SaveSystemFactions()
             LoadSystemFactions(systemName)
             selectedSystem = systemName
         End If
@@ -269,20 +280,30 @@ Module SoftData
         Return " "
     End Function
 
-    Public Function AddFactions(systemName As String, factions As List(Of Faction)) As Boolean
+    Public Sub AddFactions(systemName As String, factions As List(Of Faction))
         systemFactions.Add(systemName, factions)
-    End Function
-    Friend Sub LoadSystemFactions(systemName As String)
-        RockRatsClient.SoftDataGrid.Rows.Clear()
+    End Sub
+    Public Sub SaveSystemFactions()
+        updateFactionsData()
 
-        If systemFactions.ContainsKey(systemName) Then
-            factions = systemFactions(systemName)
-            For Each faction In factions
-                UpdateDataGridRow(faction.FactionName, faction.Influence.ToString(), faction.State, faction.Found)
-            Next
+        If factions IsNot Nothing And systemFactions IsNot Nothing Then
+            If Not String.IsNullOrEmpty(selectedSystem) And systemFactions.ContainsKey(selectedSystem) Then
+                systemFactions(selectedSystem) = factions
+            End If
         End If
     End Sub
-    Friend Function WhitelistChars(cleanString As String) As String
+    Public Sub LoadSystemFactions(systemName As String)
+        RockRatsClient.SoftDataGrid.Rows.Clear()
+
+        If Not systemFactions.ContainsKey(systemName) Then
+            systemFactions.Add(systemName, New List(Of Faction))
+        End If
+        factions = systemFactions(systemName)
+        For Each faction In factions
+            UpdateDataGridRow(faction.FactionName, faction.Influence.ToString(), faction.State, faction.Found)
+        Next
+    End Sub
+    Public Function WhitelistChars(cleanString As String) As String
         Try
             Dim ch As Char, ln As Integer, x As Integer = 0
             ln = cleanString.Length
@@ -314,5 +335,53 @@ Module SoftData
         RockRatsClient.SystemsList.Items.Remove(cleanSystemName)
 
         Return cleanSystemName
+    End Function
+
+    Public Sub updateFactionsData()
+        If systemFactions IsNot Nothing Then
+            If Not systemFactions.ContainsKey(selectedSystem) Then
+                systemFactions.Add(selectedSystem, New List(Of Faction))
+            End If
+            Dim updatedFactions = systemFactions(selectedSystem)
+            For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
+                If updatedFactions IsNot Nothing And Not row.IsNewRow Then
+                    Dim gridFaction As String = Trim(UCase(WhitelistChars(row.Cells(RockRatsClient.ColumnTypes.Faction).Value.ToString)))
+                    If Not String.IsNullOrEmpty(gridFaction) Then
+                        If factions.FirstOrDefault(Function(f) f.FactionName.Equals(gridFaction)) Is Nothing Then
+                            Dim faction As New Faction() With {
+                                .FactionName = gridFaction
+                            }
+                            updatedFactions.Add(faction)
+                        End If
+                    End If
+                End If
+            Next
+            For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
+                If Not row.IsNewRow Then
+                    Dim gridFaction As String = Trim(UCase(WhitelistChars(row.Cells(RockRatsClient.ColumnTypes.Faction).Value.ToString)))
+                    If Not String.IsNullOrEmpty(gridFaction) Then
+                        Dim faction = updatedFactions.First(Function(f) f.FactionName.Equals(gridFaction))
+                        Try
+                            faction.Influence = Decimal.Parse(row.Cells(RockRatsClient.ColumnTypes.Influence).Value.ToString)
+                        Catch ex As Exception
+                        End Try
+                        faction.State = SafeString(row.Cells(RockRatsClient.ColumnTypes.State).Value)
+                        Try
+                            faction.Found = CBool(row.Cells(RockRatsClient.ColumnTypes.Found).Value)
+                        Catch ex As Exception
+                        End Try
+
+                    End If
+                End If
+            Next
+        End If
+    End Sub
+
+    Function SafeString(str As Object) As String
+        Try
+            Return str.ToString
+        Catch ex As Exception
+            Return ""
+        End Try
     End Function
 End Module

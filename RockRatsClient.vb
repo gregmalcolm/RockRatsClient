@@ -2,6 +2,14 @@
 Imports System.Deployment.Application
 
 Public Class RockRatsClient
+    Public Enum ColumnTypes
+        Faction = 0
+        Influence = 1
+        State = 2
+        Found = 3
+    End Enum
+
+
     Private AppDataDir As String = Environment.GetEnvironmentVariable("USERPROFILE") + "\AppData\Local\RockRatsClient"
     Private clientVersion As String = Application.ProductVersion
     Private noLogDups As String = ""
@@ -242,21 +250,21 @@ Public Class RockRatsClient
         Dim factionsSent As Integer = 0
         Dim done As Boolean = False
         For Each row As DataGridViewRow In SoftDataGrid.Rows
-            If row.Cells(0).Value IsNot Nothing Then
-                If row.Cells(1).Value IsNot Nothing Then
-                    If row.Cells(0).Value.ToString.Trim <> "" Then
-                        If IsNumeric(row.Cells(1).Value.ToString) Then
-                            If row.Cells(2).Value Is Nothing Then
-                                row.Cells(2).Value = ""
+            If row.Cells(ColumnTypes.Faction).Value IsNot Nothing Then
+                If row.Cells(ColumnTypes.Influence).Value IsNot Nothing Then
+                    If row.Cells(ColumnTypes.Faction).Value.ToString.Trim <> "" Then
+                        If IsNumeric(row.Cells(ColumnTypes.Influence).Value.ToString) Then
+                            If row.Cells(ColumnTypes.State).Value Is Nothing Then
+                                row.Cells(ColumnTypes.State).Value = ""
                             End If
-                            Dim cwaitForCompletion As Boolean = Comms.SendUpdate("", "", "", selSystem.SelectedItem.ToString + ":" + row.Cells(0).Value.ToString.ToUpper + ":" + row.Cells(2).Value.ToString + ":" + row.Cells(1).Value.ToString + ":OCR")
+                            Dim cwaitForCompletion As Boolean = Comms.SendUpdate("", "", "", selSystem.SelectedItem.ToString + ":" + row.Cells(ColumnTypes.Faction).Value.ToString.ToUpper + ":" + row.Cells(ColumnTypes.State).Value.ToString + ":" + row.Cells(ColumnTypes.Influence).Value.ToString + ":OCR")
                             factionsSent += 1
                         Else
-                            LogEverywhere("Skipping " & row.Cells(0).Value.ToString & " because the infuence given is not a number")
+                            LogEverywhere("Skipping " & row.Cells(ColumnTypes.Faction).Value.ToString & " because the infuence given is not a number")
                         End If
                     End If
                 Else
-                    LogEverywhere("Skipping " & row.Cells(0).Value.ToString & " because no influence was present")
+                    LogEverywhere("Skipping " & row.Cells(ColumnTypes.Faction).Value.ToString & " because no influence was present")
                 End If
             End If
         Next
@@ -409,6 +417,31 @@ Public Class RockRatsClient
             Else
                 StatusLog("Failed to remove the system, sorry!")
             End If
+        End If
+    End Sub
+
+    Private Sub SoftDataGrid_CellEndEdit(sender As Object, e As DataGridViewCellEventArgs) Handles SoftDataGrid.CellEndEdit
+        Dim cell = SoftDataGrid(e.ColumnIndex, e.RowIndex)
+        Select Case e.ColumnIndex
+            Case ColumnTypes.Faction
+                Try
+                    Dim faction = cell.Value.ToString
+                    cell.Value = Trim(UCase(SoftData.WhitelistChars(faction)))
+                Catch ex As Exception
+                End Try
+            Case ColumnTypes.Influence
+                Try
+                    Dim influence = Decimal.Parse(cell.Value.ToString)
+                Catch ex As Exception
+                    cell.Value = "0"
+                End Try
+        End Select
+    End Sub
+
+    Private Sub SoftDataGrid_KeyPress(sender As Object, e As KeyPressEventArgs) Handles SoftDataGrid.KeyPress
+        If e.KeyChar.Equals(Keys.Delete) Then
+            Dim cell = SoftDataGrid.CurrentCell
+            cell.Value = Nothing
         End If
     End Sub
 End Class
