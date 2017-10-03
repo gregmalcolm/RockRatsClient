@@ -235,7 +235,7 @@ Module Comms
 
             Dim factionsList = systemFactions _
                 .Where(Function(faction) faction("date").S.Equals(lastEntry)) _
-                .OrderByDescending(Function(faction) faction("influence").N) _
+                .OrderByDescending(Function(faction) Decimal.Parse(faction("influence").N)) _
                 .Select(Function(faction) New Faction() With {
                     .System = faction("system").S,
                     .FactionName = faction("faction").S,

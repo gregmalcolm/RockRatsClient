@@ -9,7 +9,6 @@ Public Class RockRatsClient
         Found = 3
     End Enum
 
-
     Private AppDataDir As String = Environment.GetEnvironmentVariable("USERPROFILE") + "\AppData\Local\RockRatsClient"
     Private clientVersion As String = Application.ProductVersion
     Private noLogDups As String = ""
@@ -439,7 +438,14 @@ Public Class RockRatsClient
     End Sub
 
     Private Sub SoftDataGrid_KeyPress(sender As Object, e As KeyPressEventArgs) Handles SoftDataGrid.KeyPress
-        If e.KeyChar.Equals(Keys.Delete) Then
+        If e.KeyChar.Equals(vbBack) Then
+            Dim cell = SoftDataGrid.CurrentCell
+            cell.Value = Nothing
+        End If
+    End Sub
+
+    Private Sub SoftDataGrid_KeyDown(sender As Object, e As KeyEventArgs) Handles SoftDataGrid.KeyDown
+        If e.KeyCode.Equals(Keys.Delete) Then
             Dim cell = SoftDataGrid.CurrentCell
             cell.Value = Nothing
         End If

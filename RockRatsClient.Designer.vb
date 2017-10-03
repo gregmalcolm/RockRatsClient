@@ -790,6 +790,7 @@ Partial Class RockRatsClient
         Me.SoftDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.SoftDataGrid.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Faction, Me.Influence, Me.State, Me.Found})
         Me.SoftDataGrid.Location = New System.Drawing.Point(216, 29)
+        Me.SoftDataGrid.MultiSelect = False
         Me.SoftDataGrid.Name = "SoftDataGrid"
         Me.SoftDataGrid.RowHeadersWidth = 4
         Me.SoftDataGrid.ShowCellErrors = False
