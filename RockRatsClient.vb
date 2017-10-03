@@ -438,16 +438,33 @@ Public Class RockRatsClient
     End Sub
 
     Private Sub SoftDataGrid_KeyPress(sender As Object, e As KeyPressEventArgs) Handles SoftDataGrid.KeyPress
+        Dim cell = SoftDataGrid.CurrentCell
         If e.KeyChar.Equals(vbBack) Then
-            Dim cell = SoftDataGrid.CurrentCell
             cell.Value = Nothing
+            SoftDataGrid.NotifyCurrentCellDirty(True)
         End If
     End Sub
 
     Private Sub SoftDataGrid_KeyDown(sender As Object, e As KeyEventArgs) Handles SoftDataGrid.KeyDown
+        Dim cell = SoftDataGrid.CurrentCell
         If e.KeyCode.Equals(Keys.Delete) Then
-            Dim cell = SoftDataGrid.CurrentCell
             cell.Value = Nothing
         End If
+
+        If e.KeyCode = Keys.C AndAlso e.Modifiers = Keys.Control Then
+            My.Computer.Clipboard.SetText(cell.Value.ToString)
+        End If
+
+        If e.KeyCode = Keys.V AndAlso e.Modifiers = Keys.Control Then
+            cell.Value = My.Computer.Clipboard.GetText()
+            SoftDataGrid.NotifyCurrentCellDirty(True)
+        End If
+
+        If e.KeyCode = Keys.X AndAlso e.Modifiers = Keys.Control Then
+            My.Computer.Clipboard.SetText(cell.Value.ToString)
+            cell.Value = Nothing
+            SoftDataGrid.NotifyCurrentCellDirty(True)
+        End If
+
     End Sub
 End Class
