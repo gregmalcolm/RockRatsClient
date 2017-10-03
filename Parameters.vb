@@ -11,7 +11,8 @@
         defaultValues.Add("UpdateSiteActivity", "O")
         defaultValues.Add("BlackAndWhile", "False")
         defaultValues.Add("resizeValue", "12")
-        defaultValues.Add("overScan", "100")
+        defaultValues.Add("LogOcrText", "False")
+        defaultValues.Add("ScanMarginLeft", "25")
     End Sub
 
     Private Function getDefaultParameter(pKey As String) As String

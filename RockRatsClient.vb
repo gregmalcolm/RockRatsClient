@@ -36,6 +36,12 @@ Public Class RockRatsClient
         If bw = "True" Then
             BlackAndWhile.Checked = True
         End If
+        Dim logOcrText As String = Parameters.getParameter("LogOcrText")
+        If logOcrText = "True" Then
+            LogOcrCheckbox.Checked = True
+        End If
+        ScanMarginLeft.Text = Parameters.getParameter("ScanMarginLeft")
+
         resizeSlider.Value = CInt(Parameters.getParameter("resizeValue"))
         resizeValue.Text = "Resize: " + CType((resizeSlider.Value / 4) + 1, String) + "x"
         SaveConnDetails.Enabled = False
@@ -44,6 +50,9 @@ Public Class RockRatsClient
         SystemName.Text = DataCache.getDataCache("Store", "LastSystem")
         ShipName.Text = DataCache.getDataCache("Store", "LastShip")
         CommanderName.Text = DataCache.getDataCache("Store", "LastCommander")
+        If String.IsNullOrEmpty(CommanderName.Text) Then
+            CommanderName.Text = "Jameson"
+        End If
         RockRatsActivity.Items.Add("Logon + All RockRats System Activity")
         RockRatsActivity.Items.Add("Logon + Jumps in RockRats Systems")
         RockRatsActivity.Items.Add("Logon + Docks in RockRats Systems")
@@ -165,19 +174,28 @@ Public Class RockRatsClient
         End Try
     End Sub
     Private Sub CaptureEDScreen_Click(sender As Object, e As EventArgs) Handles CaptureEDScreen.Click
-        StatusLog("OCR Scan in progress...")
         Dim bounds As Rectangle
         Dim screenshot As System.Drawing.Bitmap
         Dim graph As Graphics
-        Dim overScan As Double = CInt(Parameters.getParameter("overScan")) / 100
+        Dim scanMarginPercentage As Integer = 25
+
+        StatusLog("OCR Scan in progress...")
+
         bounds = Screen.PrimaryScreen.Bounds
-        screenshot = New System.Drawing.Bitmap(CInt((bounds.Width * overScan) / 2.5), CInt(bounds.Height * overScan), System.Drawing.Imaging.PixelFormat.Format32bppArgb) ' Format32bppArgb
+        Try
+            scanMarginPercentage = Integer.Parse(Parameters.getParameter("ScanMarginLeft"))
+        Catch ex As Exception
+        End Try
+        Dim scanMargin As Integer = CInt(bounds.Width * (scanMarginPercentage / 100))
+
+        screenshot = New System.Drawing.Bitmap(scanMargin, bounds.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb) ' Format32bppArgb
         graph = Graphics.FromImage(screenshot)
-        graph.CopyFromScreen(CInt(bounds.X * overScan), CInt(bounds.Y * overScan), 0, 0, bounds.Size, CopyPixelOperation.SourceCopy)
+        graph.CopyFromScreen(bounds.X, bounds.Y, 0, 0, New Size(scanMargin, bounds.Height), CopyPixelOperation.SourceCopy)
+
         completeEDScreen(screenshot)
     End Sub
 
-    Private Sub PasteEDScreen_Click(sender As Object, e As EventArgs) Handles PasteEDScreen.Click
+    Private Sub PasteEDScreen_Click(sender As Object, e As EventArgs)
         StatusLog("OCR Scan in progress...")
         Dim screenshot As System.Drawing.Bitmap
         If My.Computer.Clipboard.ContainsImage Then
@@ -192,26 +210,18 @@ Public Class RockRatsClient
         ocrWorking.Visible = True
         ocrWorking.Refresh()
         Dim resize As Double = (resizeSlider.Value / 4) + 1
-        If resize > 1 Then
-            Dim procBitmap As New Bitmap(CInt(screenshot.Width * resize), CInt(screenshot.Height * resize))
-            Dim grBitmap As Graphics = Graphics.FromImage(procBitmap)
-            grBitmap.DrawImage(screenshot, 0, 0, procBitmap.Width + 1, procBitmap.Height + 1)
-            If BlackAndWhile.Checked Then
-                Dim procImg As Bitmap = toGrayScale(procBitmap)
-                Call Global.RockRatsClient.ProcEDScreen(procImg)
-                EDCapture.Image = procImg
-            Else
-                Call Global.RockRatsClient.ProcEDScreen(procBitmap)
-                EDCapture.Image = procBitmap
-            End If
-        ElseIf BlackAndWhile.Checked Then
-            Dim procImg As Bitmap = toGrayScale(screenshot)
+        Dim procBitmap As New Bitmap(CInt(screenshot.Width * resize), CInt(screenshot.Height * resize))
+        Dim grBitmap As Graphics = Graphics.FromImage(procBitmap)
+        grBitmap.DrawImage(screenshot, 0, 0, procBitmap.Width, procBitmap.Height)
+        If BlackAndWhile.Checked Then
+            Dim procImg As Bitmap = toGrayScale(procBitmap)
             Call Global.RockRatsClient.ProcEDScreen(procImg)
             EDCapture.Image = procImg
         Else
-            Call Global.RockRatsClient.ProcEDScreen(screenshot)
-            EDCapture.Image = screenshot
+            Call Global.RockRatsClient.ProcEDScreen(procBitmap)
+            EDCapture.Image = procBitmap
         End If
+
         EDCapture.Refresh()
         ocrWorking.Visible = False
         StatusLog("OCR Finished")
@@ -476,6 +486,27 @@ Public Class RockRatsClient
             cell.Value = Nothing
             SoftDataGrid.NotifyCurrentCellDirty(True)
         End If
+
+    End Sub
+
+    Private Sub LogOcrCheckbox_CheckedChanged(sender As Object, e As EventArgs) Handles LogOcrCheckbox.CheckedChanged
+        If LogOcrCheckbox.Checked Then
+            Parameters.setParameter("LogOcrText", "True")
+        Else
+            Parameters.setParameter("LogOcrText", "False")
+        End If
+    End Sub
+
+    Private Sub ScanMarginLeft_TextChanged(sender As Object, e As EventArgs) Handles ScanMarginLeft.TextChanged
+        Try
+            Dim value = Integer.Parse(Trim(ScanMarginLeft.Text))
+            Parameters.setParameter("ScanMarginLeft", ScanMarginLeft.Text)
+        Catch ex As Exception
+
+        End Try
+    End Sub
+
+    Private Sub resizeValue_Click(sender As Object, e As EventArgs) Handles resizeValue.Click
 
     End Sub
 End Class

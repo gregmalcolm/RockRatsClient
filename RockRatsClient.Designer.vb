@@ -45,7 +45,6 @@ Partial Class RockRatsClient
         Me.UpdSoftData = New System.Windows.Forms.Button()
         Me.selSystem = New System.Windows.Forms.ComboBox()
         Me.infTotal = New System.Windows.Forms.Label()
-        Me.PasteEDScreen = New System.Windows.Forms.Button()
         Me.infTotalVal = New System.Windows.Forms.Label()
         Me.BlackAndWhile = New System.Windows.Forms.CheckBox()
         Me.resizeSlider = New System.Windows.Forms.TrackBar()
@@ -102,6 +101,10 @@ Partial Class RockRatsClient
         Me.InfluenceDiff = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.PrevState = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Found = New System.Windows.Forms.DataGridViewCheckBoxColumn()
+        Me.LogOcrCheckbox = New System.Windows.Forms.CheckBox()
+        Me.ScanMarginLeft = New System.Windows.Forms.TextBox()
+        Me.Label14 = New System.Windows.Forms.Label()
+        Me.Label17 = New System.Windows.Forms.Label()
         CType(Me.EDCapture, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.resizeSlider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.HelpTab.SuspendLayout()
@@ -258,7 +261,7 @@ Partial Class RockRatsClient
         'CaptureEDScreen
         '
         Me.CaptureEDScreen.Enabled = False
-        Me.CaptureEDScreen.Location = New System.Drawing.Point(8, 256)
+        Me.CaptureEDScreen.Location = New System.Drawing.Point(11, 293)
         Me.CaptureEDScreen.Name = "CaptureEDScreen"
         Me.CaptureEDScreen.Size = New System.Drawing.Size(103, 62)
         Me.CaptureEDScreen.TabIndex = 23
@@ -301,17 +304,6 @@ Partial Class RockRatsClient
         Me.infTotal.Text = "Influence Total"
         Me.ToolTip1.SetToolTip(Me.infTotal, "Influence Total has to be 100% before update is enabled")
         '
-        'PasteEDScreen
-        '
-        Me.PasteEDScreen.Enabled = False
-        Me.PasteEDScreen.Location = New System.Drawing.Point(117, 285)
-        Me.PasteEDScreen.Name = "PasteEDScreen"
-        Me.PasteEDScreen.Size = New System.Drawing.Size(89, 33)
-        Me.PasteEDScreen.TabIndex = 33
-        Me.PasteEDScreen.Text = "Paste"
-        Me.ToolTip1.SetToolTip(Me.PasteEDScreen, "Paste an Image from your Clipboard")
-        Me.PasteEDScreen.UseVisualStyleBackColor = True
-        '
         'infTotalVal
         '
         Me.infTotalVal.AutoSize = True
@@ -327,7 +319,7 @@ Partial Class RockRatsClient
         'BlackAndWhile
         '
         Me.BlackAndWhile.AutoSize = True
-        Me.BlackAndWhile.Location = New System.Drawing.Point(117, 262)
+        Me.BlackAndWhile.Location = New System.Drawing.Point(116, 314)
         Me.BlackAndWhile.Name = "BlackAndWhile"
         Me.BlackAndWhile.Size = New System.Drawing.Size(78, 17)
         Me.BlackAndWhile.TabIndex = 39
@@ -340,7 +332,7 @@ Partial Class RockRatsClient
         '
         Me.resizeSlider.BackColor = System.Drawing.SystemColors.Window
         Me.resizeSlider.LargeChange = 4
-        Me.resizeSlider.Location = New System.Drawing.Point(8, 205)
+        Me.resizeSlider.Location = New System.Drawing.Point(7, 242)
         Me.resizeSlider.Maximum = 12
         Me.resizeSlider.Name = "resizeSlider"
         Me.resizeSlider.Size = New System.Drawing.Size(187, 45)
@@ -362,9 +354,9 @@ Partial Class RockRatsClient
         '
         'NextSystem
         '
-        Me.NextSystem.Location = New System.Drawing.Point(677, 334)
+        Me.NextSystem.Location = New System.Drawing.Point(677, 354)
         Me.NextSystem.Name = "NextSystem"
-        Me.NextSystem.Size = New System.Drawing.Size(78, 31)
+        Me.NextSystem.Size = New System.Drawing.Size(78, 50)
         Me.NextSystem.TabIndex = 46
         Me.NextSystem.Text = "Next System"
         Me.ToolTip1.SetToolTip(Me.NextSystem, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
@@ -713,6 +705,9 @@ Partial Class RockRatsClient
         '
         'SoftDataTab
         '
+        Me.SoftDataTab.Controls.Add(Me.Label14)
+        Me.SoftDataTab.Controls.Add(Me.ScanMarginLeft)
+        Me.SoftDataTab.Controls.Add(Me.LogOcrCheckbox)
         Me.SoftDataTab.Controls.Add(Me.RemoveButton)
         Me.SoftDataTab.Controls.Add(Me.AddButton)
         Me.SoftDataTab.Controls.Add(Me.NextSystem)
@@ -727,7 +722,6 @@ Partial Class RockRatsClient
         Me.SoftDataTab.Controls.Add(Me.SoftDataGrid)
         Me.SoftDataTab.Controls.Add(Me.infTotalVal)
         Me.SoftDataTab.Controls.Add(Me.ocrWorking)
-        Me.SoftDataTab.Controls.Add(Me.PasteEDScreen)
         Me.SoftDataTab.Controls.Add(Me.infTotal)
         Me.SoftDataTab.Controls.Add(Me.Label10)
         Me.SoftDataTab.Controls.Add(Me.Label8)
@@ -736,9 +730,10 @@ Partial Class RockRatsClient
         Me.SoftDataTab.Controls.Add(Me.CaptureEDScreen)
         Me.SoftDataTab.Controls.Add(Me.EDCapture)
         Me.SoftDataTab.Controls.Add(Me.Label13)
+        Me.SoftDataTab.Controls.Add(Me.Label17)
         Me.SoftDataTab.Location = New System.Drawing.Point(4, 22)
         Me.SoftDataTab.Name = "SoftDataTab"
-        Me.SoftDataTab.Size = New System.Drawing.Size(758, 370)
+        Me.SoftDataTab.Size = New System.Drawing.Size(758, 407)
         Me.SoftDataTab.TabIndex = 3
         Me.SoftDataTab.Text = "OCR"
         Me.SoftDataTab.UseVisualStyleBackColor = True
@@ -750,7 +745,7 @@ Partial Class RockRatsClient
         Me.StatusBox.Name = "StatusBox"
         Me.StatusBox.ReadOnly = True
         Me.StatusBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.StatusBox.Size = New System.Drawing.Size(456, 137)
+        Me.StatusBox.Size = New System.Drawing.Size(456, 182)
         Me.StatusBox.TabIndex = 44
         '
         'SystemNameBox
@@ -781,7 +776,7 @@ Partial Class RockRatsClient
         'resizeValue
         '
         Me.resizeValue.AutoSize = True
-        Me.resizeValue.Location = New System.Drawing.Point(49, 237)
+        Me.resizeValue.Location = New System.Drawing.Point(68, 254)
         Me.resizeValue.Name = "resizeValue"
         Me.resizeValue.Size = New System.Drawing.Size(65, 13)
         Me.resizeValue.TabIndex = 41
@@ -834,7 +829,7 @@ Partial Class RockRatsClient
         'Label8
         '
         Me.Label8.AutoSize = True
-        Me.Label8.Location = New System.Drawing.Point(3, 323)
+        Me.Label8.Location = New System.Drawing.Point(3, 367)
         Me.Label8.Name = "Label8"
         Me.Label8.Size = New System.Drawing.Size(207, 39)
         Me.Label8.TabIndex = 30
@@ -861,7 +856,7 @@ Partial Class RockRatsClient
         Me.Tabs.Location = New System.Drawing.Point(0, 0)
         Me.Tabs.Name = "Tabs"
         Me.Tabs.SelectedIndex = 0
-        Me.Tabs.Size = New System.Drawing.Size(766, 396)
+        Me.Tabs.Size = New System.Drawing.Size(766, 433)
         Me.Tabs.TabIndex = 5
         '
         'Faction
@@ -916,11 +911,52 @@ Partial Class RockRatsClient
         Me.Found.Name = "Found"
         Me.Found.Width = 50
         '
+        'LogOcrCheckbox
+        '
+        Me.LogOcrCheckbox.AutoSize = True
+        Me.LogOcrCheckbox.Location = New System.Drawing.Point(116, 338)
+        Me.LogOcrCheckbox.Name = "LogOcrCheckbox"
+        Me.LogOcrCheckbox.Size = New System.Drawing.Size(90, 17)
+        Me.LogOcrCheckbox.TabIndex = 50
+        Me.LogOcrCheckbox.Text = "Log OCR text"
+        Me.ToolTip1.SetToolTip(Me.LogOcrCheckbox, "Covert the Image to Grey Scale prior to OCR processing" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "This can improve OCR accu" &
+        "racy but at a minor delay")
+        Me.LogOcrCheckbox.UseVisualStyleBackColor = True
+        '
+        'ScanMarginLeft
+        '
+        Me.ScanMarginLeft.Location = New System.Drawing.Point(147, 203)
+        Me.ScanMarginLeft.Name = "ScanMarginLeft"
+        Me.ScanMarginLeft.Size = New System.Drawing.Size(41, 20)
+        Me.ScanMarginLeft.TabIndex = 51
+        Me.ToolTip1.SetToolTip(Me.ScanMarginLeft, "Set how much of the screen to look at when capturing text. This will stop other t" &
+        "ext like this window contaminating the results")
+        '
+        'Label14
+        '
+        Me.Label14.AutoSize = True
+        Me.Label14.Location = New System.Drawing.Point(8, 206)
+        Me.Label14.Name = "Label14"
+        Me.Label14.Size = New System.Drawing.Size(134, 13)
+        Me.Label14.TabIndex = 52
+        Me.Label14.Text = "Area of left screen to scan:"
+        Me.ToolTip1.SetToolTip(Me.Label14, "Set how much of the screen to look at when capturing text. This will stop other t" &
+        "ext like this window contaminating the results")
+        '
+        'Label17
+        '
+        Me.Label17.AutoSize = True
+        Me.Label17.Location = New System.Drawing.Point(187, 206)
+        Me.Label17.Name = "Label17"
+        Me.Label17.Size = New System.Drawing.Size(15, 13)
+        Me.Label17.TabIndex = 53
+        Me.Label17.Text = "%"
+        '
         'RockRatsClient
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(766, 396)
+        Me.ClientSize = New System.Drawing.Size(766, 433)
         Me.Controls.Add(Me.Tabs)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
@@ -1009,7 +1045,6 @@ Partial Class RockRatsClient
     Friend WithEvents infTotalVal As Label
     Friend WithEvents ocrWorking As Panel
     Friend WithEvents statusLabel As Label
-    Friend WithEvents PasteEDScreen As Button
     Friend WithEvents infTotal As Label
     Friend WithEvents Label10 As Label
     Friend WithEvents Label8 As Label
@@ -1030,4 +1065,8 @@ Partial Class RockRatsClient
     Friend WithEvents InfluenceDiff As DataGridViewTextBoxColumn
     Friend WithEvents PrevState As DataGridViewTextBoxColumn
     Friend WithEvents Found As DataGridViewCheckBoxColumn
+    Friend WithEvents LogOcrCheckbox As CheckBox
+    Friend WithEvents Label17 As Label
+    Friend WithEvents Label14 As Label
+    Friend WithEvents ScanMarginLeft As TextBox
 End Class

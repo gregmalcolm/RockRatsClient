@@ -34,6 +34,7 @@ Module SoftData
 
                 ' line = whitelistChars(line)
                 If catchFaction <> "" Then
+                    LogOcrLine(line)
                     If InStr(line, "RNMENT") = 0 Then
                         catchFaction = catchFaction + " " + Trim(line)
                     End If
@@ -46,10 +47,12 @@ Module SoftData
                 End If
                 If (Strings.Left(line, 2) = "FA" Or Strings.Mid(line, 3, 2) = "CT") And Len(line) > 10 Then
                     catchFaction = Mid(line, 10, Len(line) - 9)
+                    LogOcrLine(line)
                 End If
                 If (Strings.Left(line, 2) = "IN" Or Strings.Mid(line, 3, 2) = "FL") And factionName <> "" Then
                     influenceVal = MatchInfluence(Trim(line))
                     influence = Replace(influenceVal.ToString, ",", ".")
+                    LogOcrLine(line)
                 End If
                 If (Strings.Left(line, 2) = "ST" Or Strings.Mid(line, 3, 2) = "AT") And influence <> "" And factionName <> "" Then
                     Dim s As String = MatchState(Trim(line))
@@ -57,6 +60,7 @@ Module SoftData
                     factionName = ""
                     influence = ""
                     influenceVal = 0
+                    LogOcrLine(line)
                 End If
             Next
         Catch ex As Exception
@@ -64,6 +68,12 @@ Module SoftData
         End Try
         processingOcrTextChange = False
     End Sub
+    Private Sub LogOcrLine(line As String)
+        If Parameters.getParameter("logOcrText") = "True" Then
+            RockRatsClient.LogOutput(line)
+        End If
+    End Sub
+
 
     Private Sub AddEDCaptureText(factionName As String, influence As String, state As String, influenceVal As Decimal)
         Try
@@ -152,13 +162,11 @@ Module SoftData
             RockRatsClient.infTotalVal.Text = influenceAccountedFor.ToString
             If HasUserFinishedOCRing() Then
                 RockRatsClient.CaptureEDScreen.Enabled = False
-                RockRatsClient.PasteEDScreen.Enabled = False
                 RockRatsClient.UpdSoftData.Enabled = True
                 RockRatsClient.infTotal.ForeColor = Color.DarkGreen
                 RockRatsClient.infTotalVal.ForeColor = Color.DarkGreen
             Else
                 RockRatsClient.CaptureEDScreen.Enabled = True
-                RockRatsClient.PasteEDScreen.Enabled = True
                 RockRatsClient.UpdSoftData.Enabled = True
                 RockRatsClient.infTotal.ForeColor = Color.DarkRed
                 RockRatsClient.infTotalVal.ForeColor = Color.DarkRed
@@ -173,7 +181,6 @@ Module SoftData
     Friend Sub ProcessSystemChange(systemName As String)
         If systemName <> selectedSystem Then
             RockRatsClient.CaptureEDScreen.Enabled = True
-            RockRatsClient.PasteEDScreen.Enabled = True
             RockRatsClient.UpdSoftData.Enabled = True
             ProcessOCRTextChg()
             SaveSystemFactions()
