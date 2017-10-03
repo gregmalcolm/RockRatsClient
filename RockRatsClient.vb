@@ -6,7 +6,10 @@ Public Class RockRatsClient
         Faction = 0
         Influence = 1
         State = 2
-        Found = 3
+        PrevInfluence = 3
+        InfluenceDiff = 4
+        PrevState = 5
+        Found = 6
     End Enum
 
     Private AppDataDir As String = Environment.GetEnvironmentVariable("USERPROFILE") + "\AppData\Local\RockRatsClient"
@@ -256,7 +259,11 @@ Public Class RockRatsClient
                             If row.Cells(ColumnTypes.State).Value Is Nothing Then
                                 row.Cells(ColumnTypes.State).Value = ""
                             End If
-                            Dim cwaitForCompletion As Boolean = Comms.SendUpdate("", "", "", selSystem.SelectedItem.ToString + ":" + row.Cells(ColumnTypes.Faction).Value.ToString.ToUpper + ":" + row.Cells(ColumnTypes.State).Value.ToString + ":" + row.Cells(ColumnTypes.Influence).Value.ToString + ":OCR")
+                            Dim cwaitForCompletion As Boolean = Comms.SendUpdate("", "", "",
+                                selSystem.SelectedItem.ToString & ":" &
+                                row.Cells(ColumnTypes.Faction).Value.ToString.ToUpper & ":" &
+                                row.Cells(ColumnTypes.State).Value.ToString & ":" &
+                                row.Cells(ColumnTypes.Influence).Value.ToString & ":OCR v" & getVersion())
                             factionsSent += 1
                         Else
                             LogEverywhere("Skipping " & row.Cells(ColumnTypes.Faction).Value.ToString & " because the infuence given is not a number")
@@ -431,6 +438,10 @@ Public Class RockRatsClient
             Case ColumnTypes.Influence
                 Try
                     Dim influence = Decimal.Parse(cell.Value.ToString)
+                    Dim prevInfluenceCell = SoftDataGrid(ColumnTypes.PrevInfluence, e.RowIndex)
+                    Dim InfluenceDiffCell = SoftDataGrid(ColumnTypes.InfluenceDiff, e.RowIndex)
+                    Dim diff = SoftData.CalcInfluenceDiff(prevInfluenceCell.Value.ToString, cell.Value.ToString)
+                    InfluenceDiffCell.Value = diff
                 Catch ex As Exception
                     cell.Value = "0"
                 End Try

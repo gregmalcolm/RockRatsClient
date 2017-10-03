@@ -89,16 +89,19 @@ Partial Class RockRatsClient
         Me.onTop = New System.Windows.Forms.CheckBox()
         Me.resizeValue = New System.Windows.Forms.Label()
         Me.SoftDataGrid = New System.Windows.Forms.DataGridView()
-        Me.Faction = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Influence = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.State = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Found = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         Me.ocrWorking = New System.Windows.Forms.Panel()
         Me.statusLabel = New System.Windows.Forms.Label()
         Me.Label10 = New System.Windows.Forms.Label()
         Me.Label8 = New System.Windows.Forms.Label()
         Me.Label13 = New System.Windows.Forms.Label()
         Me.Tabs = New System.Windows.Forms.TabControl()
+        Me.Faction = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Influence = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.State = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.PrevInfluence = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.InfluenceDiff = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.PrevState = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Found = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         CType(Me.EDCapture, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.resizeSlider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.HelpTab.SuspendLayout()
@@ -266,7 +269,7 @@ Partial Class RockRatsClient
         'UpdSoftData
         '
         Me.UpdSoftData.Enabled = False
-        Me.UpdSoftData.Location = New System.Drawing.Point(526, 243)
+        Me.UpdSoftData.Location = New System.Drawing.Point(678, 246)
         Me.UpdSoftData.Name = "UpdSoftData"
         Me.UpdSoftData.Size = New System.Drawing.Size(77, 47)
         Me.UpdSoftData.TabIndex = 25
@@ -291,7 +294,7 @@ Partial Class RockRatsClient
         '
         Me.infTotal.AutoSize = True
         Me.infTotal.ForeColor = System.Drawing.Color.DarkRed
-        Me.infTotal.Location = New System.Drawing.Point(525, 297)
+        Me.infTotal.Location = New System.Drawing.Point(677, 300)
         Me.infTotal.Name = "infTotal"
         Me.infTotal.Size = New System.Drawing.Size(78, 13)
         Me.infTotal.TabIndex = 32
@@ -314,7 +317,7 @@ Partial Class RockRatsClient
         Me.infTotalVal.AutoSize = True
         Me.infTotalVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.infTotalVal.ForeColor = System.Drawing.Color.DarkRed
-        Me.infTotalVal.Location = New System.Drawing.Point(552, 311)
+        Me.infTotalVal.Location = New System.Drawing.Point(704, 314)
         Me.infTotalVal.Name = "infTotalVal"
         Me.infTotalVal.Size = New System.Drawing.Size(16, 18)
         Me.infTotalVal.TabIndex = 36
@@ -349,7 +352,7 @@ Partial Class RockRatsClient
         '
         'viewWebTracker
         '
-        Me.viewWebTracker.Location = New System.Drawing.Point(516, 3)
+        Me.viewWebTracker.Location = New System.Drawing.Point(670, 3)
         Me.viewWebTracker.Name = "viewWebTracker"
         Me.viewWebTracker.Size = New System.Drawing.Size(89, 20)
         Me.viewWebTracker.TabIndex = 45
@@ -359,7 +362,7 @@ Partial Class RockRatsClient
         '
         'NextSystem
         '
-        Me.NextSystem.Location = New System.Drawing.Point(525, 331)
+        Me.NextSystem.Location = New System.Drawing.Point(677, 334)
         Me.NextSystem.Name = "NextSystem"
         Me.NextSystem.Size = New System.Drawing.Size(78, 31)
         Me.NextSystem.TabIndex = 46
@@ -398,7 +401,7 @@ Partial Class RockRatsClient
         Me.HelpTab.Controls.Add(Me.Label11)
         Me.HelpTab.Location = New System.Drawing.Point(4, 22)
         Me.HelpTab.Name = "HelpTab"
-        Me.HelpTab.Size = New System.Drawing.Size(622, 371)
+        Me.HelpTab.Size = New System.Drawing.Size(759, 370)
         Me.HelpTab.TabIndex = 4
         Me.HelpTab.Text = "Help"
         Me.HelpTab.UseVisualStyleBackColor = True
@@ -458,7 +461,7 @@ Partial Class RockRatsClient
         Me.LogTab.Location = New System.Drawing.Point(4, 22)
         Me.LogTab.Name = "LogTab"
         Me.LogTab.Padding = New System.Windows.Forms.Padding(3)
-        Me.LogTab.Size = New System.Drawing.Size(622, 371)
+        Me.LogTab.Size = New System.Drawing.Size(759, 370)
         Me.LogTab.TabIndex = 1
         Me.LogTab.Text = "Log"
         Me.LogTab.UseVisualStyleBackColor = True
@@ -469,7 +472,7 @@ Partial Class RockRatsClient
         Me.logOut.Location = New System.Drawing.Point(3, 3)
         Me.logOut.Name = "logOut"
         Me.logOut.ReadOnly = True
-        Me.logOut.Size = New System.Drawing.Size(616, 365)
+        Me.logOut.Size = New System.Drawing.Size(753, 364)
         Me.logOut.TabIndex = 0
         Me.logOut.Text = ""
         '
@@ -479,7 +482,7 @@ Partial Class RockRatsClient
         Me.SettingsTab.Controls.Add(Me.Panel1)
         Me.SettingsTab.Location = New System.Drawing.Point(4, 22)
         Me.SettingsTab.Name = "SettingsTab"
-        Me.SettingsTab.Size = New System.Drawing.Size(622, 371)
+        Me.SettingsTab.Size = New System.Drawing.Size(759, 370)
         Me.SettingsTab.TabIndex = 2
         Me.SettingsTab.Text = "Settings"
         Me.SettingsTab.UseVisualStyleBackColor = True
@@ -560,7 +563,7 @@ Partial Class RockRatsClient
         Me.StatusTab.Location = New System.Drawing.Point(4, 22)
         Me.StatusTab.Name = "StatusTab"
         Me.StatusTab.Padding = New System.Windows.Forms.Padding(3)
-        Me.StatusTab.Size = New System.Drawing.Size(622, 371)
+        Me.StatusTab.Size = New System.Drawing.Size(759, 370)
         Me.StatusTab.TabIndex = 0
         Me.StatusTab.Text = "Status"
         Me.StatusTab.UseVisualStyleBackColor = True
@@ -735,7 +738,7 @@ Partial Class RockRatsClient
         Me.SoftDataTab.Controls.Add(Me.Label13)
         Me.SoftDataTab.Location = New System.Drawing.Point(4, 22)
         Me.SoftDataTab.Name = "SoftDataTab"
-        Me.SoftDataTab.Size = New System.Drawing.Size(622, 371)
+        Me.SoftDataTab.Size = New System.Drawing.Size(758, 370)
         Me.SoftDataTab.TabIndex = 3
         Me.SoftDataTab.Text = "OCR"
         Me.SoftDataTab.UseVisualStyleBackColor = True
@@ -747,7 +750,7 @@ Partial Class RockRatsClient
         Me.StatusBox.Name = "StatusBox"
         Me.StatusBox.ReadOnly = True
         Me.StatusBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.StatusBox.Size = New System.Drawing.Size(301, 137)
+        Me.StatusBox.Size = New System.Drawing.Size(456, 137)
         Me.StatusBox.TabIndex = 44
         '
         'SystemNameBox
@@ -788,40 +791,14 @@ Partial Class RockRatsClient
         '
         Me.SoftDataGrid.AllowUserToOrderColumns = True
         Me.SoftDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.SoftDataGrid.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Faction, Me.Influence, Me.State, Me.Found})
+        Me.SoftDataGrid.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Faction, Me.Influence, Me.State, Me.PrevInfluence, Me.InfluenceDiff, Me.PrevState, Me.Found})
         Me.SoftDataGrid.Location = New System.Drawing.Point(216, 29)
         Me.SoftDataGrid.MultiSelect = False
         Me.SoftDataGrid.Name = "SoftDataGrid"
         Me.SoftDataGrid.RowHeadersWidth = 4
         Me.SoftDataGrid.ShowCellErrors = False
-        Me.SoftDataGrid.Size = New System.Drawing.Size(387, 190)
+        Me.SoftDataGrid.Size = New System.Drawing.Size(713, 190)
         Me.SoftDataGrid.TabIndex = 37
-        '
-        'Faction
-        '
-        Me.Faction.HeaderText = "Faction"
-        Me.Faction.MaxInputLength = 250
-        Me.Faction.Name = "Faction"
-        Me.Faction.Width = 170
-        '
-        'Influence
-        '
-        Me.Influence.HeaderText = "Influence"
-        Me.Influence.MaxInputLength = 5
-        Me.Influence.Name = "Influence"
-        Me.Influence.Width = 55
-        '
-        'State
-        '
-        Me.State.HeaderText = "State"
-        Me.State.Name = "State"
-        Me.State.Width = 76
-        '
-        'Found
-        '
-        Me.Found.HeaderText = "Found"
-        Me.Found.Name = "Found"
-        Me.Found.Width = 50
         '
         'ocrWorking
         '
@@ -848,7 +825,7 @@ Partial Class RockRatsClient
         'Label10
         '
         Me.Label10.AutoSize = True
-        Me.Label10.Location = New System.Drawing.Point(525, 227)
+        Me.Label10.Location = New System.Drawing.Point(677, 230)
         Me.Label10.Name = "Label10"
         Me.Label10.Size = New System.Drawing.Size(54, 13)
         Me.Label10.TabIndex = 31
@@ -884,14 +861,66 @@ Partial Class RockRatsClient
         Me.Tabs.Location = New System.Drawing.Point(0, 0)
         Me.Tabs.Name = "Tabs"
         Me.Tabs.SelectedIndex = 0
-        Me.Tabs.Size = New System.Drawing.Size(630, 397)
+        Me.Tabs.Size = New System.Drawing.Size(766, 396)
         Me.Tabs.TabIndex = 5
+        '
+        'Faction
+        '
+        Me.Faction.HeaderText = "Faction"
+        Me.Faction.MaxInputLength = 250
+        Me.Faction.Name = "Faction"
+        Me.Faction.ToolTipText = "Faction Name"
+        Me.Faction.Width = 170
+        '
+        'Influence
+        '
+        Me.Influence.HeaderText = "Influence"
+        Me.Influence.MaxInputLength = 5
+        Me.Influence.Name = "Influence"
+        Me.Influence.ToolTipText = "Faction Influence %"
+        Me.Influence.Width = 55
+        '
+        'State
+        '
+        Me.State.HeaderText = "State"
+        Me.State.Name = "State"
+        Me.State.ToolTipText = "Faction State (if any)"
+        Me.State.Width = 76
+        '
+        'PrevInfluence
+        '
+        Me.PrevInfluence.HeaderText = "Prev Influence"
+        Me.PrevInfluence.Name = "PrevInfluence"
+        Me.PrevInfluence.ReadOnly = True
+        Me.PrevInfluence.ToolTipText = "Influence from previous collection"
+        Me.PrevInfluence.Width = 55
+        '
+        'InfluenceDiff
+        '
+        Me.InfluenceDiff.HeaderText = "Influence Diff"
+        Me.InfluenceDiff.Name = "InfluenceDiff"
+        Me.InfluenceDiff.ReadOnly = True
+        Me.InfluenceDiff.ToolTipText = "Influence difference after collection"
+        Me.InfluenceDiff.Width = 55
+        '
+        'PrevState
+        '
+        Me.PrevState.HeaderText = "PrevState"
+        Me.PrevState.Name = "PrevState"
+        Me.PrevState.ToolTipText = "State from previous collection"
+        Me.PrevState.Width = 76
+        '
+        'Found
+        '
+        Me.Found.HeaderText = "Found"
+        Me.Found.Name = "Found"
+        Me.Found.Width = 50
         '
         'RockRatsClient
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(630, 397)
+        Me.ClientSize = New System.Drawing.Size(766, 396)
         Me.Controls.Add(Me.Tabs)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
@@ -990,12 +1019,15 @@ Partial Class RockRatsClient
     Friend WithEvents EDCapture As PictureBox
     Friend WithEvents Tabs As TabControl
     Friend WithEvents viewWebTracker As Button
-    Friend WithEvents Faction As DataGridViewTextBoxColumn
-    Friend WithEvents Influence As DataGridViewTextBoxColumn
-    Friend WithEvents State As DataGridViewTextBoxColumn
-    Friend WithEvents Found As DataGridViewCheckBoxColumn
     Friend WithEvents NextSystem As Button
     Friend WithEvents AddButton As Button
     Friend WithEvents RemoveButton As Button
     Friend WithEvents Label13 As Label
+    Friend WithEvents Faction As DataGridViewTextBoxColumn
+    Friend WithEvents Influence As DataGridViewTextBoxColumn
+    Friend WithEvents State As DataGridViewTextBoxColumn
+    Friend WithEvents PrevInfluence As DataGridViewTextBoxColumn
+    Friend WithEvents InfluenceDiff As DataGridViewTextBoxColumn
+    Friend WithEvents PrevState As DataGridViewTextBoxColumn
+    Friend WithEvents Found As DataGridViewCheckBoxColumn
 End Class

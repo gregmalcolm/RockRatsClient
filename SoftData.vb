@@ -66,35 +66,34 @@ Module SoftData
     End Sub
 
     Private Sub AddEDCaptureText(factionName As String, influence As String, state As String, influenceVal As Decimal)
-        Dim doUpdate As Boolean = True
-        For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
-            If Not row.IsNewRow Then
-                If row.Cells(RockRatsClient.ColumnTypes.Faction).Value.ToString = factionName Then
-                    If CBool(row.Cells(RockRatsClient.ColumnTypes.Found).Value) Then
-                        doUpdate = False
-                    End If
-                    Exit For
+        Try
+            Dim faction = factions.First(Function(f) f.FactionName.Equals(factionName))
+            If faction IsNot Nothing Then
+                faction.Influence = influenceVal
+                faction.State = state
+                If influenceVal > 0 Then
+                    faction.Found = True
                 End If
+                UpdateDataGridRow(faction)
             End If
-        Next
-        If doUpdate Then
-            Dim markFound As Boolean = False
-            If influenceVal > 0 Then
-                markFound = True
-            End If
-            UpdateDataGridRow(factionName, influence, state, markFound)
-        End If
-    End Sub
 
-    Friend Sub UpdateDataGridRow(factionName As String, influence As String, state As String, found As Boolean)
+        Catch ex As Exception
+
+        End Try
+    End Sub
+    Public Sub UpdateDataGridRow(faction As Faction)
         Dim doInsert As Boolean = True
+        Dim influenceDiff = CalcInfluenceDiff(faction.PrevInfluence.ToString, faction.Influence.ToString)
         For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
             If Not row.IsNewRow Then
                 If row.Cells(RockRatsClient.ColumnTypes.Faction).Value IsNot Nothing Then
-                    If row.Cells(RockRatsClient.ColumnTypes.Faction).Value.ToString = factionName Then
-                        row.Cells(RockRatsClient.ColumnTypes.Influence).Value = influence
-                        row.Cells(RockRatsClient.ColumnTypes.State).Value = state
-                        row.Cells(RockRatsClient.ColumnTypes.Found).Value = found
+                    If row.Cells(RockRatsClient.ColumnTypes.Faction).Value.ToString = faction.FactionName Then
+                        row.Cells(RockRatsClient.ColumnTypes.Influence).Value = faction.Influence
+                        row.Cells(RockRatsClient.ColumnTypes.State).Value = faction.State
+                        row.Cells(RockRatsClient.ColumnTypes.PrevInfluence).Value = faction.PrevInfluence
+                        row.Cells(RockRatsClient.ColumnTypes.InfluenceDiff).Value = influenceDiff
+                        row.Cells(RockRatsClient.ColumnTypes.PrevState).Value = faction.PrevState
+                        row.Cells(RockRatsClient.ColumnTypes.Found).Value = faction.Found
                         doInsert = False
                         Exit For
                     End If
@@ -102,9 +101,34 @@ Module SoftData
             End If
         Next
         If doInsert Then
-            RockRatsClient.SoftDataGrid.Rows.Add(factionName, influence, state, found)
+            RockRatsClient.SoftDataGrid.Rows.Add(
+                faction.FactionName,
+                faction.Influence,
+                faction.State,
+                faction.PrevInfluence,
+                influenceDiff,
+                faction.PrevState,
+                faction.Found)
         End If
     End Sub
+    Public Function CalcInfluenceDiff(prevInfluence As String, influence As String) As String
+        Try
+            Dim influenceVal = Decimal.Parse(influence)
+            Dim prevInfluenceVal = Decimal.Parse(prevInfluence)
+            If prevInfluenceVal > 0 And influenceVal > 0 Then
+                Dim diff = (influenceVal - prevInfluenceVal).ToString
+                If Decimal.Parse(diff) = 0 Then
+                    diff = ""
+                ElseIf Decimal.Parse(diff) > 0 Then
+                    diff = "+" & diff
+                End If
+                Return diff
+            End If
+        Catch ex As Exception
+            Return ""
+        End Try
+        Return ""
+    End Function
 
     Friend Sub ProcessOCRTextChg()
         If Not processingOcrTextChange Then
@@ -300,7 +324,7 @@ Module SoftData
         End If
         factions = systemFactions(systemName)
         For Each faction In factions
-            UpdateDataGridRow(faction.FactionName, faction.Influence.ToString(), faction.State, faction.Found)
+            UpdateDataGridRow(faction)
         Next
     End Sub
     Public Function WhitelistChars(cleanString As String) As String
@@ -370,7 +394,6 @@ Module SoftData
                             faction.Found = CBool(row.Cells(RockRatsClient.ColumnTypes.Found).Value)
                         Catch ex As Exception
                         End Try
-
                     End If
                 End If
             Next

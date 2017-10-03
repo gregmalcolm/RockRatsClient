@@ -239,10 +239,10 @@ Module Comms
                 .Select(Function(faction) New Faction() With {
                     .System = faction("system").S,
                     .FactionName = faction("faction").S,
-                    .OldEntryDate = Date.ParseExact(faction("date").S, "yyyy-MM-dd", Nothing),
-                    .OldCommander = If(faction.ContainsKey("commander"), faction("commander").S, Nothing),
-                    .OldInfluence = If(faction.ContainsKey("influence"), Decimal.Parse(faction("influence").N), Nothing),
-                    .OldState = If(faction.ContainsKey("state"), faction("state").S, Nothing),
+                    .PrevEntryDate = Date.ParseExact(faction("date").S, "yyyy-MM-dd", Nothing),
+                    .PrevCommander = If(faction.ContainsKey("commander"), faction("commander").S, Nothing),
+                    .PrevInfluence = If(faction.ContainsKey("influence"), Decimal.Parse(faction("influence").N), Nothing),
+                    .PrevState = If(faction.ContainsKey("state"), faction("state").S, Nothing),
                     .Downloaded = True
                 }) _
                 .ToList()
