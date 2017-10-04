@@ -52,6 +52,9 @@ Partial Class RockRatsClient
         Me.NextSystem = New System.Windows.Forms.Button()
         Me.AddButton = New System.Windows.Forms.Button()
         Me.RemoveButton = New System.Windows.Forms.Button()
+        Me.LogOcrCheckbox = New System.Windows.Forms.CheckBox()
+        Me.ScanMarginLeft = New System.Windows.Forms.TextBox()
+        Me.Label14 = New System.Windows.Forms.Label()
         Me.HelpTab = New System.Windows.Forms.TabPage()
         Me.Version = New System.Windows.Forms.Label()
         Me.Label15 = New System.Windows.Forms.Label()
@@ -88,12 +91,6 @@ Partial Class RockRatsClient
         Me.onTop = New System.Windows.Forms.CheckBox()
         Me.resizeValue = New System.Windows.Forms.Label()
         Me.SoftDataGrid = New System.Windows.Forms.DataGridView()
-        Me.ocrWorking = New System.Windows.Forms.Panel()
-        Me.statusLabel = New System.Windows.Forms.Label()
-        Me.Label10 = New System.Windows.Forms.Label()
-        Me.Label8 = New System.Windows.Forms.Label()
-        Me.Label13 = New System.Windows.Forms.Label()
-        Me.Tabs = New System.Windows.Forms.TabControl()
         Me.Faction = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Influence = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.State = New System.Windows.Forms.DataGridViewTextBoxColumn()
@@ -101,10 +98,13 @@ Partial Class RockRatsClient
         Me.InfluenceDiff = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.PrevState = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Found = New System.Windows.Forms.DataGridViewCheckBoxColumn()
-        Me.LogOcrCheckbox = New System.Windows.Forms.CheckBox()
-        Me.ScanMarginLeft = New System.Windows.Forms.TextBox()
-        Me.Label14 = New System.Windows.Forms.Label()
+        Me.ocrWorking = New System.Windows.Forms.Panel()
+        Me.statusLabel = New System.Windows.Forms.Label()
+        Me.Label10 = New System.Windows.Forms.Label()
+        Me.Label8 = New System.Windows.Forms.Label()
+        Me.Label13 = New System.Windows.Forms.Label()
         Me.Label17 = New System.Windows.Forms.Label()
+        Me.Tabs = New System.Windows.Forms.TabControl()
         CType(Me.EDCapture, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.resizeSlider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.HelpTab.SuspendLayout()
@@ -260,7 +260,6 @@ Partial Class RockRatsClient
         '
         'CaptureEDScreen
         '
-        Me.CaptureEDScreen.Enabled = False
         Me.CaptureEDScreen.Location = New System.Drawing.Point(11, 293)
         Me.CaptureEDScreen.Name = "CaptureEDScreen"
         Me.CaptureEDScreen.Size = New System.Drawing.Size(103, 62)
@@ -271,7 +270,6 @@ Partial Class RockRatsClient
         '
         'UpdSoftData
         '
-        Me.UpdSoftData.Enabled = False
         Me.UpdSoftData.Location = New System.Drawing.Point(678, 246)
         Me.UpdSoftData.Name = "UpdSoftData"
         Me.UpdSoftData.Size = New System.Drawing.Size(77, 47)
@@ -384,6 +382,38 @@ Partial Class RockRatsClient
         Me.ToolTip1.SetToolTip(Me.RemoveButton, "Add the entered system name to the list of official Rock Rat Systems")
         Me.RemoveButton.UseVisualStyleBackColor = True
         '
+        'LogOcrCheckbox
+        '
+        Me.LogOcrCheckbox.AutoSize = True
+        Me.LogOcrCheckbox.Location = New System.Drawing.Point(116, 338)
+        Me.LogOcrCheckbox.Name = "LogOcrCheckbox"
+        Me.LogOcrCheckbox.Size = New System.Drawing.Size(90, 17)
+        Me.LogOcrCheckbox.TabIndex = 50
+        Me.LogOcrCheckbox.Text = "Log OCR text"
+        Me.ToolTip1.SetToolTip(Me.LogOcrCheckbox, "Covert the Image to Grey Scale prior to OCR processing" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "This can improve OCR accu" &
+        "racy but at a minor delay")
+        Me.LogOcrCheckbox.UseVisualStyleBackColor = True
+        '
+        'ScanMarginLeft
+        '
+        Me.ScanMarginLeft.Location = New System.Drawing.Point(147, 203)
+        Me.ScanMarginLeft.Name = "ScanMarginLeft"
+        Me.ScanMarginLeft.Size = New System.Drawing.Size(41, 20)
+        Me.ScanMarginLeft.TabIndex = 51
+        Me.ToolTip1.SetToolTip(Me.ScanMarginLeft, "Set how much of the screen to look at when capturing text. This will stop other t" &
+        "ext like this window contaminating the results")
+        '
+        'Label14
+        '
+        Me.Label14.AutoSize = True
+        Me.Label14.Location = New System.Drawing.Point(8, 206)
+        Me.Label14.Name = "Label14"
+        Me.Label14.Size = New System.Drawing.Size(134, 13)
+        Me.Label14.TabIndex = 52
+        Me.Label14.Text = "Area of left screen to scan:"
+        Me.ToolTip1.SetToolTip(Me.Label14, "Set how much of the screen to look at when capturing text. This will stop other t" &
+        "ext like this window contaminating the results")
+        '
         'HelpTab
         '
         Me.HelpTab.Controls.Add(Me.Version)
@@ -393,7 +423,7 @@ Partial Class RockRatsClient
         Me.HelpTab.Controls.Add(Me.Label11)
         Me.HelpTab.Location = New System.Drawing.Point(4, 22)
         Me.HelpTab.Name = "HelpTab"
-        Me.HelpTab.Size = New System.Drawing.Size(759, 370)
+        Me.HelpTab.Size = New System.Drawing.Size(758, 407)
         Me.HelpTab.TabIndex = 4
         Me.HelpTab.Text = "Help"
         Me.HelpTab.UseVisualStyleBackColor = True
@@ -453,7 +483,7 @@ Partial Class RockRatsClient
         Me.LogTab.Location = New System.Drawing.Point(4, 22)
         Me.LogTab.Name = "LogTab"
         Me.LogTab.Padding = New System.Windows.Forms.Padding(3)
-        Me.LogTab.Size = New System.Drawing.Size(759, 370)
+        Me.LogTab.Size = New System.Drawing.Size(758, 407)
         Me.LogTab.TabIndex = 1
         Me.LogTab.Text = "Log"
         Me.LogTab.UseVisualStyleBackColor = True
@@ -464,7 +494,7 @@ Partial Class RockRatsClient
         Me.logOut.Location = New System.Drawing.Point(3, 3)
         Me.logOut.Name = "logOut"
         Me.logOut.ReadOnly = True
-        Me.logOut.Size = New System.Drawing.Size(753, 364)
+        Me.logOut.Size = New System.Drawing.Size(752, 401)
         Me.logOut.TabIndex = 0
         Me.logOut.Text = ""
         '
@@ -474,7 +504,7 @@ Partial Class RockRatsClient
         Me.SettingsTab.Controls.Add(Me.Panel1)
         Me.SettingsTab.Location = New System.Drawing.Point(4, 22)
         Me.SettingsTab.Name = "SettingsTab"
-        Me.SettingsTab.Size = New System.Drawing.Size(759, 370)
+        Me.SettingsTab.Size = New System.Drawing.Size(758, 407)
         Me.SettingsTab.TabIndex = 2
         Me.SettingsTab.Text = "Settings"
         Me.SettingsTab.UseVisualStyleBackColor = True
@@ -555,7 +585,7 @@ Partial Class RockRatsClient
         Me.StatusTab.Location = New System.Drawing.Point(4, 22)
         Me.StatusTab.Name = "StatusTab"
         Me.StatusTab.Padding = New System.Windows.Forms.Padding(3)
-        Me.StatusTab.Size = New System.Drawing.Size(759, 370)
+        Me.StatusTab.Size = New System.Drawing.Size(758, 407)
         Me.StatusTab.TabIndex = 0
         Me.StatusTab.Text = "Status"
         Me.StatusTab.UseVisualStyleBackColor = True
@@ -795,70 +825,6 @@ Partial Class RockRatsClient
         Me.SoftDataGrid.Size = New System.Drawing.Size(713, 190)
         Me.SoftDataGrid.TabIndex = 37
         '
-        'ocrWorking
-        '
-        Me.ocrWorking.BackColor = System.Drawing.Color.WhiteSmoke
-        Me.ocrWorking.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.ocrWorking.Controls.Add(Me.statusLabel)
-        Me.ocrWorking.Location = New System.Drawing.Point(8, 81)
-        Me.ocrWorking.Name = "ocrWorking"
-        Me.ocrWorking.Size = New System.Drawing.Size(194, 100)
-        Me.ocrWorking.TabIndex = 34
-        Me.ocrWorking.Visible = False
-        '
-        'statusLabel
-        '
-        Me.statusLabel.AutoSize = True
-        Me.statusLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.statusLabel.ForeColor = System.Drawing.Color.DarkGreen
-        Me.statusLabel.Location = New System.Drawing.Point(37, 38)
-        Me.statusLabel.Name = "statusLabel"
-        Me.statusLabel.Size = New System.Drawing.Size(79, 20)
-        Me.statusLabel.TabIndex = 0
-        Me.statusLabel.Text = "Working..."
-        '
-        'Label10
-        '
-        Me.Label10.AutoSize = True
-        Me.Label10.Location = New System.Drawing.Point(677, 230)
-        Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(54, 13)
-        Me.Label10.TabIndex = 31
-        Me.Label10.Text = "3. Update"
-        '
-        'Label8
-        '
-        Me.Label8.AutoSize = True
-        Me.Label8.Location = New System.Drawing.Point(3, 367)
-        Me.Label8.Name = "Label8"
-        Me.Label8.Size = New System.Drawing.Size(207, 39)
-        Me.Label8.TabIndex = 30
-        Me.Label8.Text = "2. Capture (Multiple times)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "TIP: Zoom out all the way on System Map." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "It helps t" &
-    "he OCR out."
-        '
-        'Label13
-        '
-        Me.Label13.AutoSize = True
-        Me.Label13.Location = New System.Drawing.Point(17, 43)
-        Me.Label13.Name = "Label13"
-        Me.Label13.Size = New System.Drawing.Size(54, 13)
-        Me.Label13.TabIndex = 49
-        Me.Label13.Text = "Loading..."
-        '
-        'Tabs
-        '
-        Me.Tabs.Controls.Add(Me.SoftDataTab)
-        Me.Tabs.Controls.Add(Me.StatusTab)
-        Me.Tabs.Controls.Add(Me.SettingsTab)
-        Me.Tabs.Controls.Add(Me.LogTab)
-        Me.Tabs.Controls.Add(Me.HelpTab)
-        Me.Tabs.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Tabs.Location = New System.Drawing.Point(0, 0)
-        Me.Tabs.Name = "Tabs"
-        Me.Tabs.SelectedIndex = 0
-        Me.Tabs.Size = New System.Drawing.Size(766, 433)
-        Me.Tabs.TabIndex = 5
-        '
         'Faction
         '
         Me.Faction.HeaderText = "Faction"
@@ -911,37 +877,55 @@ Partial Class RockRatsClient
         Me.Found.Name = "Found"
         Me.Found.Width = 50
         '
-        'LogOcrCheckbox
+        'ocrWorking
         '
-        Me.LogOcrCheckbox.AutoSize = True
-        Me.LogOcrCheckbox.Location = New System.Drawing.Point(116, 338)
-        Me.LogOcrCheckbox.Name = "LogOcrCheckbox"
-        Me.LogOcrCheckbox.Size = New System.Drawing.Size(90, 17)
-        Me.LogOcrCheckbox.TabIndex = 50
-        Me.LogOcrCheckbox.Text = "Log OCR text"
-        Me.ToolTip1.SetToolTip(Me.LogOcrCheckbox, "Covert the Image to Grey Scale prior to OCR processing" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "This can improve OCR accu" &
-        "racy but at a minor delay")
-        Me.LogOcrCheckbox.UseVisualStyleBackColor = True
+        Me.ocrWorking.BackColor = System.Drawing.Color.WhiteSmoke
+        Me.ocrWorking.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.ocrWorking.Controls.Add(Me.statusLabel)
+        Me.ocrWorking.Location = New System.Drawing.Point(8, 81)
+        Me.ocrWorking.Name = "ocrWorking"
+        Me.ocrWorking.Size = New System.Drawing.Size(194, 100)
+        Me.ocrWorking.TabIndex = 34
+        Me.ocrWorking.Visible = False
         '
-        'ScanMarginLeft
+        'statusLabel
         '
-        Me.ScanMarginLeft.Location = New System.Drawing.Point(147, 203)
-        Me.ScanMarginLeft.Name = "ScanMarginLeft"
-        Me.ScanMarginLeft.Size = New System.Drawing.Size(41, 20)
-        Me.ScanMarginLeft.TabIndex = 51
-        Me.ToolTip1.SetToolTip(Me.ScanMarginLeft, "Set how much of the screen to look at when capturing text. This will stop other t" &
-        "ext like this window contaminating the results")
+        Me.statusLabel.AutoSize = True
+        Me.statusLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.statusLabel.ForeColor = System.Drawing.Color.DarkGreen
+        Me.statusLabel.Location = New System.Drawing.Point(37, 38)
+        Me.statusLabel.Name = "statusLabel"
+        Me.statusLabel.Size = New System.Drawing.Size(79, 20)
+        Me.statusLabel.TabIndex = 0
+        Me.statusLabel.Text = "Working..."
         '
-        'Label14
+        'Label10
         '
-        Me.Label14.AutoSize = True
-        Me.Label14.Location = New System.Drawing.Point(8, 206)
-        Me.Label14.Name = "Label14"
-        Me.Label14.Size = New System.Drawing.Size(134, 13)
-        Me.Label14.TabIndex = 52
-        Me.Label14.Text = "Area of left screen to scan:"
-        Me.ToolTip1.SetToolTip(Me.Label14, "Set how much of the screen to look at when capturing text. This will stop other t" &
-        "ext like this window contaminating the results")
+        Me.Label10.AutoSize = True
+        Me.Label10.Location = New System.Drawing.Point(677, 230)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(54, 13)
+        Me.Label10.TabIndex = 31
+        Me.Label10.Text = "3. Update"
+        '
+        'Label8
+        '
+        Me.Label8.AutoSize = True
+        Me.Label8.Location = New System.Drawing.Point(3, 367)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(207, 39)
+        Me.Label8.TabIndex = 30
+        Me.Label8.Text = "2. Capture (Multiple times)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "TIP: Zoom out all the way on System Map." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "It helps t" &
+    "he OCR out."
+        '
+        'Label13
+        '
+        Me.Label13.AutoSize = True
+        Me.Label13.Location = New System.Drawing.Point(17, 43)
+        Me.Label13.Name = "Label13"
+        Me.Label13.Size = New System.Drawing.Size(54, 13)
+        Me.Label13.TabIndex = 49
+        Me.Label13.Text = "Loading..."
         '
         'Label17
         '
@@ -951,6 +935,20 @@ Partial Class RockRatsClient
         Me.Label17.Size = New System.Drawing.Size(15, 13)
         Me.Label17.TabIndex = 53
         Me.Label17.Text = "%"
+        '
+        'Tabs
+        '
+        Me.Tabs.Controls.Add(Me.SoftDataTab)
+        Me.Tabs.Controls.Add(Me.StatusTab)
+        Me.Tabs.Controls.Add(Me.SettingsTab)
+        Me.Tabs.Controls.Add(Me.LogTab)
+        Me.Tabs.Controls.Add(Me.HelpTab)
+        Me.Tabs.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Tabs.Location = New System.Drawing.Point(0, 0)
+        Me.Tabs.Name = "Tabs"
+        Me.Tabs.SelectedIndex = 0
+        Me.Tabs.Size = New System.Drawing.Size(766, 433)
+        Me.Tabs.TabIndex = 5
         '
         'RockRatsClient
         '

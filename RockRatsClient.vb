@@ -70,8 +70,8 @@ Public Class RockRatsClient
         Else
             RockRatsActivity.SelectedIndex = 3
         End If
-        Version.Text = "Version: " & clientVersion
-        LogOutput("Version: " & clientVersion)
+        Version.Text = "Version: " & getVersion()
+        LogOutput("Version: " & getVersion())
         LogOutput("AppData: " & AppDataDir)
         Me.Refresh()                     ' Ensure the app is fully loaded before 
         LoadTimer.Enabled = True         ' opening comms - avoids possible exceptions.

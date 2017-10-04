@@ -218,6 +218,7 @@ Module Comms
             },
             .Limit = 5000
         }
+        RockRatsClient.LogEverywhere("Requesting factions from AWS. At the moment this sometimes takes a while... :/")
         Dim response = Await awsClient.ScanAsync(request)
 
         For Each systemName As String In RockRatsClient.SystemsList.Items
@@ -226,6 +227,7 @@ Module Comms
     End Function
     Private Sub ReadFactionFromResults(factionsData As List(Of Dictionary(Of String, AttributeValue)), systemName As String)
         Dim systemFactions = factionsData.Where(Function(faction) faction("system").S.Equals(systemName))
+        RockRatsClient.LogOutput("Downloading factions from " & systemName)
 
         If systemFactions.Count > 0 Then
             Dim lastEntry = systemFactions _

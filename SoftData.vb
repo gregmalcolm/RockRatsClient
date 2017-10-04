@@ -161,13 +161,9 @@ Module SoftData
             influenceAccountedFor = i
             RockRatsClient.infTotalVal.Text = influenceAccountedFor.ToString
             If HasUserFinishedOCRing() Then
-                RockRatsClient.CaptureEDScreen.Enabled = False
-                RockRatsClient.UpdSoftData.Enabled = True
                 RockRatsClient.infTotal.ForeColor = Color.DarkGreen
                 RockRatsClient.infTotalVal.ForeColor = Color.DarkGreen
             Else
-                RockRatsClient.CaptureEDScreen.Enabled = True
-                RockRatsClient.UpdSoftData.Enabled = True
                 RockRatsClient.infTotal.ForeColor = Color.DarkRed
                 RockRatsClient.infTotalVal.ForeColor = Color.DarkRed
             End If
@@ -180,8 +176,6 @@ Module SoftData
 
     Friend Sub ProcessSystemChange(systemName As String)
         If systemName <> selectedSystem Then
-            RockRatsClient.CaptureEDScreen.Enabled = True
-            RockRatsClient.UpdSoftData.Enabled = True
             ProcessOCRTextChg()
             SaveSystemFactions()
             LoadSystemFactions(systemName)
