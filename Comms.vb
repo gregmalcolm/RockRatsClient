@@ -331,6 +331,8 @@ Module Comms
 
     Private Async Function ReceiveData() As Task
         If (Not dataIsLoaded) Then
+            Files.IdLastJournal()
+            Files.TailJournal()
             RockRatsClient.LogEverywhere("Downloading Systems...")
             Await ReadSystemsFromAws()
             Await ReadFactionsFromAws()

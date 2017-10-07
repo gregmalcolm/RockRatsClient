@@ -3,16 +3,9 @@ Imports System.Globalization
 
 Module Files
     Private currentJournal As String = "NotInitalized"
-    Private RockRatsSystems(32) As String
     Private lastMaxOffset As Long = 0
     Private line As String = ""
     Private idleCounter As Integer = 0
-    Private processDocked As Boolean = True
-    Private allegianceCodes As New Hashtable()
-    Private economyCodes As New Hashtable()
-    Private governmentCodes As New Hashtable()
-    Private securityCodes As New Hashtable()
-    Private stateCodes As New Hashtable()
     Private coords(3) As Integer
     Private waitForCords As String = ""
 
@@ -51,7 +44,7 @@ Module Files
         idleCounter = 0
     End Sub
 
-    Friend Function TailJournal() As Boolean
+    Public Function TailJournal() As Boolean
         Dim waitForCompletion As Boolean
         If Not File.Exists(currentJournal) Then
             RockRatsClient.FileStatus.ForeColor = Color.DarkRed
@@ -128,29 +121,8 @@ Module Files
             Dim procActivity As String = getParameter("UpdateSiteActivity")
             curLine = Replace(curLine, "{", "")
             curLine = Trim(Replace(curLine, "}", ""))
-            If InStr(curLine, "|event|:|Docked|") > 0 Then
-                If processDocked Then
-                    waitForCompletion = ProcessJournalLine(curLine, "5", "3")
-                Else
-                    processDocked = True
-                End If
-            ElseIf InStr(curLine, "|event|:|Location|") > 0 Then
-                waitForCompletion = ProcessJournalLine(curLine, "2", "0")
-            ElseIf InStr(curLine, "|event|:|FSDJump|,") > 0 Then
-                waitForCompletion = ProcessJournalLine(curLine, "2", "1")
-            ElseIf InStr(curLine, "|event|:|LoadGame|,") > 0 Then
+            If InStr(curLine, "|event|:|LoadGame|,") > 0 Then
                 waitForCompletion = ProcessJournalLine(curLine, "6", "2")
-            ElseIf InStr(curLine, "|event|:|Promotion|,") > 0 And procActivity <> "N" Then
-                waitForCompletion = ProcessJournalLine(curLine, "6", "8")
-            ElseIf InStr(curLine, "|event|:|SendText|,") > 0 Then
-                waitForCompletion = ProcessJournalLine(curLine, "7", "6")
-            ElseIf InStr(curLine, "|event|:|ReceiveText|,") > 0 Then
-                waitForCompletion = ProcessJournalLine(curLine, "7", "7")
-            ElseIf InStr(curLine, "|event|:|ShipyardSwap|,") > 0 And (procActivity = "A" Or procActivity = "D") Then
-                processDocked = False
-                waitForCompletion = ProcessJournalLine(curLine, "6", "4")
-            ElseIf InStr(curLine, "|event|:|ShipyardNew|,") > 0 And (procActivity = "A" Or procActivity = "D") Then
-                waitForCompletion = ProcessJournalLine(curLine, "6", "5")
             End If
             Return True
         Catch ex As Exception
@@ -182,86 +154,7 @@ Module Files
                 End If
             Next
 
-            If elapsedMinutes < 2 Then
-                If uType = "6" Then
-                    waitForCompletion = ProcessJournalActivityLine(line, uType, uSubType, sTimeStamp)
-                Else
-                    waitForCompletion = ProcessJournalSystemLine(line, uType, uSubType, sTimeStamp)
-                End If
-            End If
-            Return True
-        Catch ex As Exception
-            Return False
-        End Try
-    End Function
-
-    Private Function ProcessJournalSystemLine(line As String, uType As String, uSubType As String, sTimeStamp As String) As Boolean
-        Try
-            Dim waitForCompletion As Boolean
-            Dim elements() As String
-            Dim stringSeparators() As String = {","}
-            Dim systemName As String = ""
-            Dim stationName As String = ""
-            Dim systemAllegiance As String = ""
-            Dim systemEconomy As String = ""
-            Dim systemGovernment As String = ""
-            Dim systemSecurity As String = ""
-            Dim sFaction As String = ""
-            Dim sFactionState As String = ""
-
-            If uSubType = "0" Then
-                Dim coordsStart As Integer = InStr(line, "|StarPos|:")
-                If coordsStart > 0 Then
-                    coordsStart = coordsStart + 11
-                    Dim coordsEnd As Integer = InStr(Mid(line, coordsStart), "]")
-                    Dim coordsTxt As String = Mid(line, coordsStart, coordsEnd - 1)
-                    elements = coordsTxt.Split(stringSeparators, StringSplitOptions.None)
-                    Dim i As Integer = 0
-                    For Each coord As String In elements
-                        coords(i) = CInt(coord)
-                        i = i + 1
-                    Next
-                End If
-            End If
-
-            stringSeparators = {", "}
-            elements = line.Split(stringSeparators, StringSplitOptions.None)
-            For Each s As String In elements
-                If InStr(s, "|StarSystem|:") > 0 Then
-                    systemName = UCase(Trim(Replace(Mid(s, 15), "|", "")))
-                ElseIf InStr(s, "|StationName|:") > 0 And uType = "5" Then
-                    stationName = Trim(Replace(Mid(s, 16), "|", ""))
-                ElseIf InStr(s, "|SystemAllegiance|:") > 0 Then
-                    systemAllegiance = GetAllegianceCode(Trim(Replace(Mid(s, 21), "|", "")))
-                ElseIf InStr(s, "|SystemEconomy_Localised|:") > 0 Then
-                    systemEconomy = GetEconomyCode(Trim(Replace(Mid(s, 28), "|", "")))
-                ElseIf InStr(s, "|SystemGovernment_Localised|:") > 0 Then
-                    systemGovernment = GetGovernmentCode(Trim(Replace(Mid(s, 31), "|", "")))
-                ElseIf InStr(s, "|SystemSecurity_Localised|:") > 0 Then
-                    systemSecurity = GetSecurityCode(Trim(Replace(Mid(s, 29), "|", "")))
-                ElseIf InStr(s, "|SystemFaction|:") > 0 Then
-                    sFaction = Trim(Replace(Mid(s, 18), "|", ""))
-                ElseIf InStr(s, "|StationFaction|:") > 0 Then
-                    sFaction = Trim(Replace(Mid(s, 19), "|", ""))
-                ElseIf InStr(s, "|FactionState|:") > 0 Then
-                    sFactionState = GetStateCode(Trim(Replace(Mid(s, 17), "|", "")))
-                End If
-            Next
-
-            If uSubType = "0" And waitForCords <> "" Then
-                Try
-                    Dim dist As Double = DistFromChertan(coords(0), coords(1), coords(2))
-                    waitForCompletion = ProcessActivity(waitForCords, "6", "2", sTimeStamp, ":" + dist.ToString + ":" + systemName)
-                    waitForCords = ""
-                Catch inEx As Exception
-
-                End Try
-            End If
-            waitForCompletion = ProcessSystemUpdate(systemName, stationName, systemAllegiance, systemEconomy, systemGovernment, systemSecurity, sFaction, sFactionState, sTimeStamp, uType, uSubType)
-            If systemName <> "" Then
-                RockRatsClient.SystemName.Text = systemName
-                DataCache.setDataCache("Store", "LastSystem", systemName)
-            End If
+            waitForCompletion = ProcessJournalActivityLine(line, uType, uSubType, sTimeStamp)
             Return True
         Catch ex As Exception
             Return False
@@ -279,43 +172,14 @@ Module Files
 
             elements = line.Split(stringSeparators, StringSplitOptions.None)
             For Each s As String In elements
-                If InStr(s, "|Ship|:") > 0 Then
-                    sShip = Trim(Replace(Mid(s, 9), "|", ""))
-                ElseIf InStr(s, "|Commander|:") > 0 And uSubType = "2" Then
+                If InStr(s, "|Commander|:") > 0 And uSubType = "2" Then
                     Dim commanderName As String = Trim(Replace(Mid(s, 14), "|", ""))
                     RockRatsClient.CommanderName.Text = commanderName
-                    DataCache.setDataCache("Store", "LastCommander", commanderName)
-                ElseIf InStr(s, "|ShipType|:") > 0 Then
-                    sShip = Trim(Replace(Mid(s, 13), "|", ""))
-                ElseIf InStr(s, "|Combat|:") > 0 And uSubType = "8" Then
-                    promoteRank = Trim(Replace(Mid(s, 11), "|", ""))
-                    promoteType = "C"
-                ElseIf InStr(s, "|Trade|:") > 0 And uSubType = "8" Then
-                    promoteRank = Trim(Replace(Mid(s, 10), "|", ""))
-                    promoteType = "T"
-                ElseIf InStr(s, "|Explore|:") > 0 And uSubType = "8" Then
-                    promoteRank = Trim(Replace(Mid(s, 12), "|", ""))
-                    promoteType = "E"
-                ElseIf InStr(s, "|CQC|:") > 0 And uSubType = "8" Then
-                    promoteRank = Trim(Replace(Mid(s, 8), "|", ""))
-                    promoteType = "Q"
+                    DataCache.SetDataCache("Store", "LastCommander", commanderName)
+
                 End If
             Next
 
-            If getParameter("UpdateSiteActivity") <> "N" Then
-                If uSubType = "2" Then
-                    waitForCords = sShip
-                ElseIf uSubType = "8" Then
-                    waitForCompletion = ProcessActivity(promoteType, uType, uSubType, sTimeStamp, ":" + promoteRank)
-                Else
-                    waitForCompletion = ProcessActivity(sShip, uType, uSubType, sTimeStamp, "")
-                End If
-            End If
-            If sShip <> "" Then
-                RockRatsClient.ShipName.Text = sShip
-                DataCache.setDataCache("Store", "LastShip", sShip)
-            End If
-            Return True
         Catch ex As Exception
             Return False
         End Try
@@ -346,48 +210,10 @@ Module Files
             Return False
         End Try
     End Function
-
-    Private Function ProcessSystemUpdate(systemName As String, stationName As String, systemAllegiance As String, systemEconomy As String, systemGovernment As String, systemSecurity As String, sFaction As String, sFactionState As String, sTimeStamp As String, uType As String, uSubType As String) As Boolean
-        Try
-            For index = 0 To RockRatsSystems.GetUpperBound(0)
-                If RockRatsSystems(index) = systemName Then
-                    Dim cKey As String = systemName
-                    Dim DataRow As String = ""
-
-                    Dim cCat As String
-                    If uType = "2" Then
-                        cCat = "System"
-                        DataRow = systemName + ":" + systemAllegiance + ":" + systemEconomy + ":" + systemGovernment + ":" + systemSecurity
-                        If sFaction <> "" Then
-                            If sFactionState <> "" Then
-                                DataRow = DataRow + ":" + sFaction + ":" + sFactionState
-                                cCat = "System Faction State"
-                                uType = "4"
-                            Else
-                                DataRow = DataRow + ":" + sFaction
-                                cCat = "System Faction"
-                                uType = "3"
-                            End If
-                        End If
-                    Else
-                        cCat = "Station"
-                        cKey = stationName
-                        DataRow = stationName + ":" + sFaction + ":" + systemName + ":" + systemAllegiance + ":" + systemEconomy + ":" + systemGovernment ' + ":" + systemSecurity
-                    End If
-                    Dim waitForCompletion As Boolean = ProcessUpdate(DataRow, sTimeStamp, cCat, cKey, uType, uSubType)
-                    Exit For
-                End If
-            Next
-            Return True
-        Catch ex As Exception
-            Return False
-        End Try
-    End Function
-
     Private Function ProcessUpdate(DataRow As String, sTimeStamp As String, cCat As String, cKey As String, uType As String, uSubType As String) As Boolean
         Dim localCache As String = DataRow + ":" + sTimeStamp
-        If DataCache.getDataCache(cCat, cKey) <> localCache Then
-            If DataCache.setDataCache(cCat, cKey, localCache) Then
+        If DataCache.GetDataCache(cCat, cKey) <> localCache Then
+            If DataCache.SetDataCache(cCat, cKey, localCache) Then
                 Dim waitForCompletion As Boolean = Comms.SendUpdate(uType, uSubType, DataRow, "")
                 RockRatsClient.LogOutput("Sending " + cCat + " Update for " + cKey)
             End If
@@ -397,131 +223,5 @@ Module Files
         Return True
     End Function
 
-    Private Function GetAllegianceCode(aText As String) As String
-        Dim retValue As String = "3" ' 3 = None
-        For Each de As DictionaryEntry In allegianceCodes
-            If LCase(de.Key.ToString) = LCase(aText) Then
-                retValue = CType(de.Value, String)
-                Exit For
-            End If
-        Next de
-        Return retValue
-    End Function
 
-    Private Function GetGovernmentCode(gText As String) As String
-        Dim retValue As String = "13" ' 13 = None
-        For Each de As DictionaryEntry In governmentCodes
-            If LCase(de.Key.ToString) = LCase(gText) Then
-                retValue = CType(de.Value, String)
-                Exit For
-            End If
-        Next de
-        Return retValue
-    End Function
-
-    Private Function GetEconomyCode(eText As String) As String
-        Dim retValue As String = "10" ' 10 = None
-        For Each de As DictionaryEntry In economyCodes
-            If LCase(de.Key.ToString) = LCase(eText) Then
-                retValue = CType(de.Value, String)
-                Exit For
-            End If
-        Next de
-        Return retValue
-    End Function
-
-    Private Function GetSecurityCode(sText As String) As String
-        Dim retValue As String = "3" ' 3 = None
-        For Each de As DictionaryEntry In securityCodes
-            If LCase(de.Key.ToString) = LCase(sText) Then
-                retValue = CType(de.Value, String)
-                Exit For
-            End If
-        Next de
-        Return retValue
-    End Function
-
-    Private Function GetStateCode(sText As String) As String
-        Dim retValue As String = "12" ' 12 = None
-        For Each de As DictionaryEntry In stateCodes
-            If LCase(de.Key.ToString) = LCase(sText) Then
-                retValue = CType(de.Value, String)
-                Exit For
-            End If
-        Next de
-        Return retValue
-    End Function
-
-    Friend Sub SetRockRatsSystems(systems As String)
-        Dim elements() As String
-        Dim stringSeparators() As String = {":"}
-        elements = systems.Split(stringSeparators, StringSplitOptions.None)
-        ReDim RockRatsSystems(CInt(elements(1)))
-        RockRatsClient.SystemsList.Items.Clear()
-        For index = 2 To elements.GetUpperBound(0)
-            Dim cleanSystemName As String = SoftData.AddSystem(elements(index))
-            RockRatsSystems(index - 1) = cleanSystemName
-
-            SoftData.LoadSystemFactions(cleanSystemName)
-        Next
-        RockRatsClient.LogOutput("Downloaded " + elements(1) + " RockRats Systems")
-    End Sub
-
-    Friend Sub InitJournalCodes()
-        ' Server Codes
-        '
-        'my @allegianceCodes = ("Independent", "Federation", "Empire", "None");
-        'My @economyCodes    = ("Agriculture", "Demand", "Extraction", "High Tech", "Industrial", "Refinery", "Service", "Supply", "Terraforming", "Tourism", "None");
-        'My @governmentCodes = ("Anarchy", "Colony", "Communism", "Confederacy", "Cooperative", "Corporate", "Democracy", "Dictatorship", "Feudal", "Imperial", "Patronage", "Prison Colony", "Theocracy", "None");
-        'My @securityCodes   = ("High", "Low", "Medium", "None");
-        'My @stateCodes      = ("Boom", "Bust", "Civil unrest", "Civil war", "Election", "Expansion", "Famine", "Investment", "Lockdown", "Outbreak", "Retreat", "War", " ");
-        '#my @shipCodes      = ("Sidewinder", ...); # Waiting for the ShipID values to be documented - Use Ship or ShipType for now.
-
-        allegianceCodes.Add("independent", "0")
-        allegianceCodes.Add("federation", "1")
-        allegianceCodes.Add("empire", "2")
-
-        economyCodes.Add("agriculture", "0")
-        economyCodes.Add("demand", "1")
-        economyCodes.Add("extraction", "2")
-        economyCodes.Add("high tech", "3")
-        economyCodes.Add("industrial", "4")
-        economyCodes.Add("refinery", "5")
-        economyCodes.Add("service", "6")
-        economyCodes.Add("supply", "7")
-        economyCodes.Add("terraforming", "8")
-        economyCodes.Add("tourism", "9")
-
-        governmentCodes.Add("anarchy", "0")
-        governmentCodes.Add("colony", "1")
-        governmentCodes.Add("communism", "2")
-        governmentCodes.Add("confederacy", "3")
-        governmentCodes.Add("cooperative", "4")
-        governmentCodes.Add("corporate", "5")
-        governmentCodes.Add("democracy", "6")
-        governmentCodes.Add("dictatorship", "7")
-        governmentCodes.Add("feudal", "8")
-        governmentCodes.Add("imperial", "9")
-        governmentCodes.Add("patronage", "10")
-        governmentCodes.Add("prison colony", "11")
-        governmentCodes.Add("theocracy", "12")
-
-        securityCodes.Add("high", "0")
-        securityCodes.Add("low", "1")
-        securityCodes.Add("medium", "2")
-
-        stateCodes.Add("boom", "0")
-        stateCodes.Add("bust", "1")
-        stateCodes.Add("civil unrest", "2")
-        stateCodes.Add("civil war", "3")
-        stateCodes.Add("election", "4")
-        stateCodes.Add("expansion", "5")
-        stateCodes.Add("famine", "6")
-        stateCodes.Add("investment", "7")
-        stateCodes.Add("lockdown", "8")
-        stateCodes.Add("outbreak", "9")
-        stateCodes.Add("retreat", "0")
-        stateCodes.Add("war", "11")
-
-    End Sub
 End Module

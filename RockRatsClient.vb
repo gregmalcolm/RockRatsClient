@@ -27,10 +27,7 @@ Public Class RockRatsClient
             My.Computer.FileSystem.CreateDirectory(AppDataDir)
         End If
         Parameters.initDefaultParameters()  ' Call this first to set default values
-        Files.InitJournalCodes()
         Comms.InitCommsCodes()
-        Username.Text = Parameters.getParameter("Username")
-        SiteKey.Text = Parameters.getParameter("SiteKey")
         JournalFolder.Text = Parameters.getParameter("JournalDirectory")
         Dim bw As String = Parameters.getParameter("BlackAndWhile")
         If bw = "True" Then
@@ -44,31 +41,12 @@ Public Class RockRatsClient
 
         resizeSlider.Value = CInt(Parameters.getParameter("resizeValue"))
         resizeValue.Text = "Resize: " + CType((resizeSlider.Value / 4) + 1, String) + "x"
-        SaveConnDetails.Enabled = False
-        SaveJournalDir.Enabled = False
         SystemsList.Items.Clear()
-        SystemName.Text = DataCache.getDataCache("Store", "LastSystem")
-        ShipName.Text = DataCache.getDataCache("Store", "LastShip")
-        CommanderName.Text = DataCache.getDataCache("Store", "LastCommander")
+        SystemName.Text = DataCache.GetDataCache("Store", "LastSystem")
+        ShipName.Text = DataCache.GetDataCache("Store", "LastShip")
+        CommanderName.Text = DataCache.GetDataCache("Store", "LastCommander")
         If String.IsNullOrEmpty(CommanderName.Text) Then
             CommanderName.Text = "Jameson"
-        End If
-        RockRatsActivity.Items.Add("Logon + All RockRats System Activity")
-        RockRatsActivity.Items.Add("Logon + Jumps in RockRats Systems")
-        RockRatsActivity.Items.Add("Logon + Docks in RockRats Systems")
-        RockRatsActivity.Items.Add("Logon location only")
-        RockRatsActivity.Items.Add("No Update")
-        Dim procActivity As String = getParameter("UpdateSiteActivity")
-        If procActivity = "A" Then
-            RockRatsActivity.SelectedIndex = 0
-        ElseIf procActivity = "N" Then
-            RockRatsActivity.SelectedIndex = 4
-        ElseIf procActivity = "J" Then
-            RockRatsActivity.SelectedIndex = 1
-        ElseIf procActivity = "D" Then
-            RockRatsActivity.SelectedIndex = 2
-        Else
-            RockRatsActivity.SelectedIndex = 3
         End If
         LogOutput("Version: " & getVersion())
         LogOutput("AppData: " & AppDataDir)
@@ -80,21 +58,6 @@ Public Class RockRatsClient
         LoadTimer.Enabled = False
         ConnStatus.Text = "Connecting..."
         commsTimer.Enabled = True
-    End Sub
-
-    Private Sub Username_TextChanged(sender As Object, e As EventArgs) Handles Username.TextChanged
-        SaveConnDetails.Enabled = True
-    End Sub
-
-    Private Sub SiteKey_TextChanged(sender As Object, e As EventArgs) Handles SiteKey.TextChanged
-        SaveConnDetails.Enabled = True
-    End Sub
-
-    Private Sub SaveConnDetails_Click(sender As Object, e As EventArgs) Handles SaveConnDetails.Click
-        Parameters.setParameter("Username", Username.Text)
-        Parameters.setParameter("SiteKey", SiteKey.Text)
-        SaveConnDetails.Enabled = False
-        TestConnection.Enabled = True
     End Sub
 
     Private Sub BrowserForDir_Click(sender As Object, e As EventArgs) Handles BrowserForDir.Click
@@ -123,23 +86,7 @@ Public Class RockRatsClient
     End Sub
 
     Private Sub JournalFolder_TextChanged(sender As Object, e As EventArgs) Handles JournalFolder.TextChanged
-        SaveJournalDir.Enabled = True
-    End Sub
-
-    Private Sub SaveJournalDir_Click(sender As Object, e As EventArgs) Handles SaveJournalDir.Click
         Parameters.setParameter("JournalDirectory", JournalFolder.Text)
-        Dim procActivity As String = "O"
-        If RockRatsActivity.SelectedIndex = 0 Then
-            procActivity = "A"
-        ElseIf RockRatsActivity.SelectedIndex = 4 Then
-            procActivity = "N"
-        ElseIf RockRatsActivity.SelectedIndex = 1 Then
-            procActivity = "J"
-        ElseIf RockRatsActivity.SelectedIndex = 2 Then
-            procActivity = "D"
-        End If
-        setParameter("UpdateSiteActivity", procActivity)
-        SaveJournalDir.Enabled = False
     End Sub
 
     Private Sub tailLogs_Click_1(sender As Object, e As EventArgs) Handles tailLogs.Click
@@ -347,10 +294,6 @@ Public Class RockRatsClient
         End If
     End Function
 
-    Private Sub RockRatsActivity_SelectedIndexChanged(sender As Object, e As EventArgs) Handles RockRatsActivity.SelectedIndexChanged
-        SaveJournalDir.Enabled = True
-    End Sub
-
     Private Sub SoftDataGrid_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles SoftDataGrid.CellContentClick
 
     End Sub
@@ -505,15 +448,7 @@ Public Class RockRatsClient
         End Try
     End Sub
 
-    Private Sub resizeValue_Click(sender As Object, e As EventArgs) Handles resizeValue.Click
-
-    End Sub
-
-    Private Sub Label11_Click(sender As Object, e As EventArgs) 
-
-    End Sub
-
-    Private Sub HelpText_TextChanged(sender As Object, e As EventArgs)
-
+    Private Sub CommanderName_TextChanged(sender As Object, e As EventArgs) Handles CommanderName.TextChanged
+        DataCache.SetDataCache("Store", "LastCommander", CommanderName.Text)
     End Sub
 End Class

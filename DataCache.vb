@@ -2,7 +2,7 @@
     Private dataCache As New Hashtable()
     Private datFile As String = Environment.GetEnvironmentVariable("USERPROFILE") + "\AppData\Local\RockRatsClient\RockRatsClient.cache"
 
-    Friend Function getDataCache(pCat As String, cKey As String) As String
+    Friend Function GetDataCache(pCat As String, cKey As String) As String
         Dim retValue As String = ""
         For Each de As DictionaryEntry In dataCache
             If de.Key.ToString = cKey Then
@@ -16,7 +16,7 @@
         Return retValue
     End Function
 
-    Friend Function setDataCache(pCat As String, cKey As String, cValue As String) As Boolean
+    Friend Function SetDataCache(pCat As String, cKey As String, cValue As String) As Boolean
         Try
             Interaction.WriteINIFile(pCat, cKey, cValue, datFile)
             If dataCache.ContainsKey(cKey) Then
