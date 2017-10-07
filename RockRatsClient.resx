@@ -135,23 +135,6 @@
   <metadata name="ToolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>586, 17</value>
   </metadata>
-  <data name="Label15.Text" xml:space="preserve">
-    <value>This client can take a screenshot of your Main Screen, it then uses OCR to parse the image
-To do this, first select the System as this will populate the Factions, then open the System Map in game
-and use the Capture or Paste option. Scroll down the Faction list and Capture subsequent screenshots.
-
-If a Faction is not captured on the first attempt or the influence is an incorrect value, untick Found
-and try scrolling slightly on the System Map before capturing again, this will usually correct the values.</value>
-  </data>
-  <data name="Label12.Text" xml:space="preserve">
-    <value>Reuses SEPP code. Sepp Client was developed to enable automatic updating of System and Station Faction details
-The client reads from the Commanders Journal (introduced in ED 2.2) to update the RockRats website
-The Client itself will not update your registry
-All library files bundled for OCR are stored in the Application Directory
-The installer used allows for complete uninstall of the client and all libraries
-User settings are stored in the User Profile location
-The location of your user settings is shown on the Log tab as AppData</value>
-  </data>
   <metadata name="Faction.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>

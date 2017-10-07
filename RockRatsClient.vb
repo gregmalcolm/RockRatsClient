@@ -70,7 +70,6 @@ Public Class RockRatsClient
         Else
             RockRatsActivity.SelectedIndex = 3
         End If
-        Version.Text = "Version: " & getVersion()
         LogOutput("Version: " & getVersion())
         LogOutput("AppData: " & AppDataDir)
         Me.Refresh()                     ' Ensure the app is fully loaded before 
@@ -356,7 +355,7 @@ Public Class RockRatsClient
 
     End Sub
 
-    Private Sub Label12_Click(sender As Object, e As EventArgs) Handles Label12.Click
+    Private Sub Label12_Click(sender As Object, e As EventArgs) 
 
     End Sub
 
@@ -368,7 +367,7 @@ Public Class RockRatsClient
 
     End Sub
 
-    Private Sub Version_Click(sender As Object, e As EventArgs) Handles Version.Click
+    Private Sub Version_Click(sender As Object, e As EventArgs)
 
     End Sub
 
@@ -507,6 +506,14 @@ Public Class RockRatsClient
     End Sub
 
     Private Sub resizeValue_Click(sender As Object, e As EventArgs) Handles resizeValue.Click
+
+    End Sub
+
+    Private Sub Label11_Click(sender As Object, e As EventArgs) 
+
+    End Sub
+
+    Private Sub HelpText_TextChanged(sender As Object, e As EventArgs)
 
     End Sub
 End Class
