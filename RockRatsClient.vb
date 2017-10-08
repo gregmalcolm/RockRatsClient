@@ -16,34 +16,19 @@ Public Class RockRatsClient
     Private clientVersion As String = Application.ProductVersion
     Private noLogDups As String = ""
 
-    Private Sub tailTimer_Tick(sender As Object, e As EventArgs) Handles tailTimer.Tick
-        tailTimer.Enabled = False
-        Dim waitForCompletion As Boolean = Files.TailJournal()
-        tailTimer.Enabled = True
-    End Sub
-
     Private Sub RockRatsClient_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         If Not Directory.Exists(AppDataDir) Then
             My.Computer.FileSystem.CreateDirectory(AppDataDir)
         End If
-        Parameters.initDefaultParameters()  ' Call this first to set default values
+        Parameters.InitDefaultParameters()  ' Call this first to set default values
         Comms.InitCommsCodes()
-        JournalFolder.Text = Parameters.getParameter("JournalDirectory")
-        Dim bw As String = Parameters.getParameter("BlackAndWhile")
-        If bw = "True" Then
-            BlackAndWhile.Checked = True
-        End If
-        Dim logOcrText As String = Parameters.getParameter("LogOcrText")
+        JournalFolder.Text = Parameters.GetParameter("JournalDirectory")
+        Dim logOcrText As String = Parameters.GetParameter("LogOcrText")
         If logOcrText = "True" Then
             LogOcrCheckbox.Checked = True
         End If
-        ScanMarginLeft.Text = Parameters.getParameter("ScanMarginLeft")
+        ScanMarginLeft.Text = Parameters.GetParameter("ScanMarginLeft2")
 
-        resizeSlider.Value = CInt(Parameters.getParameter("resizeValue"))
-        resizeValue.Text = "Resize: " + CType((resizeSlider.Value / 4) + 1, String) + "x"
-        SystemsList.Items.Clear()
-        SystemName.Text = DataCache.GetDataCache("Store", "LastSystem")
-        ShipName.Text = DataCache.GetDataCache("Store", "LastShip")
         CommanderName.Text = DataCache.GetDataCache("Store", "LastCommander")
         If String.IsNullOrEmpty(CommanderName.Text) Then
             CommanderName.Text = "Jameson"
@@ -51,13 +36,7 @@ Public Class RockRatsClient
         LogOutput("Version: " & getVersion())
         LogOutput("AppData: " & AppDataDir)
         Me.Refresh()                     ' Ensure the app is fully loaded before 
-        LoadTimer.Enabled = True         ' opening comms - avoids possible exceptions.
-    End Sub
-
-    Private Sub LoadTimer_Tick(sender As Object, e As EventArgs) Handles LoadTimer.Tick
-        LoadTimer.Enabled = False
-        ConnStatus.Text = "Connecting..."
-        commsTimer.Enabled = True
+        CommsTimer.Enabled = True         ' opening comms - avoids possible exceptions.
     End Sub
 
     Private Sub BrowserForDir_Click(sender As Object, e As EventArgs) Handles BrowserForDir.Click
@@ -65,34 +44,9 @@ Public Class RockRatsClient
             JournalFolder.Text = FolderBrowser.SelectedPath
         End If
     End Sub
-
-    Friend Sub toggleTailLog()
-        If tailTimer.Enabled = False Then
-            LogOutput("Startup Journal Monitor")
-            If Files.IdLastJournal() Then
-                tailTimer.Enabled = True
-                tailLogs.Text = "Stop"
-            Else
-                LogOutput("Unable to identify Journal Logs")
-            End If
-        Else
-            tailTimer.Enabled = False
-            tailLogs.Text = "Run"
-            FileStatus.Text = "Idle"
-            Files.StopJournal()
-            LogOutput("Shutdown Journal Monitor")
-        End If
-        tailLogs.Enabled = True
-    End Sub
-
     Private Sub JournalFolder_TextChanged(sender As Object, e As EventArgs) Handles JournalFolder.TextChanged
-        Parameters.setParameter("JournalDirectory", JournalFolder.Text)
+        Parameters.SetParameter("JournalDirectory", JournalFolder.Text)
     End Sub
-
-    Private Sub tailLogs_Click_1(sender As Object, e As EventArgs) Handles tailLogs.Click
-        toggleTailLog()
-    End Sub
-
     Public Sub LogEverywhere(message As String)
         StatusLog(message)
         LogOutput(message)
@@ -108,7 +62,7 @@ Public Class RockRatsClient
         Debug.WriteLine(logText)
         Try
             If noLogDups <> logText Then
-                logOut.AppendText(Now().ToString + " - " + logText + vbNewLine)
+                LogTextBox.AppendText(Now().ToString + " - " + logText + vbNewLine)
                 If Tabs.SelectedTab Is LogTab Then
                     LogTab.Text = "Log"
                 Else
@@ -116,7 +70,7 @@ Public Class RockRatsClient
                 End If
             End If
         Catch ex As Exception
-            logOut.Text = "" ' Guess it's full - emptying is a harsh workaround but lets see if it ever happens
+            LogTextBox.Text = "" ' Guess it's full - emptying is a harsh workaround but lets see if it ever happens
         End Try
     End Sub
     Private Sub CaptureEDScreen_Click(sender As Object, e As EventArgs) Handles CaptureEDScreen.Click
@@ -129,7 +83,7 @@ Public Class RockRatsClient
 
         bounds = Screen.PrimaryScreen.Bounds
         Try
-            scanMarginPercentage = Integer.Parse(Parameters.getParameter("ScanMarginLeft"))
+            scanMarginPercentage = Integer.Parse(Parameters.GetParameter("ScanMarginLeft2"))
         Catch ex As Exception
         End Try
         Dim scanMargin As Integer = CInt(bounds.Width * (scanMarginPercentage / 100))
@@ -138,7 +92,7 @@ Public Class RockRatsClient
         graph = Graphics.FromImage(screenshot)
         graph.CopyFromScreen(bounds.X, bounds.Y, 0, 0, New Size(scanMargin, bounds.Height), CopyPixelOperation.SourceCopy)
 
-        completeEDScreen(screenshot)
+        CompleteEDScreen(screenshot)
     End Sub
 
     Private Sub PasteEDScreen_Click(sender As Object, e As EventArgs)
@@ -147,56 +101,25 @@ Public Class RockRatsClient
         If My.Computer.Clipboard.ContainsImage Then
             screenshot = CType(My.Computer.Clipboard.GetImage, Bitmap)
             '        EDCapture.Image = My.Computer.Clipboard.GetImage
-            completeEDScreen(screenshot)
+            CompleteEDScreen(screenshot)
         End If
     End Sub
 
-    Private Sub completeEDScreen(screenshot As System.Drawing.Bitmap)
-        statusLabel.Text = "Working..."
-        ocrWorking.Visible = True
-        ocrWorking.Refresh()
-        Dim resize As Double = (resizeSlider.Value / 4) + 1
-        Dim procBitmap As New Bitmap(CInt(screenshot.Width * resize), CInt(screenshot.Height * resize))
+    Private Sub CompleteEDScreen(screenshot As System.Drawing.Bitmap)
+        Const resizeScale = 4
+        Dim procBitmap As New Bitmap(CInt(screenshot.Width * resizeScale), CInt(screenshot.Height * resizeScale))
         Dim grBitmap As Graphics = Graphics.FromImage(procBitmap)
         grBitmap.DrawImage(screenshot, 0, 0, procBitmap.Width, procBitmap.Height)
-        If BlackAndWhile.Checked Then
-            Dim procImg As Bitmap = toGrayScale(procBitmap)
-            Call Global.RockRatsClient.ProcEDScreen(procImg)
-            EDCapture.Image = procImg
-        Else
-            Call Global.RockRatsClient.ProcEDScreen(procBitmap)
-            EDCapture.Image = procBitmap
-        End If
+        Call Global.RockRatsClient.ProcEDScreen(procBitmap)
+        EDCapture.Image = procBitmap
 
         EDCapture.Refresh()
-        ocrWorking.Visible = False
         StatusLog("OCR Finished")
         Call Global.RockRatsClient.ProcessOCRTextChg()
     End Sub
 
-    Private Function toGrayScale(ByVal bmp As Bitmap) As Bitmap
-        Dim grayscale As New Imaging.ColorMatrix(New Single()() _
-        {
-              New Single() {0.299F, 0.299F, 0.299F, 0, 0},
-              New Single() {0.587F, 0.587F, 0.587F, 0, 0},
-              New Single() {0.114F, 0.114F, 0.114F, 0, 0},
-              New Single() {0, 0, 0, 1, 0},
-              New Single() {0, 0, 0, 0, 1}
-        })
-
-        Dim imgattr As New Imaging.ImageAttributes()
-        imgattr.SetColorMatrix(grayscale)
-        Using g As Graphics = Graphics.FromImage(bmp)
-            g.DrawImage(bmp, New Rectangle(0, 0, bmp.Width, bmp.Height),
-                    0, 0, bmp.Width, bmp.Height,
-                    GraphicsUnit.Pixel, imgattr)
-        End Using
-
-        toGrayScale = bmp
-    End Function
-
-    Private Sub UpdSoftData_Click(sender As Object, e As EventArgs) Handles UpdSoftData.Click
-        If selSystem.SelectedItem IsNot Nothing Then
+    Private Sub UpdateBgsData_Click(sender As Object, e As EventArgs) Handles UpdateBgsData.Click
+        If SelectedSystem.SelectedItem IsNot Nothing Then
             If Not SoftData.HasUserFinishedOCRing() Then
                 Dim ok = MsgBox("The influence total looks off. Are you sure you want update the server?", MsgBoxStyle.OkCancel)
                 If ok <> MsgBoxResult.Ok Then
@@ -204,7 +127,7 @@ Public Class RockRatsClient
                 End If
             End If
         End If
-        StatusLog("Sending '" & selSystem.SelectedItem.ToString & "' data to server...")
+        StatusLog("Sending '" & SelectedSystem.SelectedItem.ToString & "' data to server...")
         Dim factionsSent As Integer = 0
         Dim done As Boolean = False
         For Each row As DataGridViewRow In SoftDataGrid.Rows
@@ -216,7 +139,7 @@ Public Class RockRatsClient
                                 row.Cells(ColumnTypes.State).Value = ""
                             End If
                             Dim cwaitForCompletion As Boolean = Comms.SendUpdate("", "", "",
-                                selSystem.SelectedItem.ToString & ":" &
+                                SelectedSystem.SelectedItem.ToString & ":" &
                                 row.Cells(ColumnTypes.Faction).Value.ToString.ToUpper & ":" &
                                 row.Cells(ColumnTypes.State).Value.ToString & ":" &
                                 row.Cells(ColumnTypes.Influence).Value.ToString & ":OCR v" & getVersion())
@@ -230,11 +153,11 @@ Public Class RockRatsClient
                 End If
             End If
         Next
-        LogOutput("Updated " & factionsSent & "/" & (SoftDataGrid.Rows.Count - 1).ToString & " Factions in " & selSystem.SelectedItem.ToString)
-        'Call Global.RockRatsClient.procOCRTextChg()
+        LogOutput("Updated " & factionsSent & "/" & (SoftDataGrid.Rows.Count - 1).ToString & " Factions in " & SelectedSystem.SelectedItem.ToString)
+        GoToNextSystem()
     End Sub
 
-    Private Async Sub commsTimer_Tick(sender As Object, e As EventArgs) Handles commsTimer.Tick
+    Private Async Sub commsTimer_Tick(sender As Object, e As EventArgs) Handles CommsTimer.Tick
         Try
             Await Comms.ProcUpdate()
         Catch ex As Exception
@@ -242,22 +165,22 @@ Public Class RockRatsClient
         End Try
     End Sub
 
-    Private Sub selSystem_SelectedIndexChanged(sender As Object, e As EventArgs) Handles selSystem.SelectedIndexChanged
-        If selSystem.SelectedItem.ToString <> "" Then
-            ResetSystemNameBox(selSystem.SelectedItem.ToString)
+    Private Sub SelectedSystem_SelectedIndexChanged(sender As Object, e As EventArgs) Handles SelectedSystem.SelectedIndexChanged
+        If SelectedSystem.SelectedItem.ToString <> "" Then
+            ResetSystemNameBox(SelectedSystem.SelectedItem.ToString)
             My.Computer.Clipboard.SetText(SystemNameBox.Text)
-            StatusLog("Copied '" & selSystem.SelectedItem.ToString & "' to clipboard!")
-            Call Global.RockRatsClient.ProcessSystemChange(selSystem.SelectedItem.ToString)
+            StatusLog("Copied '" & SelectedSystem.SelectedItem.ToString & "' to clipboard!")
+            Call Global.RockRatsClient.ProcessSystemChange(SelectedSystem.SelectedItem.ToString)
             SoftDataGrid.Select()
         End If
     End Sub
 
-    Private Sub EDCapture_Click(sender As Object, e As EventArgs) Handles EDCapture.Click
+    Private Sub EDCapture_Click(sender As Object, e As EventArgs) 
         If Not EDCapture.Image Is Nothing Then
-            viewImage.imgBox.Width = EDCapture.Image.Width
-            viewImage.imgBox.Height = EDCapture.Image.Height
-            viewImage.imgBox.Image = EDCapture.Image
-            viewImage.Show()
+            ViewImage.ImgBox.Width = EDCapture.Image.Width
+            ViewImage.ImgBox.Height = EDCapture.Image.Height
+            ViewImage.ImgBox.Image = EDCapture.Image
+            ViewImage.Show()
         End If
     End Sub
 
@@ -265,21 +188,8 @@ Public Class RockRatsClient
         Call Global.RockRatsClient.ProcessOCRTextChg()
     End Sub
 
-    Private Sub resizeSlider_Scroll(sender As Object, e As EventArgs) Handles resizeSlider.Scroll
-        resizeValue.Text = "Resize: " + CType((resizeSlider.Value / 4) + 1, String) + "x"
-        Parameters.setParameter("resizeValue", resizeSlider.Value.ToString)
-    End Sub
-
-    Private Sub BlackAndWhile_CheckedChanged(sender As Object, e As EventArgs) Handles BlackAndWhile.CheckedChanged
-        If BlackAndWhile.Checked Then
-            Parameters.setParameter("BlackAndWhile", "True")
-        Else
-            Parameters.setParameter("BlackAndWhile", "False")
-        End If
-    End Sub
-
-    Private Sub onTop_CheckedChanged(sender As Object, e As EventArgs) Handles onTop.CheckedChanged
-        If onTop.Checked Then
+    Private Sub onTop_CheckedChanged(sender As Object, e As EventArgs) Handles AlwaysOnTopCheckbox.CheckedChanged
+        If AlwaysOnTopCheckbox.Checked Then
             Me.TopMost = True
         Else
             Me.TopMost = False
@@ -294,47 +204,18 @@ Public Class RockRatsClient
         End If
     End Function
 
-    Private Sub SoftDataGrid_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles SoftDataGrid.CellContentClick
-
-    End Sub
-
-    Private Sub Label12_Click(sender As Object, e As EventArgs) 
-
-    End Sub
-
-    Private Sub SoftDataTab_Click(sender As Object, e As EventArgs) Handles SoftDataTab.Click
-
-    End Sub
-
-    Private Sub Panel3_Paint(sender As Object, e As PaintEventArgs) Handles Panel3.Paint
-
-    End Sub
-
-    Private Sub Version_Click(sender As Object, e As EventArgs)
-
-    End Sub
-
-    Private Sub StatusBox_TextChanged(sender As Object, e As EventArgs) Handles StatusBox.TextChanged
-
-    End Sub
-
-    Private Sub viewWebTracker_Click(sender As Object, e As EventArgs) Handles viewWebTracker.Click
+    Private Sub ViewWebTracker_Click(sender As Object, e As EventArgs) Handles ViewWebTracker.Click
         Dim webAddress As String = "http://rock-rats-bgs-tracker.s3-website-us-east-1.amazonaws.com/"
         Process.Start(webAddress)
     End Sub
 
-    Private Sub statusLabel_Click(sender As Object, e As EventArgs) Handles statusLabel.Click
-
-    End Sub
-
-    Private Sub NextSystem_Click(sender As Object, e As EventArgs) Handles NextSystem.Click
-
-        If selSystem.SelectedIndex < 0 Then
-            selSystem.SelectedIndex = 1
-        ElseIf selSystem.SelectedIndex = selSystem.Items.Count - 1 Then
+    Private Sub GoToNextSystem()
+        If SelectedSystem.SelectedIndex < 0 Then
+            SelectedSystem.SelectedIndex = 1
+        ElseIf SelectedSystem.SelectedIndex = SelectedSystem.Items.Count - 1 Then
             StatusLog("No more systems!")
         Else
-            selSystem.SelectedIndex = selSystem.SelectedIndex + 1
+            SelectedSystem.SelectedIndex = SelectedSystem.SelectedIndex + 1
         End If
     End Sub
 
@@ -352,7 +233,7 @@ Public Class RockRatsClient
         If MessageBox.Show("Add " & systemName & " to the list of systems we're updating?", "Orly?", MessageBoxButtons.OKCancel) = DialogResult.OK Then
             If Await Comms.AddSystemToRoster(systemName) Then
                 StatusLog("Successfully added " & systemName & "to the Rock Rat known systems list!")
-                selSystem.SelectedIndex = selSystem.Items.Count - 1
+                SelectedSystem.SelectedIndex = SelectedSystem.Items.Count - 1
             Else
                 StatusLog("Failed to add the system, sorry!")
             End If
@@ -431,18 +312,18 @@ Public Class RockRatsClient
 
     End Sub
 
-    Private Sub LogOcrCheckbox_CheckedChanged(sender As Object, e As EventArgs) Handles LogOcrCheckbox.CheckedChanged
+    Private Sub LogOcrCheckbox_CheckedChanged(sender As Object, e As EventArgs) 
         If LogOcrCheckbox.Checked Then
-            Parameters.setParameter("LogOcrText", "True")
+            Parameters.SetParameter("LogOcrText", "True")
         Else
-            Parameters.setParameter("LogOcrText", "False")
+            Parameters.SetParameter("LogOcrText", "False")
         End If
     End Sub
 
-    Private Sub ScanMarginLeft_TextChanged(sender As Object, e As EventArgs) Handles ScanMarginLeft.TextChanged
+    Private Sub ScanMarginLeft_TextChanged(sender As Object, e As EventArgs) 
         Try
             Dim value = Integer.Parse(Trim(ScanMarginLeft.Text))
-            Parameters.setParameter("ScanMarginLeft", ScanMarginLeft.Text)
+            Parameters.SetParameter("ScanMarginLeft2", ScanMarginLeft.Text)
         Catch ex As Exception
 
         End Try
@@ -450,5 +331,11 @@ Public Class RockRatsClient
 
     Private Sub CommanderName_TextChanged(sender As Object, e As EventArgs) Handles CommanderName.TextChanged
         DataCache.SetDataCache("Store", "LastCommander", CommanderName.Text)
+    End Sub
+
+    Public Sub ShowBgsTools()
+        SelectedSystem.SelectedIndex = 0
+        SelectedSystem.Visible = True
+        SoftDataGrid.Visible = True
     End Sub
 End Class

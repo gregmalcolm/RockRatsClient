@@ -245,10 +245,10 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="RockRatsSystem.vb" />
-    <Compile Include="viewImage.Designer.vb">
-      <DependentUpon>viewImage.vb</DependentUpon>
+    <Compile Include="ViewImage.Designer.vb">
+      <DependentUpon>ViewImage.vb</DependentUpon>
     </Compile>
-    <Compile Include="viewImage.vb">
+    <Compile Include="ViewImage.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GlobalSuppressions.vb" />
@@ -283,8 +283,8 @@
     <EmbeddedResource Include="RockRatsClient.resx">
       <DependentUpon>RockRatsClient.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="viewImage.resx">
-      <DependentUpon>viewImage.vb</DependentUpon>
+    <EmbeddedResource Include="ViewImage.resx">
+      <DependentUpon>ViewImage.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

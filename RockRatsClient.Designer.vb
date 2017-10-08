@@ -24,53 +24,38 @@ Partial Class RockRatsClient
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(RockRatsClient))
-        Me.tailTimer = New System.Windows.Forms.Timer(Me.components)
-        Me.LoadTimer = New System.Windows.Forms.Timer(Me.components)
         Me.JourneyDir = New System.DirectoryServices.DirectoryEntry()
         Me.FolderBrowser = New System.Windows.Forms.FolderBrowserDialog()
-        Me.commsTimer = New System.Windows.Forms.Timer(Me.components)
+        Me.CommsTimer = New System.Windows.Forms.Timer(Me.components)
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.JournalFolder = New System.Windows.Forms.TextBox()
         Me.BrowserForDir = New System.Windows.Forms.Button()
-        Me.tailLogs = New System.Windows.Forms.Button()
-        Me.EDCapture = New System.Windows.Forms.PictureBox()
+        Me.JournalFolder = New System.Windows.Forms.TextBox()
         Me.CaptureEDScreen = New System.Windows.Forms.Button()
-        Me.UpdSoftData = New System.Windows.Forms.Button()
-        Me.selSystem = New System.Windows.Forms.ComboBox()
-        Me.infTotal = New System.Windows.Forms.Label()
-        Me.infTotalVal = New System.Windows.Forms.Label()
-        Me.BlackAndWhile = New System.Windows.Forms.CheckBox()
-        Me.resizeSlider = New System.Windows.Forms.TrackBar()
-        Me.viewWebTracker = New System.Windows.Forms.Button()
-        Me.NextSystem = New System.Windows.Forms.Button()
+        Me.UpdateBgsData = New System.Windows.Forms.Button()
+        Me.SelectedSystem = New System.Windows.Forms.ComboBox()
+        Me.InfTotal = New System.Windows.Forms.Label()
+        Me.InfTotalVal = New System.Windows.Forms.Label()
+        Me.ViewWebTracker = New System.Windows.Forms.Button()
         Me.AddButton = New System.Windows.Forms.Button()
         Me.RemoveButton = New System.Windows.Forms.Button()
         Me.LogOcrCheckbox = New System.Windows.Forms.CheckBox()
         Me.ScanMarginLeft = New System.Windows.Forms.TextBox()
         Me.Label14 = New System.Windows.Forms.Label()
-        Me.LogTab = New System.Windows.Forms.TabPage()
-        Me.logOut = New System.Windows.Forms.RichTextBox()
-        Me.SettingsTab = New System.Windows.Forms.TabPage()
-        Me.Label9 = New System.Windows.Forms.Label()
-        Me.StatusTab = New System.Windows.Forms.TabPage()
-        Me.SystemsList = New System.Windows.Forms.ListBox()
-        Me.Panel3 = New System.Windows.Forms.Panel()
-        Me.SystemName = New System.Windows.Forms.Label()
-        Me.ShipName = New System.Windows.Forms.Label()
-        Me.SystemLabel = New System.Windows.Forms.Label()
-        Me.ShipLabel = New System.Windows.Forms.Label()
-        Me.FileStatus = New System.Windows.Forms.Label()
-        Me.Label3 = New System.Windows.Forms.Label()
-        Me.ConnStatus = New System.Windows.Forms.Label()
+        Me.EDCapture = New System.Windows.Forms.PictureBox()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.Label6 = New System.Windows.Forms.Label()
-        Me.Tabs = New System.Windows.Forms.TabControl()
+        Me.LogTab = New System.Windows.Forms.TabPage()
+        Me.LogTextBox = New System.Windows.Forms.RichTextBox()
+        Me.SettingsTab = New System.Windows.Forms.TabPage()
+        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.CommanderName = New System.Windows.Forms.TextBox()
+        Me.Label9 = New System.Windows.Forms.Label()
+        Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.Label17 = New System.Windows.Forms.Label()
         Me.SoftDataTab = New System.Windows.Forms.TabPage()
         Me.StatusBox = New System.Windows.Forms.TextBox()
         Me.SystemNameBox = New System.Windows.Forms.TextBox()
-        Me.Label7 = New System.Windows.Forms.Label()
-        Me.onTop = New System.Windows.Forms.CheckBox()
-        Me.resizeValue = New System.Windows.Forms.Label()
+        Me.SystemLabel = New System.Windows.Forms.Label()
         Me.SoftDataGrid = New System.Windows.Forms.DataGridView()
         Me.Faction = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Influence = New System.Windows.Forms.DataGridViewTextBoxColumn()
@@ -79,196 +64,122 @@ Partial Class RockRatsClient
         Me.InfluenceDiff = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.PrevState = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Found = New System.Windows.Forms.DataGridViewCheckBoxColumn()
-        Me.ocrWorking = New System.Windows.Forms.Panel()
-        Me.statusLabel = New System.Windows.Forms.Label()
-        Me.Label10 = New System.Windows.Forms.Label()
-        Me.Label8 = New System.Windows.Forms.Label()
-        Me.Label13 = New System.Windows.Forms.Label()
-        Me.Label17 = New System.Windows.Forms.Label()
-        Me.CommanderLabel = New System.Windows.Forms.Label()
-        Me.CommanderName = New System.Windows.Forms.TextBox()
+        Me.LoadingLabel = New System.Windows.Forms.Label()
+        Me.AlwaysOnTopCheckbox = New System.Windows.Forms.CheckBox()
+        Me.Tabs = New System.Windows.Forms.TabControl()
         CType(Me.EDCapture, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.resizeSlider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.LogTab.SuspendLayout()
         Me.SettingsTab.SuspendLayout()
-        Me.StatusTab.SuspendLayout()
-        Me.Panel3.SuspendLayout()
-        Me.Tabs.SuspendLayout()
+        Me.GroupBox2.SuspendLayout()
+        Me.GroupBox1.SuspendLayout()
         Me.SoftDataTab.SuspendLayout()
         CType(Me.SoftDataGrid, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.ocrWorking.SuspendLayout()
+        Me.Tabs.SuspendLayout()
         Me.SuspendLayout()
         '
-        'tailTimer
+        'CommsTimer
         '
-        Me.tailTimer.Interval = 4000
-        '
-        'LoadTimer
-        '
-        Me.LoadTimer.Interval = 2400
-        '
-        'commsTimer
-        '
-        Me.commsTimer.Interval = 250
+        Me.CommsTimer.Interval = 3000
         '
         'ToolTip1
         '
-        Me.ToolTip1.AutoPopDelay = 5000
+        Me.ToolTip1.AutoPopDelay = 200
         Me.ToolTip1.InitialDelay = 400
         Me.ToolTip1.ReshowDelay = 100
-        '
-        'JournalFolder
-        '
-        Me.JournalFolder.Anchor = System.Windows.Forms.AnchorStyles.Left
-        Me.JournalFolder.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.JournalFolder.Location = New System.Drawing.Point(100, 371)
-        Me.JournalFolder.Multiline = True
-        Me.JournalFolder.Name = "JournalFolder"
-        Me.JournalFolder.ReadOnly = True
-        Me.JournalFolder.Size = New System.Drawing.Size(355, 28)
-        Me.JournalFolder.TabIndex = 23
-        Me.ToolTip1.SetToolTip(Me.JournalFolder, "Set the location of your ED Journal")
-        Me.JournalFolder.WordWrap = False
         '
         'BrowserForDir
         '
         Me.BrowserForDir.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.BrowserForDir.Location = New System.Drawing.Point(461, 371)
+        Me.BrowserForDir.Location = New System.Drawing.Point(507, 16)
         Me.BrowserForDir.Name = "BrowserForDir"
-        Me.BrowserForDir.Size = New System.Drawing.Size(47, 28)
+        Me.BrowserForDir.Size = New System.Drawing.Size(36, 28)
         Me.BrowserForDir.TabIndex = 24
         Me.BrowserForDir.Text = "..."
         Me.ToolTip1.SetToolTip(Me.BrowserForDir, "Select the location of your ED Journal")
         Me.BrowserForDir.UseVisualStyleBackColor = True
         '
-        'tailLogs
+        'JournalFolder
         '
-        Me.tailLogs.Enabled = False
-        Me.tailLogs.Location = New System.Drawing.Point(66, 282)
-        Me.tailLogs.Name = "tailLogs"
-        Me.tailLogs.Size = New System.Drawing.Size(270, 63)
-        Me.tailLogs.TabIndex = 24
-        Me.tailLogs.Text = "Run"
-        Me.ToolTip1.SetToolTip(Me.tailLogs, "Process new Journal Entries")
-        Me.tailLogs.UseVisualStyleBackColor = True
-        '
-        'EDCapture
-        '
-        Me.EDCapture.BackColor = System.Drawing.Color.Transparent
-        Me.EDCapture.Location = New System.Drawing.Point(8, 67)
-        Me.EDCapture.Name = "EDCapture"
-        Me.EDCapture.Size = New System.Drawing.Size(194, 132)
-        Me.EDCapture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        Me.EDCapture.TabIndex = 0
-        Me.EDCapture.TabStop = False
-        Me.ToolTip1.SetToolTip(Me.EDCapture, "Click on the Image to see full view")
+        Me.JournalFolder.Anchor = System.Windows.Forms.AnchorStyles.Left
+        Me.JournalFolder.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.JournalFolder.Location = New System.Drawing.Point(110, 16)
+        Me.JournalFolder.Multiline = True
+        Me.JournalFolder.Name = "JournalFolder"
+        Me.JournalFolder.Size = New System.Drawing.Size(394, 28)
+        Me.JournalFolder.TabIndex = 23
+        Me.ToolTip1.SetToolTip(Me.JournalFolder, "Set the location of your ED Journal")
+        Me.JournalFolder.WordWrap = False
         '
         'CaptureEDScreen
         '
-        Me.CaptureEDScreen.Location = New System.Drawing.Point(11, 293)
+        Me.CaptureEDScreen.Location = New System.Drawing.Point(472, 255)
         Me.CaptureEDScreen.Name = "CaptureEDScreen"
-        Me.CaptureEDScreen.Size = New System.Drawing.Size(103, 62)
+        Me.CaptureEDScreen.Size = New System.Drawing.Size(77, 72)
         Me.CaptureEDScreen.TabIndex = 23
-        Me.CaptureEDScreen.Text = "Capture"
+        Me.CaptureEDScreen.Text = "OCR System Factions"
         Me.ToolTip1.SetToolTip(Me.CaptureEDScreen, "Capture the Image from your Main Screen")
         Me.CaptureEDScreen.UseVisualStyleBackColor = True
         '
-        'UpdSoftData
+        'UpdateBgsData
         '
-        Me.UpdSoftData.Location = New System.Drawing.Point(678, 246)
-        Me.UpdSoftData.Name = "UpdSoftData"
-        Me.UpdSoftData.Size = New System.Drawing.Size(77, 47)
-        Me.UpdSoftData.TabIndex = 25
-        Me.UpdSoftData.Text = "Update"
-        Me.ToolTip1.SetToolTip(Me.UpdSoftData, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
-        Me.UpdSoftData.UseVisualStyleBackColor = True
+        Me.UpdateBgsData.Location = New System.Drawing.Point(472, 380)
+        Me.UpdateBgsData.Name = "UpdateBgsData"
+        Me.UpdateBgsData.Size = New System.Drawing.Size(77, 47)
+        Me.UpdateBgsData.TabIndex = 25
+        Me.UpdateBgsData.Text = "Update Server"
+        Me.ToolTip1.SetToolTip(Me.UpdateBgsData, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
+        Me.UpdateBgsData.UseVisualStyleBackColor = True
         '
-        'selSystem
+        'SelectedSystem
         '
-        Me.selSystem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.selSystem.FormattingEnabled = True
-        Me.selSystem.Items.AddRange(New Object() {"Loading..."})
-        Me.selSystem.Location = New System.Drawing.Point(8, 40)
-        Me.selSystem.Name = "selSystem"
-        Me.selSystem.Size = New System.Drawing.Size(198, 21)
-        Me.selSystem.TabIndex = 28
-        Me.selSystem.TabStop = False
-        Me.ToolTip1.SetToolTip(Me.selSystem, "Select the system for Soft Data update")
-        Me.selSystem.Visible = False
+        Me.SelectedSystem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.SelectedSystem.FormattingEnabled = True
+        Me.SelectedSystem.Items.AddRange(New Object() {"Loading..."})
+        Me.SelectedSystem.Location = New System.Drawing.Point(48, 3)
+        Me.SelectedSystem.Name = "SelectedSystem"
+        Me.SelectedSystem.Size = New System.Drawing.Size(163, 21)
+        Me.SelectedSystem.TabIndex = 28
+        Me.SelectedSystem.TabStop = False
+        Me.ToolTip1.SetToolTip(Me.SelectedSystem, "Select the system for Soft Data update")
+        Me.SelectedSystem.Visible = False
         '
-        'infTotal
+        'InfTotal
         '
-        Me.infTotal.AutoSize = True
-        Me.infTotal.ForeColor = System.Drawing.Color.DarkRed
-        Me.infTotal.Location = New System.Drawing.Point(677, 300)
-        Me.infTotal.Name = "infTotal"
-        Me.infTotal.Size = New System.Drawing.Size(78, 13)
-        Me.infTotal.TabIndex = 32
-        Me.infTotal.Text = "Influence Total"
-        Me.ToolTip1.SetToolTip(Me.infTotal, "Influence Total has to be 100% before update is enabled")
+        Me.InfTotal.AutoSize = True
+        Me.InfTotal.ForeColor = System.Drawing.Color.DarkRed
+        Me.InfTotal.Location = New System.Drawing.Point(471, 330)
+        Me.InfTotal.Name = "InfTotal"
+        Me.InfTotal.Size = New System.Drawing.Size(78, 13)
+        Me.InfTotal.TabIndex = 32
+        Me.InfTotal.Text = "Influence Total"
+        Me.ToolTip1.SetToolTip(Me.InfTotal, "Influence Total has to be 100% before update is enabled")
         '
-        'infTotalVal
+        'InfTotalVal
         '
-        Me.infTotalVal.AutoSize = True
-        Me.infTotalVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.infTotalVal.ForeColor = System.Drawing.Color.DarkRed
-        Me.infTotalVal.Location = New System.Drawing.Point(704, 314)
-        Me.infTotalVal.Name = "infTotalVal"
-        Me.infTotalVal.Size = New System.Drawing.Size(16, 18)
-        Me.infTotalVal.TabIndex = 36
-        Me.infTotalVal.Text = "0"
-        Me.ToolTip1.SetToolTip(Me.infTotalVal, "Influence Total has to be 100% before update is enabled")
+        Me.InfTotalVal.AutoSize = True
+        Me.InfTotalVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.InfTotalVal.ForeColor = System.Drawing.Color.DarkRed
+        Me.InfTotalVal.Location = New System.Drawing.Point(498, 344)
+        Me.InfTotalVal.Name = "InfTotalVal"
+        Me.InfTotalVal.Size = New System.Drawing.Size(16, 18)
+        Me.InfTotalVal.TabIndex = 36
+        Me.InfTotalVal.Text = "0"
+        Me.ToolTip1.SetToolTip(Me.InfTotalVal, "Influence Total has to be 100% before update is enabled")
         '
-        'BlackAndWhile
+        'ViewWebTracker
         '
-        Me.BlackAndWhile.AutoSize = True
-        Me.BlackAndWhile.Location = New System.Drawing.Point(116, 314)
-        Me.BlackAndWhile.Name = "BlackAndWhile"
-        Me.BlackAndWhile.Size = New System.Drawing.Size(78, 17)
-        Me.BlackAndWhile.TabIndex = 39
-        Me.BlackAndWhile.Text = "Grey Scale"
-        Me.ToolTip1.SetToolTip(Me.BlackAndWhile, "Covert the Image to Grey Scale prior to OCR processing" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "This can improve OCR accu" &
-        "racy but at a minor delay")
-        Me.BlackAndWhile.UseVisualStyleBackColor = True
-        '
-        'resizeSlider
-        '
-        Me.resizeSlider.BackColor = System.Drawing.SystemColors.Window
-        Me.resizeSlider.LargeChange = 4
-        Me.resizeSlider.Location = New System.Drawing.Point(7, 242)
-        Me.resizeSlider.Maximum = 12
-        Me.resizeSlider.Name = "resizeSlider"
-        Me.resizeSlider.Size = New System.Drawing.Size(187, 45)
-        Me.resizeSlider.TabIndex = 40
-        Me.resizeSlider.TickFrequency = 2
-        Me.ToolTip1.SetToolTip(Me.resizeSlider, "Resize the image prior to OCR processing" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "This can improve OCR accuracy but at a " &
-        "slight delay")
-        Me.resizeSlider.Value = 12
-        '
-        'viewWebTracker
-        '
-        Me.viewWebTracker.Location = New System.Drawing.Point(670, 3)
-        Me.viewWebTracker.Name = "viewWebTracker"
-        Me.viewWebTracker.Size = New System.Drawing.Size(89, 20)
-        Me.viewWebTracker.TabIndex = 45
-        Me.viewWebTracker.Text = "Web Tracker"
-        Me.ToolTip1.SetToolTip(Me.viewWebTracker, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
-        Me.viewWebTracker.UseVisualStyleBackColor = True
-        '
-        'NextSystem
-        '
-        Me.NextSystem.Location = New System.Drawing.Point(677, 354)
-        Me.NextSystem.Name = "NextSystem"
-        Me.NextSystem.Size = New System.Drawing.Size(78, 50)
-        Me.NextSystem.TabIndex = 46
-        Me.NextSystem.Text = "Next System"
-        Me.ToolTip1.SetToolTip(Me.NextSystem, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
-        Me.NextSystem.UseVisualStyleBackColor = True
+        Me.ViewWebTracker.Location = New System.Drawing.Point(464, 33)
+        Me.ViewWebTracker.Name = "ViewWebTracker"
+        Me.ViewWebTracker.Size = New System.Drawing.Size(89, 20)
+        Me.ViewWebTracker.TabIndex = 45
+        Me.ViewWebTracker.Text = "Web Tracker"
+        Me.ToolTip1.SetToolTip(Me.ViewWebTracker, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
+        Me.ViewWebTracker.UseVisualStyleBackColor = True
         '
         'AddButton
         '
         Me.AddButton.Enabled = False
-        Me.AddButton.Location = New System.Drawing.Point(360, 3)
+        Me.AddButton.Location = New System.Drawing.Point(154, 33)
         Me.AddButton.Name = "AddButton"
         Me.AddButton.Size = New System.Drawing.Size(48, 20)
         Me.AddButton.TabIndex = 47
@@ -279,7 +190,7 @@ Partial Class RockRatsClient
         'RemoveButton
         '
         Me.RemoveButton.Enabled = False
-        Me.RemoveButton.Location = New System.Drawing.Point(414, 3)
+        Me.RemoveButton.Location = New System.Drawing.Point(208, 33)
         Me.RemoveButton.Name = "RemoveButton"
         Me.RemoveButton.Size = New System.Drawing.Size(56, 20)
         Me.RemoveButton.TabIndex = 48
@@ -290,265 +201,181 @@ Partial Class RockRatsClient
         'LogOcrCheckbox
         '
         Me.LogOcrCheckbox.AutoSize = True
-        Me.LogOcrCheckbox.Location = New System.Drawing.Point(116, 338)
+        Me.LogOcrCheckbox.Location = New System.Drawing.Point(9, 39)
         Me.LogOcrCheckbox.Name = "LogOcrCheckbox"
-        Me.LogOcrCheckbox.Size = New System.Drawing.Size(90, 17)
-        Me.LogOcrCheckbox.TabIndex = 50
-        Me.LogOcrCheckbox.Text = "Log OCR text"
+        Me.LogOcrCheckbox.Size = New System.Drawing.Size(146, 17)
+        Me.LogOcrCheckbox.TabIndex = 51
+        Me.LogOcrCheckbox.Text = "Log OCR text translations"
         Me.ToolTip1.SetToolTip(Me.LogOcrCheckbox, "Covert the Image to Grey Scale prior to OCR processing" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "This can improve OCR accu" &
         "racy but at a minor delay")
         Me.LogOcrCheckbox.UseVisualStyleBackColor = True
         '
         'ScanMarginLeft
         '
-        Me.ScanMarginLeft.Location = New System.Drawing.Point(147, 203)
+        Me.ScanMarginLeft.Location = New System.Drawing.Point(140, 13)
         Me.ScanMarginLeft.Name = "ScanMarginLeft"
         Me.ScanMarginLeft.Size = New System.Drawing.Size(41, 20)
-        Me.ScanMarginLeft.TabIndex = 51
+        Me.ScanMarginLeft.TabIndex = 56
         Me.ToolTip1.SetToolTip(Me.ScanMarginLeft, "Set how much of the screen to look at when capturing text. This will stop other t" &
         "ext like this window contaminating the results")
         '
         'Label14
         '
         Me.Label14.AutoSize = True
-        Me.Label14.Location = New System.Drawing.Point(8, 206)
+        Me.Label14.Location = New System.Drawing.Point(6, 16)
         Me.Label14.Name = "Label14"
-        Me.Label14.Size = New System.Drawing.Size(134, 13)
-        Me.Label14.TabIndex = 52
-        Me.Label14.Text = "Area of left screen to scan:"
+        Me.Label14.Size = New System.Drawing.Size(131, 13)
+        Me.Label14.TabIndex = 57
+        Me.Label14.Text = "Area of left screen to scan"
         Me.ToolTip1.SetToolTip(Me.Label14, "Set how much of the screen to look at when capturing text. This will stop other t" &
+        "ext like this window contaminating the results")
+        '
+        'EDCapture
+        '
+        Me.EDCapture.BackColor = System.Drawing.Color.Transparent
+        Me.EDCapture.Location = New System.Drawing.Point(6, 85)
+        Me.EDCapture.Name = "EDCapture"
+        Me.EDCapture.Size = New System.Drawing.Size(175, 247)
+        Me.EDCapture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        Me.EDCapture.TabIndex = 54
+        Me.EDCapture.TabStop = False
+        Me.ToolTip1.SetToolTip(Me.EDCapture, "Click on the Image to see full view")
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(6, 70)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(251, 13)
+        Me.Label1.TabIndex = 60
+        Me.Label1.Text = "Last OCR Image (Check the Factions text is visible):"
+        Me.ToolTip1.SetToolTip(Me.Label1, "Set how much of the screen to look at when capturing text. This will stop other t" &
         "ext like this window contaminating the results")
         '
         'LogTab
         '
-        Me.LogTab.Controls.Add(Me.logOut)
+        Me.LogTab.Controls.Add(Me.LogTextBox)
         Me.LogTab.Location = New System.Drawing.Point(4, 22)
         Me.LogTab.Name = "LogTab"
         Me.LogTab.Padding = New System.Windows.Forms.Padding(3)
-        Me.LogTab.Size = New System.Drawing.Size(758, 407)
+        Me.LogTab.Size = New System.Drawing.Size(558, 446)
         Me.LogTab.TabIndex = 1
         Me.LogTab.Text = "Log"
         Me.LogTab.UseVisualStyleBackColor = True
         '
-        'logOut
+        'LogTextBox
         '
-        Me.logOut.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.logOut.Location = New System.Drawing.Point(3, 3)
-        Me.logOut.Name = "logOut"
-        Me.logOut.ReadOnly = True
-        Me.logOut.Size = New System.Drawing.Size(752, 401)
-        Me.logOut.TabIndex = 0
-        Me.logOut.Text = ""
+        Me.LogTextBox.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.LogTextBox.Location = New System.Drawing.Point(3, 3)
+        Me.LogTextBox.Name = "LogTextBox"
+        Me.LogTextBox.ReadOnly = True
+        Me.LogTextBox.Size = New System.Drawing.Size(552, 440)
+        Me.LogTextBox.TabIndex = 0
+        Me.LogTextBox.Text = ""
         '
         'SettingsTab
         '
-        Me.SettingsTab.Controls.Add(Me.CommanderName)
-        Me.SettingsTab.Controls.Add(Me.CommanderLabel)
-        Me.SettingsTab.Controls.Add(Me.JournalFolder)
-        Me.SettingsTab.Controls.Add(Me.Label9)
-        Me.SettingsTab.Controls.Add(Me.BrowserForDir)
+        Me.SettingsTab.Controls.Add(Me.GroupBox2)
+        Me.SettingsTab.Controls.Add(Me.GroupBox1)
         Me.SettingsTab.Location = New System.Drawing.Point(4, 22)
         Me.SettingsTab.Name = "SettingsTab"
-        Me.SettingsTab.Size = New System.Drawing.Size(758, 407)
+        Me.SettingsTab.Size = New System.Drawing.Size(558, 446)
         Me.SettingsTab.TabIndex = 2
         Me.SettingsTab.Text = "Settings"
         Me.SettingsTab.UseVisualStyleBackColor = True
         '
+        'GroupBox2
+        '
+        Me.GroupBox2.Controls.Add(Me.Label2)
+        Me.GroupBox2.Controls.Add(Me.CommanderName)
+        Me.GroupBox2.Controls.Add(Me.JournalFolder)
+        Me.GroupBox2.Controls.Add(Me.Label9)
+        Me.GroupBox2.Controls.Add(Me.BrowserForDir)
+        Me.GroupBox2.Location = New System.Drawing.Point(3, 3)
+        Me.GroupBox2.Name = "GroupBox2"
+        Me.GroupBox2.Size = New System.Drawing.Size(548, 90)
+        Me.GroupBox2.TabIndex = 61
+        Me.GroupBox2.TabStop = False
+        Me.GroupBox2.Text = "Journal Scraping"
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
+        Me.Label2.Location = New System.Drawing.Point(10, 62)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(94, 13)
+        Me.Label2.TabIndex = 33
+        Me.Label2.Text = "Commander Name"
+        '
+        'CommanderName
+        '
+        Me.CommanderName.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.CommanderName.Location = New System.Drawing.Point(111, 57)
+        Me.CommanderName.Name = "CommanderName"
+        Me.CommanderName.Size = New System.Drawing.Size(270, 21)
+        Me.CommanderName.TabIndex = 32
+        '
         'Label9
         '
         Me.Label9.AutoSize = True
-        Me.Label9.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label9.Location = New System.Drawing.Point(8, 378)
+        Me.Label9.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
+        Me.Label9.Location = New System.Drawing.Point(42, 24)
         Me.Label9.Name = "Label9"
-        Me.Label9.Size = New System.Drawing.Size(86, 15)
+        Me.Label9.Size = New System.Drawing.Size(62, 13)
         Me.Label9.TabIndex = 22
-        Me.Label9.Text = "Journal Folder"
+        Me.Label9.Text = "Logs Folder"
         '
-        'StatusTab
+        'GroupBox1
         '
-        Me.StatusTab.Controls.Add(Me.SystemsList)
-        Me.StatusTab.Controls.Add(Me.Panel3)
-        Me.StatusTab.Controls.Add(Me.Label6)
-        Me.StatusTab.Location = New System.Drawing.Point(4, 22)
-        Me.StatusTab.Name = "StatusTab"
-        Me.StatusTab.Padding = New System.Windows.Forms.Padding(3)
-        Me.StatusTab.Size = New System.Drawing.Size(758, 407)
-        Me.StatusTab.TabIndex = 0
-        Me.StatusTab.Text = "Status"
-        Me.StatusTab.UseVisualStyleBackColor = True
+        Me.GroupBox1.Controls.Add(Me.Label1)
+        Me.GroupBox1.Controls.Add(Me.Label17)
+        Me.GroupBox1.Controls.Add(Me.EDCapture)
+        Me.GroupBox1.Controls.Add(Me.ScanMarginLeft)
+        Me.GroupBox1.Controls.Add(Me.LogOcrCheckbox)
+        Me.GroupBox1.Controls.Add(Me.Label14)
+        Me.GroupBox1.Location = New System.Drawing.Point(3, 105)
+        Me.GroupBox1.Name = "GroupBox1"
+        Me.GroupBox1.Size = New System.Drawing.Size(276, 338)
+        Me.GroupBox1.TabIndex = 59
+        Me.GroupBox1.TabStop = False
+        Me.GroupBox1.Text = "OCR Calibration"
         '
-        'SystemsList
+        'Label17
         '
-        Me.SystemsList.FormattingEnabled = True
-        Me.SystemsList.Location = New System.Drawing.Point(414, 44)
-        Me.SystemsList.Name = "SystemsList"
-        Me.SystemsList.Size = New System.Drawing.Size(200, 316)
-        Me.SystemsList.TabIndex = 22
-        '
-        'Panel3
-        '
-        Me.Panel3.Controls.Add(Me.SystemName)
-        Me.Panel3.Controls.Add(Me.ShipName)
-        Me.Panel3.Controls.Add(Me.SystemLabel)
-        Me.Panel3.Controls.Add(Me.ShipLabel)
-        Me.Panel3.Controls.Add(Me.tailLogs)
-        Me.Panel3.Controls.Add(Me.FileStatus)
-        Me.Panel3.Controls.Add(Me.Label3)
-        Me.Panel3.Controls.Add(Me.ConnStatus)
-        Me.Panel3.Controls.Add(Me.Label1)
-        Me.Panel3.Location = New System.Drawing.Point(9, 12)
-        Me.Panel3.Name = "Panel3"
-        Me.Panel3.Size = New System.Drawing.Size(399, 348)
-        Me.Panel3.TabIndex = 21
-        '
-        'SystemName
-        '
-        Me.SystemName.AutoSize = True
-        Me.SystemName.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.SystemName.Location = New System.Drawing.Point(97, 57)
-        Me.SystemName.Name = "SystemName"
-        Me.SystemName.Size = New System.Drawing.Size(90, 16)
-        Me.SystemName.TabIndex = 31
-        Me.SystemName.Text = "SystemName"
-        '
-        'ShipName
-        '
-        Me.ShipName.AutoSize = True
-        Me.ShipName.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ShipName.Location = New System.Drawing.Point(97, 31)
-        Me.ShipName.Name = "ShipName"
-        Me.ShipName.Size = New System.Drawing.Size(72, 16)
-        Me.ShipName.TabIndex = 30
-        Me.ShipName.Text = "ShipName"
-        '
-        'SystemLabel
-        '
-        Me.SystemLabel.AutoSize = True
-        Me.SystemLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.SystemLabel.Location = New System.Drawing.Point(35, 57)
-        Me.SystemLabel.Name = "SystemLabel"
-        Me.SystemLabel.Size = New System.Drawing.Size(56, 16)
-        Me.SystemLabel.TabIndex = 28
-        Me.SystemLabel.Text = "System:"
-        '
-        'ShipLabel
-        '
-        Me.ShipLabel.AutoSize = True
-        Me.ShipLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ShipLabel.Location = New System.Drawing.Point(53, 31)
-        Me.ShipLabel.Name = "ShipLabel"
-        Me.ShipLabel.Size = New System.Drawing.Size(38, 16)
-        Me.ShipLabel.TabIndex = 27
-        Me.ShipLabel.Text = "Ship:"
-        '
-        'FileStatus
-        '
-        Me.FileStatus.Anchor = System.Windows.Forms.AnchorStyles.Top
-        Me.FileStatus.AutoSize = True
-        Me.FileStatus.ForeColor = System.Drawing.Color.DarkCyan
-        Me.FileStatus.Location = New System.Drawing.Point(36, 244)
-        Me.FileStatus.Name = "FileStatus"
-        Me.FileStatus.Size = New System.Drawing.Size(24, 13)
-        Me.FileStatus.TabIndex = 23
-        Me.FileStatus.Text = "Idle"
-        Me.FileStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'Label3
-        '
-        Me.Label3.AutoSize = True
-        Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.Location = New System.Drawing.Point(5, 222)
-        Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(112, 20)
-        Me.Label3.TabIndex = 22
-        Me.Label3.Text = "Journal Status"
-        '
-        'ConnStatus
-        '
-        Me.ConnStatus.Anchor = System.Windows.Forms.AnchorStyles.Top
-        Me.ConnStatus.AutoSize = True
-        Me.ConnStatus.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ConnStatus.ForeColor = System.Drawing.Color.DarkCyan
-        Me.ConnStatus.Location = New System.Drawing.Point(35, 125)
-        Me.ConnStatus.Name = "ConnStatus"
-        Me.ConnStatus.Size = New System.Drawing.Size(88, 15)
-        Me.ConnStatus.TabIndex = 21
-        Me.ConnStatus.Text = "Not Connected"
-        Me.ConnStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'Label1
-        '
-        Me.Label1.Anchor = System.Windows.Forms.AnchorStyles.Top
-        Me.Label1.AutoSize = True
-        Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.Location = New System.Drawing.Point(5, 102)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(141, 20)
-        Me.Label1.TabIndex = 20
-        Me.Label1.Text = "Connection Status"
-        Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'Label6
-        '
-        Me.Label6.AutoSize = True
-        Me.Label6.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label6.Location = New System.Drawing.Point(469, 17)
-        Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(123, 16)
-        Me.Label6.TabIndex = 11
-        Me.Label6.Text = "RockRats Systems"
-        '
-        'Tabs
-        '
-        Me.Tabs.Controls.Add(Me.SoftDataTab)
-        Me.Tabs.Controls.Add(Me.StatusTab)
-        Me.Tabs.Controls.Add(Me.SettingsTab)
-        Me.Tabs.Controls.Add(Me.LogTab)
-        Me.Tabs.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Tabs.Location = New System.Drawing.Point(0, 0)
-        Me.Tabs.Name = "Tabs"
-        Me.Tabs.SelectedIndex = 0
-        Me.Tabs.Size = New System.Drawing.Size(766, 433)
-        Me.Tabs.TabIndex = 5
+        Me.Label17.AutoSize = True
+        Me.Label17.Location = New System.Drawing.Point(183, 15)
+        Me.Label17.Name = "Label17"
+        Me.Label17.Size = New System.Drawing.Size(15, 13)
+        Me.Label17.TabIndex = 59
+        Me.Label17.Text = "%"
         '
         'SoftDataTab
         '
-        Me.SoftDataTab.Controls.Add(Me.Label14)
-        Me.SoftDataTab.Controls.Add(Me.ScanMarginLeft)
+        Me.SoftDataTab.Controls.Add(Me.ViewWebTracker)
         Me.SoftDataTab.Controls.Add(Me.StatusBox)
         Me.SoftDataTab.Controls.Add(Me.SystemNameBox)
-        Me.SoftDataTab.Controls.Add(Me.LogOcrCheckbox)
         Me.SoftDataTab.Controls.Add(Me.RemoveButton)
         Me.SoftDataTab.Controls.Add(Me.AddButton)
-        Me.SoftDataTab.Controls.Add(Me.NextSystem)
-        Me.SoftDataTab.Controls.Add(Me.viewWebTracker)
-        Me.SoftDataTab.Controls.Add(Me.Label7)
-        Me.SoftDataTab.Controls.Add(Me.onTop)
-        Me.SoftDataTab.Controls.Add(Me.resizeValue)
-        Me.SoftDataTab.Controls.Add(Me.resizeSlider)
-        Me.SoftDataTab.Controls.Add(Me.BlackAndWhile)
+        Me.SoftDataTab.Controls.Add(Me.SystemLabel)
         Me.SoftDataTab.Controls.Add(Me.SoftDataGrid)
-        Me.SoftDataTab.Controls.Add(Me.infTotalVal)
-        Me.SoftDataTab.Controls.Add(Me.ocrWorking)
-        Me.SoftDataTab.Controls.Add(Me.infTotal)
-        Me.SoftDataTab.Controls.Add(Me.Label10)
-        Me.SoftDataTab.Controls.Add(Me.Label8)
-        Me.SoftDataTab.Controls.Add(Me.selSystem)
-        Me.SoftDataTab.Controls.Add(Me.UpdSoftData)
+        Me.SoftDataTab.Controls.Add(Me.InfTotalVal)
+        Me.SoftDataTab.Controls.Add(Me.InfTotal)
+        Me.SoftDataTab.Controls.Add(Me.SelectedSystem)
+        Me.SoftDataTab.Controls.Add(Me.UpdateBgsData)
         Me.SoftDataTab.Controls.Add(Me.CaptureEDScreen)
-        Me.SoftDataTab.Controls.Add(Me.EDCapture)
-        Me.SoftDataTab.Controls.Add(Me.Label13)
-        Me.SoftDataTab.Controls.Add(Me.Label17)
+        Me.SoftDataTab.Controls.Add(Me.LoadingLabel)
+        Me.SoftDataTab.Controls.Add(Me.AlwaysOnTopCheckbox)
         Me.SoftDataTab.Location = New System.Drawing.Point(4, 22)
         Me.SoftDataTab.Name = "SoftDataTab"
-        Me.SoftDataTab.Size = New System.Drawing.Size(758, 407)
+        Me.SoftDataTab.Size = New System.Drawing.Size(558, 446)
         Me.SoftDataTab.TabIndex = 3
         Me.SoftDataTab.Text = "OCR"
         Me.SoftDataTab.UseVisualStyleBackColor = True
         '
         'StatusBox
         '
-        Me.StatusBox.Location = New System.Drawing.Point(216, 225)
+        Me.StatusBox.Location = New System.Drawing.Point(10, 255)
         Me.StatusBox.Multiline = True
         Me.StatusBox.Name = "StatusBox"
         Me.StatusBox.ReadOnly = True
@@ -558,50 +385,33 @@ Partial Class RockRatsClient
         '
         'SystemNameBox
         '
-        Me.SystemNameBox.Location = New System.Drawing.Point(216, 3)
+        Me.SystemNameBox.Location = New System.Drawing.Point(10, 33)
         Me.SystemNameBox.Name = "SystemNameBox"
         Me.SystemNameBox.Size = New System.Drawing.Size(138, 20)
         Me.SystemNameBox.TabIndex = 43
         '
-        'Label7
+        'SystemLabel
         '
-        Me.Label7.AutoSize = True
-        Me.Label7.Location = New System.Drawing.Point(8, 23)
-        Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(86, 13)
-        Me.Label7.TabIndex = 29
-        Me.Label7.Text = "1. Select System"
-        '
-        'onTop
-        '
-        Me.onTop.Location = New System.Drawing.Point(11, 0)
-        Me.onTop.Name = "onTop"
-        Me.onTop.Size = New System.Drawing.Size(134, 23)
-        Me.onTop.TabIndex = 42
-        Me.onTop.Text = "Always on Top"
-        Me.onTop.UseVisualStyleBackColor = True
-        '
-        'resizeValue
-        '
-        Me.resizeValue.AutoSize = True
-        Me.resizeValue.Location = New System.Drawing.Point(68, 254)
-        Me.resizeValue.Name = "resizeValue"
-        Me.resizeValue.Size = New System.Drawing.Size(65, 13)
-        Me.resizeValue.TabIndex = 41
-        Me.resizeValue.Text = "Resize: 4.0x"
+        Me.SystemLabel.AutoSize = True
+        Me.SystemLabel.Location = New System.Drawing.Point(3, 8)
+        Me.SystemLabel.Name = "SystemLabel"
+        Me.SystemLabel.Size = New System.Drawing.Size(44, 13)
+        Me.SystemLabel.TabIndex = 29
+        Me.SystemLabel.Text = "System:"
         '
         'SoftDataGrid
         '
         Me.SoftDataGrid.AllowUserToOrderColumns = True
         Me.SoftDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.SoftDataGrid.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Faction, Me.Influence, Me.State, Me.PrevInfluence, Me.InfluenceDiff, Me.PrevState, Me.Found})
-        Me.SoftDataGrid.Location = New System.Drawing.Point(216, 29)
+        Me.SoftDataGrid.Location = New System.Drawing.Point(10, 59)
         Me.SoftDataGrid.MultiSelect = False
         Me.SoftDataGrid.Name = "SoftDataGrid"
         Me.SoftDataGrid.RowHeadersWidth = 4
         Me.SoftDataGrid.ShowCellErrors = False
-        Me.SoftDataGrid.Size = New System.Drawing.Size(713, 190)
+        Me.SoftDataGrid.Size = New System.Drawing.Size(543, 190)
         Me.SoftDataGrid.TabIndex = 37
+        Me.SoftDataGrid.Visible = False
         '
         'Faction
         '
@@ -655,87 +465,43 @@ Partial Class RockRatsClient
         Me.Found.Name = "Found"
         Me.Found.Width = 50
         '
-        'ocrWorking
+        'LoadingLabel
         '
-        Me.ocrWorking.BackColor = System.Drawing.Color.WhiteSmoke
-        Me.ocrWorking.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.ocrWorking.Controls.Add(Me.statusLabel)
-        Me.ocrWorking.Location = New System.Drawing.Point(8, 81)
-        Me.ocrWorking.Name = "ocrWorking"
-        Me.ocrWorking.Size = New System.Drawing.Size(194, 100)
-        Me.ocrWorking.TabIndex = 34
-        Me.ocrWorking.Visible = False
+        Me.LoadingLabel.AutoSize = True
+        Me.LoadingLabel.Location = New System.Drawing.Point(51, 8)
+        Me.LoadingLabel.Name = "LoadingLabel"
+        Me.LoadingLabel.Size = New System.Drawing.Size(54, 13)
+        Me.LoadingLabel.TabIndex = 49
+        Me.LoadingLabel.Text = "Loading..."
         '
-        'statusLabel
+        'AlwaysOnTopCheckbox
         '
-        Me.statusLabel.AutoSize = True
-        Me.statusLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.statusLabel.ForeColor = System.Drawing.Color.DarkGreen
-        Me.statusLabel.Location = New System.Drawing.Point(37, 38)
-        Me.statusLabel.Name = "statusLabel"
-        Me.statusLabel.Size = New System.Drawing.Size(79, 20)
-        Me.statusLabel.TabIndex = 0
-        Me.statusLabel.Text = "Working..."
+        Me.AlwaysOnTopCheckbox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.AlwaysOnTopCheckbox.Location = New System.Drawing.Point(419, -1)
+        Me.AlwaysOnTopCheckbox.Name = "AlwaysOnTopCheckbox"
+        Me.AlwaysOnTopCheckbox.Size = New System.Drawing.Size(134, 23)
+        Me.AlwaysOnTopCheckbox.TabIndex = 42
+        Me.AlwaysOnTopCheckbox.Text = "Always on Top"
+        Me.AlwaysOnTopCheckbox.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.AlwaysOnTopCheckbox.UseVisualStyleBackColor = True
         '
-        'Label10
+        'Tabs
         '
-        Me.Label10.AutoSize = True
-        Me.Label10.Location = New System.Drawing.Point(677, 230)
-        Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(54, 13)
-        Me.Label10.TabIndex = 31
-        Me.Label10.Text = "3. Update"
-        '
-        'Label8
-        '
-        Me.Label8.AutoSize = True
-        Me.Label8.Location = New System.Drawing.Point(3, 367)
-        Me.Label8.Name = "Label8"
-        Me.Label8.Size = New System.Drawing.Size(207, 39)
-        Me.Label8.TabIndex = 30
-        Me.Label8.Text = "2. Capture (Multiple times)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "TIP: Zoom out all the way on System Map." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "It helps t" &
-    "he OCR out."
-        '
-        'Label13
-        '
-        Me.Label13.AutoSize = True
-        Me.Label13.Location = New System.Drawing.Point(17, 43)
-        Me.Label13.Name = "Label13"
-        Me.Label13.Size = New System.Drawing.Size(54, 13)
-        Me.Label13.TabIndex = 49
-        Me.Label13.Text = "Loading..."
-        '
-        'Label17
-        '
-        Me.Label17.AutoSize = True
-        Me.Label17.Location = New System.Drawing.Point(187, 206)
-        Me.Label17.Name = "Label17"
-        Me.Label17.Size = New System.Drawing.Size(15, 13)
-        Me.Label17.TabIndex = 53
-        Me.Label17.Text = "%"
-        '
-        'CommanderLabel
-        '
-        Me.CommanderLabel.AutoSize = True
-        Me.CommanderLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.CommanderLabel.Location = New System.Drawing.Point(9, 9)
-        Me.CommanderLabel.Name = "CommanderLabel"
-        Me.CommanderLabel.Size = New System.Drawing.Size(85, 16)
-        Me.CommanderLabel.TabIndex = 30
-        Me.CommanderLabel.Text = "Commander:"
-        '
-        'CommanderName
-        '
-        Me.CommanderName.Location = New System.Drawing.Point(88, 8)
-        Me.CommanderName.Name = "CommanderName"
-        Me.CommanderName.Size = New System.Drawing.Size(150, 20)
-        Me.CommanderName.TabIndex = 32
+        Me.Tabs.Controls.Add(Me.SoftDataTab)
+        Me.Tabs.Controls.Add(Me.SettingsTab)
+        Me.Tabs.Controls.Add(Me.LogTab)
+        Me.Tabs.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Tabs.Location = New System.Drawing.Point(0, 0)
+        Me.Tabs.Name = "Tabs"
+        Me.Tabs.SelectedIndex = 0
+        Me.Tabs.Size = New System.Drawing.Size(566, 472)
+        Me.Tabs.TabIndex = 5
         '
         'RockRatsClient
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(766, 433)
+        Me.ClientSize = New System.Drawing.Size(566, 472)
         Me.Controls.Add(Me.Tabs)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
@@ -745,64 +511,38 @@ Partial Class RockRatsClient
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Rock Rats Client"
         CType(Me.EDCapture, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.resizeSlider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.LogTab.ResumeLayout(False)
         Me.SettingsTab.ResumeLayout(False)
-        Me.SettingsTab.PerformLayout()
-        Me.StatusTab.ResumeLayout(False)
-        Me.StatusTab.PerformLayout()
-        Me.Panel3.ResumeLayout(False)
-        Me.Panel3.PerformLayout()
-        Me.Tabs.ResumeLayout(False)
+        Me.GroupBox2.ResumeLayout(False)
+        Me.GroupBox2.PerformLayout()
+        Me.GroupBox1.ResumeLayout(False)
+        Me.GroupBox1.PerformLayout()
         Me.SoftDataTab.ResumeLayout(False)
         Me.SoftDataTab.PerformLayout()
         CType(Me.SoftDataGrid, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.ocrWorking.ResumeLayout(False)
-        Me.ocrWorking.PerformLayout()
+        Me.Tabs.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
-    Friend WithEvents tailTimer As Timer
     Friend WithEvents LoadTimer As Timer
     Friend WithEvents JourneyDir As DirectoryServices.DirectoryEntry
     Friend WithEvents FolderBrowser As FolderBrowserDialog
-    Friend WithEvents commsTimer As Timer
+    Friend WithEvents CommsTimer As Timer
     Friend WithEvents ToolTip1 As ToolTip
     Friend WithEvents LogTab As TabPage
-    Friend WithEvents logOut As RichTextBox
+    Friend WithEvents LogTextBox As RichTextBox
     Friend WithEvents SettingsTab As TabPage
-    Friend WithEvents BrowserForDir As Button
+    Friend WithEvents CommanderName As TextBox
     Friend WithEvents JournalFolder As TextBox
     Friend WithEvents Label9 As Label
-    Friend WithEvents StatusTab As TabPage
-    Friend WithEvents SystemsList As ListBox
-    Friend WithEvents Panel3 As Panel
-    Friend WithEvents SystemName As Label
-    Friend WithEvents ShipName As Label
-    Friend WithEvents SystemLabel As Label
-    Friend WithEvents ShipLabel As Label
-    Friend WithEvents tailLogs As Button
-    Friend WithEvents FileStatus As Label
-    Friend WithEvents Label3 As Label
-    Friend WithEvents ConnStatus As Label
-    Friend WithEvents Label1 As Label
-    Friend WithEvents Label6 As Label
-    Friend WithEvents Tabs As TabControl
+    Friend WithEvents BrowserForDir As Button
     Friend WithEvents SoftDataTab As TabPage
-    Friend WithEvents Label14 As Label
-    Friend WithEvents ScanMarginLeft As TextBox
     Friend WithEvents StatusBox As TextBox
     Friend WithEvents SystemNameBox As TextBox
-    Friend WithEvents LogOcrCheckbox As CheckBox
     Friend WithEvents RemoveButton As Button
     Friend WithEvents AddButton As Button
-    Friend WithEvents NextSystem As Button
-    Friend WithEvents viewWebTracker As Button
-    Friend WithEvents Label7 As Label
-    Friend WithEvents onTop As CheckBox
-    Friend WithEvents resizeValue As Label
-    Friend WithEvents resizeSlider As TrackBar
-    Friend WithEvents BlackAndWhile As CheckBox
+    Friend WithEvents ViewWebTracker As Button
+    Friend WithEvents SystemLabel As Label
     Friend WithEvents SoftDataGrid As DataGridView
     Friend WithEvents Faction As DataGridViewTextBoxColumn
     Friend WithEvents Influence As DataGridViewTextBoxColumn
@@ -811,18 +551,21 @@ Partial Class RockRatsClient
     Friend WithEvents InfluenceDiff As DataGridViewTextBoxColumn
     Friend WithEvents PrevState As DataGridViewTextBoxColumn
     Friend WithEvents Found As DataGridViewCheckBoxColumn
-    Friend WithEvents infTotalVal As Label
-    Friend WithEvents ocrWorking As Panel
-    Friend WithEvents statusLabel As Label
-    Friend WithEvents infTotal As Label
-    Friend WithEvents Label10 As Label
-    Friend WithEvents Label8 As Label
-    Friend WithEvents selSystem As ComboBox
-    Friend WithEvents UpdSoftData As Button
+    Friend WithEvents InfTotalVal As Label
+    Friend WithEvents InfTotal As Label
+    Friend WithEvents SelectedSystem As ComboBox
+    Friend WithEvents UpdateBgsData As Button
     Friend WithEvents CaptureEDScreen As Button
+    Friend WithEvents LoadingLabel As Label
+    Friend WithEvents Tabs As TabControl
+    Friend WithEvents AlwaysOnTopCheckbox As CheckBox
+    Friend WithEvents ScanMarginLeft As TextBox
+    Friend WithEvents Label14 As Label
     Friend WithEvents EDCapture As PictureBox
-    Friend WithEvents Label13 As Label
+    Friend WithEvents LogOcrCheckbox As CheckBox
+    Friend WithEvents GroupBox1 As GroupBox
+    Friend WithEvents Label1 As Label
     Friend WithEvents Label17 As Label
-    Friend WithEvents CommanderLabel As Label
-    Friend WithEvents CommanderName As TextBox
+    Friend WithEvents GroupBox2 As GroupBox
+    Friend WithEvents Label2 As Label
 End Class

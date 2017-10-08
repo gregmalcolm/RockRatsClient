@@ -46,7 +46,7 @@ Module Comms
             If softData <> "" Then
                 sendSoftDataQueue.Enqueue("7:" + softData)
             Else
-                sendQueue.Enqueue(type + ":" + subtype + ":" + data + "!" + getParameter("UpdateSiteActivity"))
+                sendQueue.Enqueue(type + ":" + subtype + ":" + data + "!" + GetParameter("UpdateSiteActivity"))
             End If
             Return True
         Catch ex As Exception
@@ -198,7 +198,7 @@ Module Comms
         }
         Dim response = Await awsClient.ScanAsync(request)
 
-        RockRatsClient.selSystem.Items.Clear()
+        RockRatsClient.SelectedSystem.Items.Clear()
         For Each sys In response.Items.OrderBy(Function(system) system("datetime").S)
             SoftData.AddSystem(sys("system").S)
         Next
@@ -221,7 +221,7 @@ Module Comms
         RockRatsClient.LogEverywhere("Requesting factions from AWS. At the moment this sometimes takes a while... :/")
         Dim response = Await awsClient.ScanAsync(request)
 
-        For Each systemName As String In RockRatsClient.SystemsList.Items
+        For Each systemName As String In RockRatsClient.SelectedSystem.Items
             ReadFactionFromResults(response.Items, systemName)
         Next
     End Function
@@ -337,7 +337,7 @@ Module Comms
             Await ReadSystemsFromAws()
             Await ReadFactionsFromAws()
             RockRatsClient.LogEverywhere("Systems are ready!")
-            RockRatsClient.selSystem.Show()
+            RockRatsClient.ShowBgsTools()
             dataIsLoaded = True
         End If
     End Function

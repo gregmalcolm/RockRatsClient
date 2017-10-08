@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class viewImage
+Partial Class ViewImage
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -22,32 +22,32 @@ Partial Class viewImage
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(viewImage))
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ViewImage))
         Me.Panel1 = New System.Windows.Forms.Panel()
-        Me.imgBox = New System.Windows.Forms.PictureBox()
+        Me.ImgBox = New System.Windows.Forms.PictureBox()
         Me.Panel1.SuspendLayout()
-        CType(Me.imgBox, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.ImgBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
         '
         Me.Panel1.AutoScroll = True
-        Me.Panel1.Controls.Add(Me.imgBox)
+        Me.Panel1.Controls.Add(Me.ImgBox)
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel1.Location = New System.Drawing.Point(0, 0)
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(1189, 834)
         Me.Panel1.TabIndex = 1
         '
-        'imgBox
+        'ImgBox
         '
-        Me.imgBox.Location = New System.Drawing.Point(0, 0)
-        Me.imgBox.Name = "imgBox"
-        Me.imgBox.Size = New System.Drawing.Size(75, 111)
-        Me.imgBox.TabIndex = 1
-        Me.imgBox.TabStop = False
+        Me.ImgBox.Location = New System.Drawing.Point(0, 0)
+        Me.ImgBox.Name = "ImgBox"
+        Me.ImgBox.Size = New System.Drawing.Size(75, 111)
+        Me.ImgBox.TabIndex = 1
+        Me.ImgBox.TabStop = False
         '
-        'viewImage
+        'ViewImage
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
@@ -55,14 +55,14 @@ Partial Class viewImage
         Me.ClientSize = New System.Drawing.Size(1189, 834)
         Me.Controls.Add(Me.Panel1)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
-        Me.Name = "viewImage"
+        Me.Name = "ViewImage"
         Me.Text = "RockRatsClient - View Image"
         Me.Panel1.ResumeLayout(False)
-        CType(Me.imgBox, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.ImgBox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
 
     Friend WithEvents Panel1 As Panel
-    Friend WithEvents imgBox As PictureBox
+    Friend WithEvents ImgBox As PictureBox
 End Class

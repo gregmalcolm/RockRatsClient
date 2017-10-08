@@ -1,3 +1,3 @@
-﻿Public Class viewImage
+﻿Public Class ViewImage
 
 End Class

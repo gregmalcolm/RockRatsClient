@@ -3,19 +3,17 @@
     Private userValues As New Hashtable()
     Private iniFile As String = Environment.GetEnvironmentVariable("USERPROFILE") + "\AppData\Local\RockRatsClient\RockRatsClient.ini"
 
-    Friend Sub initDefaultParameters()
+    Friend Sub InitDefaultParameters()
         ' RockRatsClient Default Values
         defaultValues.Add("JournalDirectory", Environment.GetEnvironmentVariable("USERPROFILE") + "\Saved Games\Frontier Developments\Elite Dangerous\")
         defaultValues.Add("HostAddress", "")
         defaultValues.Add("HostPort", "4526")
         defaultValues.Add("UpdateSiteActivity", "O")
-        defaultValues.Add("BlackAndWhile", "False")
-        defaultValues.Add("resizeValue", "12")
         defaultValues.Add("LogOcrText", "False")
-        defaultValues.Add("ScanMarginLeft", "25")
+        defaultValues.Add("ScanMarginLeft2", "23")
     End Sub
 
-    Private Function getDefaultParameter(pKey As String) As String
+    Private Function GetDefaultParameter(pKey As String) As String
         Dim retValue As String = ""
         For Each de As DictionaryEntry In defaultValues
             If de.Key.ToString = pKey Then
@@ -26,7 +24,7 @@
         Return retValue
     End Function
 
-    Friend Function getParameter(pKey As String) As String
+    Friend Function GetParameter(pKey As String) As String
         Dim retValue As String = ""
         For Each de As DictionaryEntry In userValues
             If de.Key.ToString = pKey Then
@@ -37,16 +35,16 @@
         If retValue = "" Then
             retValue = Interaction.readIniFile("Client", pKey, iniFile)
             If retValue = "" Then
-                retValue = getDefaultParameter(pKey)
+                retValue = GetDefaultParameter(pKey)
                 If retValue <> "" Then
-                    setParameter(pKey, retValue)
+                    SetParameter(pKey, retValue)
                 End If
             End If
         End If
         Return retValue
     End Function
 
-    Friend Sub setParameter(pKey As String, pValue As String)
+    Friend Sub SetParameter(pKey As String, pValue As String)
         Interaction.WriteINIFile("Client", pKey, pValue, iniFile)
         If userValues.ContainsKey(pKey) Then
             userValues.Remove(pKey)

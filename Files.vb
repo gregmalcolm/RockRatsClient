@@ -10,15 +10,9 @@ Module Files
     Private waitForCords As String = ""
 
     Friend Function IdLastJournal() As Boolean
-        Dim JournalDir As String = getParameter("JournalDirectory")
-
+        Dim JournalDir As String = GetParameter("JournalDirectory")
         If Not Directory.Exists(JournalDir) Then
-            RockRatsClient.FileStatus.ForeColor = Color.DarkRed
-            RockRatsClient.FileStatus.Text = "ERROR - Directory not found"
             Return False
-        Else
-            RockRatsClient.FileStatus.ForeColor = Color.DarkCyan
-            RockRatsClient.FileStatus.Text = "Folder Found"
         End If
 
         Try
@@ -29,11 +23,7 @@ Module Files
                 lastMaxOffset = 0
                 RockRatsClient.LogOutput("Tailing: " + fileName)
             End If
-            RockRatsClient.FileStatus.ForeColor = Color.DarkGreen
-            RockRatsClient.FileStatus.Text = "Tailing: " + fileName
         Catch ex As Exception
-            RockRatsClient.FileStatus.ForeColor = Color.DarkRed
-            RockRatsClient.FileStatus.Text = "ERROR - Journals Not Found"
             Return False
         End Try
         Return True
@@ -47,8 +37,6 @@ Module Files
     Public Function TailJournal() As Boolean
         Dim waitForCompletion As Boolean
         If Not File.Exists(currentJournal) Then
-            RockRatsClient.FileStatus.ForeColor = Color.DarkRed
-            RockRatsClient.FileStatus.Text = "ERROR - File not found"
             Return False
         End If
 
@@ -69,8 +57,6 @@ Module Files
             End Using
             Return True
         Catch ex As Exception
-            RockRatsClient.FileStatus.ForeColor = Color.DarkRed
-            RockRatsClient.FileStatus.Text = "ERROR - File could not be read"
             Return False
         End Try
     End Function
@@ -118,7 +104,7 @@ Module Files
         Try
             Dim curLine As String = Replace(line, """", "|")
             Dim waitForCompletion As Boolean = Nothing
-            Dim procActivity As String = getParameter("UpdateSiteActivity")
+            Dim procActivity As String = GetParameter("UpdateSiteActivity")
             curLine = Replace(curLine, "{", "")
             curLine = Trim(Replace(curLine, "}", ""))
             If InStr(curLine, "|event|:|LoadGame|,") > 0 Then
@@ -163,12 +149,8 @@ Module Files
 
     Private Function ProcessJournalActivityLine(line As String, uType As String, uSubType As String, sTimeStamp As String) As Boolean
         Try
-            Dim waitForCompletion As Boolean
             Dim elements() As String
             Dim stringSeparators() As String = {", "}
-            Dim sShip As String = ""
-            Dim promoteRank As String = ""
-            Dim promoteType As String = ""
 
             elements = line.Split(stringSeparators, StringSplitOptions.None)
             For Each s As String In elements
@@ -176,9 +158,10 @@ Module Files
                     Dim commanderName As String = Trim(Replace(Mid(s, 14), "|", ""))
                     RockRatsClient.CommanderName.Text = commanderName
                     DataCache.SetDataCache("Store", "LastCommander", commanderName)
-
+                    RockRatsClient.LogOutput("Updated commander to " + commanderName)
                 End If
             Next
+            Return True
 
         Catch ex As Exception
             Return False

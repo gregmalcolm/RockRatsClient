@@ -24,7 +24,7 @@ Module SoftData
             Dim elements() As String
             Dim stringSeparators() As String = {vbCrLf}
             elements = rockRatsOcr.GetText.Split(stringSeparators, StringSplitOptions.None)
-            Dim catchFaction As String = ""
+            Dim factionFirstLine As String = ""
             Dim factionName As String = ""
             Dim influence As String = ""
             Dim influenceVal As Decimal = 0
@@ -33,28 +33,28 @@ Module SoftData
                 ' RockRatsClient.LogEverywhere(line)
 
                 ' line = whitelistChars(line)
-                If catchFaction <> "" Then
+                If factionFirstLine <> "" Then
                     LogOcrLine(line)
-                    If InStr(line, "RNMENT") = 0 Then
-                        catchFaction = catchFaction + " " + Trim(line)
+                    If Not isGovermentText(line) Then
+                        factionFirstLine = factionFirstLine + " " + Trim(line)
                     End If
-                    factionName = MatchFaction(catchFaction)
+                    factionName = MatchFaction(factionFirstLine)
                     ' MsgBox(catchFaction + vbNewLine + factionName)
-                    catchFaction = ""
+                    factionFirstLine = ""
                     influence = ""
                     influenceVal = 0
 
                 End If
-                If (Strings.Left(line, 2) = "FA" Or Strings.Mid(line, 3, 2) = "CT") And Len(line) > 10 Then
-                    catchFaction = Mid(line, 10, Len(line) - 9)
+                If IsFactionText(line) Then
+                    factionFirstLine = Mid(line, 10, Len(line) - 9)
                     LogOcrLine(line)
                 End If
-                If (Strings.Left(line, 2) = "IN" Or Strings.Mid(line, 3, 2) = "FL") And factionName <> "" Then
+                If factionName <> "" AndAlso isInfluenceText(line) Then
                     influenceVal = MatchInfluence(Trim(line))
                     influence = Replace(influenceVal.ToString, ",", ".")
                     LogOcrLine(line)
                 End If
-                If (Strings.Left(line, 2) = "ST" Or Strings.Mid(line, 3, 2) = "AT") And influence <> "" And factionName <> "" Then
+                If influence <> "" AndAlso isStateText(line) Then
                     Dim s As String = MatchState(Trim(line))
                     AddEDCaptureText(factionName, influence, s, influenceVal)
                     factionName = ""
@@ -69,7 +69,7 @@ Module SoftData
         processingOcrTextChange = False
     End Sub
     Private Sub LogOcrLine(line As String)
-        If Parameters.getParameter("logOcrText") = "True" Then
+        If Parameters.GetParameter("logOcrText") = "True" Then
             RockRatsClient.LogOutput(line)
         End If
     End Sub
@@ -159,13 +159,13 @@ Module SoftData
             Next
 
             influenceAccountedFor = i
-            RockRatsClient.infTotalVal.Text = influenceAccountedFor.ToString
+            RockRatsClient.InfTotalVal.Text = influenceAccountedFor.ToString
             If HasUserFinishedOCRing() Then
-                RockRatsClient.infTotal.ForeColor = Color.DarkGreen
-                RockRatsClient.infTotalVal.ForeColor = Color.DarkGreen
+                RockRatsClient.InfTotal.ForeColor = Color.DarkGreen
+                RockRatsClient.InfTotalVal.ForeColor = Color.DarkGreen
             Else
-                RockRatsClient.infTotal.ForeColor = Color.DarkRed
-                RockRatsClient.infTotalVal.ForeColor = Color.DarkRed
+                RockRatsClient.InfTotal.ForeColor = Color.DarkRed
+                RockRatsClient.InfTotalVal.ForeColor = Color.DarkRed
             End If
         End If
     End Sub
@@ -176,10 +176,12 @@ Module SoftData
 
     Friend Sub ProcessSystemChange(systemName As String)
         If systemName <> selectedSystem Then
+            RockRatsClient.SoftDataGrid.Enabled = False
             ProcessOCRTextChg()
             SaveSystemFactions()
             LoadSystemFactions(systemName)
             selectedSystem = systemName
+            RockRatsClient.SoftDataGrid.Enabled = True
         End If
     End Sub
 
@@ -239,67 +241,58 @@ Module SoftData
         Return factionName
     End Function
 
-    Private Function MatchInfluence(edInfluence As String) As Decimal
-        Dim s As String = Strings.Left(edInfluence, Len(edInfluence) - 1)
-        s = Trim(Mid(s, 12))
-        Dim n As Decimal
+    Private Function MatchInfluence(influence As String) As Decimal
+        Dim val As Decimal = 0
+        Dim pattern As String = ".*\b(\d{1,2})\.?(\d).*"
         Try
-            n = Decimal.Parse(s)
+            If Regex.Match(influence, pattern).Success Then
+                influence = Regex.Replace(influence, pattern, "$1.$2")
+                val = Decimal.Parse(influence)
+            End If
         Catch ex As Exception
-            n = 0
+            val = 0
         End Try
-        Return n
+        Return val
     End Function
 
-    Private Function MatchState(edState As String) As String
-        Dim s As String = Replace(edState, "_", "")
-        s = Replace(s, "'", "")
-        s = Replace(s, ".", "")
-        s = Replace(s, "-", "",)
-        s = Replace(s, "D", "O", 2, 1)
-        s = Replace(s, "D", "O", 3, 1)
-        s = Replace(s, "ROOM", "BOOM")
-        s = Replace(s, "EOOM", "BOOM")
-        s = Replace(s, "EUST", "BUST")
-        s = Replace(s, "RUST", "BUST")
-        s = Replace(s, "LDCK", "LOCK")
-        s = Replace(s, "DDWN", "DOWN")
-        s = Replace(s, "IDN", "ION")
+    Private Function MatchState(stateText As String) As String
+        Dim text As String = Replace(stateText, "_", "")
+        text = Regex.Replace(text, "^[^ ]* +(\w.+)$", "$1")
 
-        If InStr(s, "BOOM") > 0 Then
-            Return "Boom"
-        End If
-        If InStr(s, "BUST") > 0 Then
-            Return "Bust"
-        End If
-        If InStr(s, "UNREST") > 0 Then
+        If WordMatchScore(text, "CIVILUNREST", noOfWords:=2) > 7 Then
             Return "Civil unrest"
         End If
-        If InStr(s, "CIVIL WAR") > 0 Then
+        If WordMatchScore(text, "CIVILWAR", noOfWords:=2) >= 6 Then
             Return "Civil war"
         End If
-        If InStr(s, "ELEC") > 0 Then
-            Return "Election"
-        End If
-        If InStr(s, "EXPA") > 0 Then
-            Return "Expansion"
-        End If
-        If InStr(s, "FAMI") > 0 Then
-            Return "Famine"
-        End If
-        If InStr(s, "INVE") > 0 Then
+        If WordMatchScore(text, "INVESTMENT") >= 6 Then
             Return "Investment"
         End If
-        If InStr(s, "LOCK") > 0 Then
+        If WordMatchScore(text, "EXPANSION") >= 6 Then
+            Return "Expansion"
+        End If
+        If WordMatchScore(text, "LOCKDOWN") >= 5 Then
             Return "Lockdown"
         End If
-        If InStr(s, "OUTB") > 0 Then
+        If WordMatchScore(text, "ELECTION") >= 5 Then
+            Return "Election"
+        End If
+        If WordMatchScore(text, "OUTBREAK") >= 5 Then
             Return "Outbreak"
         End If
-        If InStr(s, "RETR") > 0 Then
+        If WordMatchScore(text, "RETREAT") >= 4 Then
             Return "Retreat"
         End If
-        If InStr(s, "WAR") > 0 Then
+        If WordMatchScore(text, "FAMINE") >= 4 Then
+            Return "Famine"
+        End If
+        If WordMatchScore(text, "BOOM") >= 3 Then
+            Return "Boom"
+        End If
+        If WordMatchScore(text, "BUST") >= 3 Then
+            Return "Bust"
+        End If
+        If WordMatchScore(text, "WAR") >= 2 Then
             Return "War"
         End If
         Return " "
@@ -349,15 +342,13 @@ Module SoftData
 
     Public Function AddSystem(systemName As String) As String
         Dim cleanSystemName As String = SoftData.WhitelistChars(Trim(systemName))
-        RockRatsClient.SystemsList.Items.Add(cleanSystemName)
-        RockRatsClient.selSystem.Items.Add(cleanSystemName)
+        RockRatsClient.SelectedSystem.Items.Add(cleanSystemName)
 
         Return cleanSystemName
     End Function
     Public Function RemoveSystem(systemName As String) As String
         Dim cleanSystemName As String = SoftData.WhitelistChars(Trim(systemName))
-        RockRatsClient.selSystem.Items.Remove(cleanSystemName)
-        RockRatsClient.SystemsList.Items.Remove(cleanSystemName)
+        RockRatsClient.SelectedSystem.Items.Remove(cleanSystemName)
 
         Return cleanSystemName
     End Function
@@ -407,5 +398,66 @@ Module SoftData
         Catch ex As Exception
             Return ""
         End Try
+    End Function
+
+    Function isFactionText(line As String) As Boolean
+        Return LabelMatchScore(line, "FACTION", ExtraChars:=3) >= 4
+    End Function
+
+    Function isInfluenceText(line As String) As Boolean
+        Return LabelMatchScore(line, "INFLUENCE", ExtraChars:=2) >= 5
+    End Function
+
+    Function isStateText(line As String) As Boolean
+        Return LabelMatchScore(line, "STATE", ExtraChars:=3) >= 4
+    End Function
+
+    Function isGovermentText(line As String) As Boolean
+        Return LabelMatchScore(line, "GOVERMENT", ExtraChars:=3) >= 5
+    End Function
+
+    Function LabelMatchScore(line As String, matchWord As String, Optional ExtraChars As Integer = 0) As Integer
+        Dim found As Boolean = False
+        If Len(line) >= matchWord.Count + ExtraChars And line.IndexOf(" ") > -1 Then
+            Dim label = line.Split(" "c)(0)
+            Return WordMatchScore(label, matchWord)
+        End If
+        Return 0
+    End Function
+
+    Function WordMatchScore(line As String, matchWord As String, Optional noOfWords As Integer = 1) As Integer
+        Dim found As Boolean = False
+        Dim space = New Regex(" ")
+        Dim Candidate = space.Replace(line, "", noOfWords - 1)
+        Candidate = Regex.Replace(Candidate, "[\W]+", "")
+        If Len(Candidate) >= matchWord.Count Then
+            Dim score = 0
+            Dim n As Integer
+            For n = 0 To matchWord.Count - 1
+                Dim pattern = MatchGlpyhsPatternFor(matchWord.Chars(n))
+
+                If Regex.Match(Candidate.ElementAt(n), pattern).Success Then
+                    score += 1
+                End If
+            Next
+            Return score
+        End If
+        Return 0
+    End Function
+
+
+    Function MatchGlpyhsPatternFor(c As Char) As String
+        Select Case c.ToString
+            Case "B"
+                Return "[BRE]"
+            Case "C"
+                Return "[CE]"
+            Case "F"
+                Return "[FP]"
+            Case "O"
+                Return "[OD]"
+            Case Else
+                Return c.ToString
+        End Select
     End Function
 End Module
