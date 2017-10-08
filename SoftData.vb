@@ -74,24 +74,29 @@ Module SoftData
         End If
     End Sub
 
+    Public Function AreAllFactionsOCRed() As Boolean
+        Return factions.FirstOrDefault(Function(f) Not f.Found) Is Nothing
+    End Function
 
     Private Sub AddEDCaptureText(factionName As String, influence As String, state As String, influenceVal As Decimal)
         Try
             Dim faction = factions.First(Function(f) f.FactionName.Equals(factionName))
             If faction IsNot Nothing Then
-                faction.Influence = influenceVal
-                faction.State = state
-                If influenceVal > 0 Then
-                    faction.Found = True
+                If Not faction.Found Then
+                    faction.Influence = influenceVal
+                    faction.State = state
+                    If influenceVal > 0 Then
+                        faction.Found = True
+                    End If
+                    UpdateDataGridRow(faction, True)
                 End If
-                UpdateDataGridRow(faction)
             End If
 
         Catch ex As Exception
 
         End Try
     End Sub
-    Public Sub UpdateDataGridRow(faction As Faction)
+    Public Sub UpdateDataGridRow(faction As Faction, Optional scrollToChanges As Boolean = False)
         Dim doInsert As Boolean = True
         Dim influenceDiff = CalcInfluenceDiff(faction.PrevInfluence.ToString, faction.Influence.ToString)
         For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
@@ -104,6 +109,12 @@ Module SoftData
                         row.Cells(RockRatsClient.ColumnTypes.InfluenceDiff).Value = influenceDiff
                         row.Cells(RockRatsClient.ColumnTypes.PrevState).Value = faction.PrevState
                         row.Cells(RockRatsClient.ColumnTypes.Found).Value = faction.Found
+                        If scrollToChanges Then
+                            Dim scrollIndex = row.Index - 6
+                            If scrollIndex >= 0 Then
+                                RockRatsClient.SoftDataGrid.FirstDisplayedScrollingRowIndex = row.Index - 6
+                            End If
+                        End If
                         doInsert = False
                         Exit For
                     End If
@@ -259,10 +270,10 @@ Module SoftData
         Dim text As String = Replace(stateText, "_", "")
         text = Regex.Replace(text, "^[^ ]* +(\w.+)$", "$1")
 
-        If WordMatchScore(text, "CIVILUNREST", noOfWords:=2) > 7 Then
+        If WordMatchScore(text, "CIVILUNREST", noOfWords:=2) > 8 Then
             Return "Civil unrest"
         End If
-        If WordMatchScore(text, "CIVILWAR", noOfWords:=2) >= 6 Then
+        If WordMatchScore(text, "CIVILWAR", noOfWords:=2) >= 7 Then
             Return "Civil war"
         End If
         If WordMatchScore(text, "INVESTMENT") >= 6 Then
@@ -300,6 +311,16 @@ Module SoftData
 
     Public Sub AddFactions(systemName As String, factions As List(Of Faction))
         systemFactions.Add(systemName, factions)
+    End Sub
+    Public Sub ClearFaction(factionName As String)
+        Try
+            Dim factions = systemFactions(selectedSystem)
+            Dim faction = factions.First(Function(f) f.FactionName.Equals(factionName))
+            faction.Influence = 0
+            faction.State = ""
+        Catch ex As Exception
+
+        End Try
     End Sub
     Public Sub SaveSystemFactions()
         updateFactionsData()
@@ -392,7 +413,7 @@ Module SoftData
         End If
     End Sub
 
-    Function SafeString(str As Object) As String
+    Private Function SafeString(str As Object) As String
         Try
             Return str.ToString
         Catch ex As Exception
@@ -400,23 +421,23 @@ Module SoftData
         End Try
     End Function
 
-    Function isFactionText(line As String) As Boolean
+    Private Function isFactionText(line As String) As Boolean
         Return LabelMatchScore(line, "FACTION", ExtraChars:=3) >= 4
     End Function
 
-    Function isInfluenceText(line As String) As Boolean
+    Private Function isInfluenceText(line As String) As Boolean
         Return LabelMatchScore(line, "INFLUENCE", ExtraChars:=2) >= 5
     End Function
 
-    Function isStateText(line As String) As Boolean
+    Private Function isStateText(line As String) As Boolean
         Return LabelMatchScore(line, "STATE", ExtraChars:=3) >= 4
     End Function
 
-    Function isGovermentText(line As String) As Boolean
+    Private Function isGovermentText(line As String) As Boolean
         Return LabelMatchScore(line, "GOVERMENT", ExtraChars:=3) >= 5
     End Function
 
-    Function LabelMatchScore(line As String, matchWord As String, Optional ExtraChars As Integer = 0) As Integer
+    Private Function LabelMatchScore(line As String, matchWord As String, Optional ExtraChars As Integer = 0) As Integer
         Dim found As Boolean = False
         If Len(line) >= matchWord.Count + ExtraChars And line.IndexOf(" ") > -1 Then
             Dim label = line.Split(" "c)(0)
@@ -425,7 +446,7 @@ Module SoftData
         Return 0
     End Function
 
-    Function WordMatchScore(line As String, matchWord As String, Optional noOfWords As Integer = 1) As Integer
+    Private Function WordMatchScore(line As String, matchWord As String, Optional noOfWords As Integer = 1) As Integer
         Dim found As Boolean = False
         Dim space = New Regex(" ")
         Dim Candidate = space.Replace(line, "", noOfWords - 1)
@@ -435,8 +456,12 @@ Module SoftData
             Dim n As Integer
             For n = 0 To matchWord.Count - 1
                 Dim pattern = MatchGlpyhsPatternFor(matchWord.Chars(n))
+                Dim prevIndex = Math.Max(n - 1, 0)
+                Dim nextIndex = Math.Min(n + 1, matchWord.Count - 1)
 
-                If Regex.Match(Candidate.ElementAt(n), pattern).Success Then
+                If Regex.Match(Candidate.ElementAt(n), pattern).Success Or
+                Regex.Match(Candidate.ElementAt(prevIndex), pattern).Success Or
+                Regex.Match(Candidate.ElementAt(nextIndex), pattern).Success Then
                     score += 1
                 End If
             Next
@@ -444,9 +469,7 @@ Module SoftData
         End If
         Return 0
     End Function
-
-
-    Function MatchGlpyhsPatternFor(c As Char) As String
+    Private Function MatchGlpyhsPatternFor(c As Char) As String
         Select Case c.ToString
             Case "B"
                 Return "[BRE]"
@@ -456,6 +479,8 @@ Module SoftData
                 Return "[FP]"
             Case "O"
                 Return "[OD]"
+            Case "R"
+                Return "R|FI"
             Case Else
                 Return c.ToString
         End Select

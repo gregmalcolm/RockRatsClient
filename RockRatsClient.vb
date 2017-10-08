@@ -79,7 +79,14 @@ Public Class RockRatsClient
         Dim graph As Graphics
         Dim scanMarginPercentage As Integer = 25
 
+        If SoftData.AreAllFactionsOCRed() Then
+            MessageBox.Show("I can't do that Commander!" & vbCrLf &
+                "All rows are marked As OCRed which means theres nothing left to update.",
+                "Orly", MessageBoxButtons.OK)
+        End If
+
         StatusLog("OCR Scan in progress...")
+        CaptureEDScreen.Enabled = False
 
         bounds = Screen.PrimaryScreen.Bounds
         Try
@@ -93,6 +100,7 @@ Public Class RockRatsClient
         graph.CopyFromScreen(bounds.X, bounds.Y, 0, 0, New Size(scanMargin, bounds.Height), CopyPixelOperation.SourceCopy)
 
         CompleteEDScreen(screenshot)
+        CaptureEDScreen.Enabled = True
     End Sub
 
     Private Sub PasteEDScreen_Click(sender As Object, e As EventArgs)
@@ -128,30 +136,39 @@ Public Class RockRatsClient
             End If
         End If
         StatusLog("Sending '" & SelectedSystem.SelectedItem.ToString & "' data to server...")
-        Dim factionsSent As Integer = 0
+            Dim factionsSent As Integer = 0
         Dim done As Boolean = False
         For Each row As DataGridViewRow In SoftDataGrid.Rows
-            If row.Cells(ColumnTypes.Faction).Value IsNot Nothing Then
-                If row.Cells(ColumnTypes.Influence).Value IsNot Nothing Then
-                    If row.Cells(ColumnTypes.Faction).Value.ToString.Trim <> "" Then
-                        If IsNumeric(row.Cells(ColumnTypes.Influence).Value.ToString) Then
-                            If row.Cells(ColumnTypes.State).Value Is Nothing Then
-                                row.Cells(ColumnTypes.State).Value = ""
-                            End If
-                            Dim cwaitForCompletion As Boolean = Comms.SendUpdate("", "", "",
+            Try
+                Dim InfluenceVal As Decimal = 0
+                If IsNumeric(row.Cells(ColumnTypes.Influence).Value.ToString) Then
+                    Try
+                        InfluenceVal = Decimal.Parse(row.Cells(ColumnTypes.Influence).Value.ToString)
+                    Catch ex As Exception
+                    End Try
+                End If
+
+                If row.Cells(ColumnTypes.Faction).Value IsNot Nothing Then
+                    If row.Cells(ColumnTypes.Influence).Value IsNot Nothing Then
+                        If row.Cells(ColumnTypes.Faction).Value.ToString.Trim <> "" Then
+                            If InfluenceVal <> 0 Then
+                                Dim cwaitForCompletion As Boolean = Comms.SendUpdate("", "", "",
                                 SelectedSystem.SelectedItem.ToString & ":" &
                                 row.Cells(ColumnTypes.Faction).Value.ToString.ToUpper & ":" &
                                 row.Cells(ColumnTypes.State).Value.ToString & ":" &
                                 row.Cells(ColumnTypes.Influence).Value.ToString & ":OCR v" & getVersion())
-                            factionsSent += 1
-                        Else
-                            LogEverywhere("Skipping " & row.Cells(ColumnTypes.Faction).Value.ToString & " because the infuence given is not a number")
+                                factionsSent += 1
+                            Else
+                                LogEverywhere("Skipping " & row.Cells(ColumnTypes.Faction).Value.ToString & " because the infuence is zero")
+                            End If
                         End If
+                    Else
+                        LogEverywhere("Skipping " & row.Cells(ColumnTypes.Faction).Value.ToString & " because no influence was present")
                     End If
-                Else
-                    LogEverywhere("Skipping " & row.Cells(ColumnTypes.Faction).Value.ToString & " because no influence was present")
                 End If
-            End If
+            Catch ex As Exception
+                LogEverywhere("Unable to send one of the rows")
+            End Try
         Next
         LogOutput("Updated " & factionsSent & "/" & (SoftDataGrid.Rows.Count - 1).ToString & " Factions in " & SelectedSystem.SelectedItem.ToString)
         GoToNextSystem()
@@ -337,5 +354,17 @@ Public Class RockRatsClient
         SelectedSystem.SelectedIndex = 0
         SelectedSystem.Visible = True
         SoftDataGrid.Visible = True
+    End Sub
+
+    Private Sub SoftDataGrid_RowsRemoved(sender As Object, e As DataGridViewRowsRemovedEventArgs) Handles SoftDataGrid.RowsRemoved
+        Dim n As Integer
+        For n = e.RowIndex To e.RowIndex + e.RowCount - 1
+            Try
+                Dim factionName = SoftDataGrid(n, ColumnTypes.Faction).Value.ToString
+                SoftData.ClearFaction(factionName)
+            Catch ex As Exception
+            End Try
+        Next
+
     End Sub
 End Class

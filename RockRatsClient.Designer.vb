@@ -57,6 +57,9 @@ Partial Class RockRatsClient
         Me.SystemNameBox = New System.Windows.Forms.TextBox()
         Me.SystemLabel = New System.Windows.Forms.Label()
         Me.SoftDataGrid = New System.Windows.Forms.DataGridView()
+        Me.LoadingLabel = New System.Windows.Forms.Label()
+        Me.AlwaysOnTopCheckbox = New System.Windows.Forms.CheckBox()
+        Me.Tabs = New System.Windows.Forms.TabControl()
         Me.Faction = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Influence = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.State = New System.Windows.Forms.DataGridViewTextBoxColumn()
@@ -64,9 +67,7 @@ Partial Class RockRatsClient
         Me.InfluenceDiff = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.PrevState = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Found = New System.Windows.Forms.DataGridViewCheckBoxColumn()
-        Me.LoadingLabel = New System.Windows.Forms.Label()
-        Me.AlwaysOnTopCheckbox = New System.Windows.Forms.CheckBox()
-        Me.Tabs = New System.Windows.Forms.TabControl()
+        Me.Label3 = New System.Windows.Forms.Label()
         CType(Me.EDCapture, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.LogTab.SuspendLayout()
         Me.SettingsTab.SuspendLayout()
@@ -90,7 +91,7 @@ Partial Class RockRatsClient
         'BrowserForDir
         '
         Me.BrowserForDir.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.BrowserForDir.Location = New System.Drawing.Point(507, 16)
+        Me.BrowserForDir.Location = New System.Drawing.Point(403, 16)
         Me.BrowserForDir.Name = "BrowserForDir"
         Me.BrowserForDir.Size = New System.Drawing.Size(36, 28)
         Me.BrowserForDir.TabIndex = 24
@@ -105,16 +106,16 @@ Partial Class RockRatsClient
         Me.JournalFolder.Location = New System.Drawing.Point(110, 16)
         Me.JournalFolder.Multiline = True
         Me.JournalFolder.Name = "JournalFolder"
-        Me.JournalFolder.Size = New System.Drawing.Size(394, 28)
+        Me.JournalFolder.Size = New System.Drawing.Size(289, 28)
         Me.JournalFolder.TabIndex = 23
         Me.ToolTip1.SetToolTip(Me.JournalFolder, "Set the location of your ED Journal")
         Me.JournalFolder.WordWrap = False
         '
         'CaptureEDScreen
         '
-        Me.CaptureEDScreen.Location = New System.Drawing.Point(472, 255)
+        Me.CaptureEDScreen.Location = New System.Drawing.Point(10, 255)
         Me.CaptureEDScreen.Name = "CaptureEDScreen"
-        Me.CaptureEDScreen.Size = New System.Drawing.Size(77, 72)
+        Me.CaptureEDScreen.Size = New System.Drawing.Size(77, 46)
         Me.CaptureEDScreen.TabIndex = 23
         Me.CaptureEDScreen.Text = "OCR System Factions"
         Me.ToolTip1.SetToolTip(Me.CaptureEDScreen, "Capture the Image from your Main Screen")
@@ -122,9 +123,9 @@ Partial Class RockRatsClient
         '
         'UpdateBgsData
         '
-        Me.UpdateBgsData.Location = New System.Drawing.Point(472, 380)
+        Me.UpdateBgsData.Location = New System.Drawing.Point(494, 255)
         Me.UpdateBgsData.Name = "UpdateBgsData"
-        Me.UpdateBgsData.Size = New System.Drawing.Size(77, 47)
+        Me.UpdateBgsData.Size = New System.Drawing.Size(82, 46)
         Me.UpdateBgsData.TabIndex = 25
         Me.UpdateBgsData.Text = "Update Server"
         Me.ToolTip1.SetToolTip(Me.UpdateBgsData, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
@@ -147,11 +148,11 @@ Partial Class RockRatsClient
         '
         Me.InfTotal.AutoSize = True
         Me.InfTotal.ForeColor = System.Drawing.Color.DarkRed
-        Me.InfTotal.Location = New System.Drawing.Point(471, 330)
+        Me.InfTotal.Location = New System.Drawing.Point(93, 260)
         Me.InfTotal.Name = "InfTotal"
-        Me.InfTotal.Size = New System.Drawing.Size(78, 13)
+        Me.InfTotal.Size = New System.Drawing.Size(81, 13)
         Me.InfTotal.TabIndex = 32
-        Me.InfTotal.Text = "Influence Total"
+        Me.InfTotal.Text = "Influence Total:"
         Me.ToolTip1.SetToolTip(Me.InfTotal, "Influence Total has to be 100% before update is enabled")
         '
         'InfTotalVal
@@ -159,7 +160,7 @@ Partial Class RockRatsClient
         Me.InfTotalVal.AutoSize = True
         Me.InfTotalVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.InfTotalVal.ForeColor = System.Drawing.Color.DarkRed
-        Me.InfTotalVal.Location = New System.Drawing.Point(498, 344)
+        Me.InfTotalVal.Location = New System.Drawing.Point(171, 256)
         Me.InfTotalVal.Name = "InfTotalVal"
         Me.InfTotalVal.Size = New System.Drawing.Size(16, 18)
         Me.InfTotalVal.TabIndex = 36
@@ -168,7 +169,7 @@ Partial Class RockRatsClient
         '
         'ViewWebTracker
         '
-        Me.ViewWebTracker.Location = New System.Drawing.Point(464, 33)
+        Me.ViewWebTracker.Location = New System.Drawing.Point(485, 33)
         Me.ViewWebTracker.Name = "ViewWebTracker"
         Me.ViewWebTracker.Size = New System.Drawing.Size(89, 20)
         Me.ViewWebTracker.TabIndex = 45
@@ -201,7 +202,8 @@ Partial Class RockRatsClient
         'LogOcrCheckbox
         '
         Me.LogOcrCheckbox.AutoSize = True
-        Me.LogOcrCheckbox.Location = New System.Drawing.Point(9, 39)
+        Me.LogOcrCheckbox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.LogOcrCheckbox.Location = New System.Drawing.Point(247, 39)
         Me.LogOcrCheckbox.Name = "LogOcrCheckbox"
         Me.LogOcrCheckbox.Size = New System.Drawing.Size(146, 17)
         Me.LogOcrCheckbox.TabIndex = 51
@@ -212,7 +214,7 @@ Partial Class RockRatsClient
         '
         'ScanMarginLeft
         '
-        Me.ScanMarginLeft.Location = New System.Drawing.Point(140, 13)
+        Me.ScanMarginLeft.Location = New System.Drawing.Point(344, 11)
         Me.ScanMarginLeft.Name = "ScanMarginLeft"
         Me.ScanMarginLeft.Size = New System.Drawing.Size(41, 20)
         Me.ScanMarginLeft.TabIndex = 56
@@ -222,7 +224,7 @@ Partial Class RockRatsClient
         'Label14
         '
         Me.Label14.AutoSize = True
-        Me.Label14.Location = New System.Drawing.Point(6, 16)
+        Me.Label14.Location = New System.Drawing.Point(210, 14)
         Me.Label14.Name = "Label14"
         Me.Label14.Size = New System.Drawing.Size(131, 13)
         Me.Label14.TabIndex = 57
@@ -232,10 +234,10 @@ Partial Class RockRatsClient
         '
         'EDCapture
         '
-        Me.EDCapture.BackColor = System.Drawing.Color.Transparent
-        Me.EDCapture.Location = New System.Drawing.Point(6, 85)
+        Me.EDCapture.BackColor = System.Drawing.Color.DarkGray
+        Me.EDCapture.Location = New System.Drawing.Point(8, 33)
         Me.EDCapture.Name = "EDCapture"
-        Me.EDCapture.Size = New System.Drawing.Size(175, 247)
+        Me.EDCapture.Size = New System.Drawing.Size(176, 242)
         Me.EDCapture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.EDCapture.TabIndex = 54
         Me.EDCapture.TabStop = False
@@ -244,11 +246,11 @@ Partial Class RockRatsClient
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(6, 70)
+        Me.Label1.Location = New System.Drawing.Point(5, 17)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(251, 13)
+        Me.Label1.Size = New System.Drawing.Size(85, 13)
         Me.Label1.TabIndex = 60
-        Me.Label1.Text = "Last OCR Image (Check the Factions text is visible):"
+        Me.Label1.Text = "Last OCR Image" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10)
         Me.ToolTip1.SetToolTip(Me.Label1, "Set how much of the screen to look at when capturing text. This will stop other t" &
         "ext like this window contaminating the results")
         '
@@ -258,7 +260,7 @@ Partial Class RockRatsClient
         Me.LogTab.Location = New System.Drawing.Point(4, 22)
         Me.LogTab.Name = "LogTab"
         Me.LogTab.Padding = New System.Windows.Forms.Padding(3)
-        Me.LogTab.Size = New System.Drawing.Size(558, 446)
+        Me.LogTab.Size = New System.Drawing.Size(866, 304)
         Me.LogTab.TabIndex = 1
         Me.LogTab.Text = "Log"
         Me.LogTab.UseVisualStyleBackColor = True
@@ -269,7 +271,7 @@ Partial Class RockRatsClient
         Me.LogTextBox.Location = New System.Drawing.Point(3, 3)
         Me.LogTextBox.Name = "LogTextBox"
         Me.LogTextBox.ReadOnly = True
-        Me.LogTextBox.Size = New System.Drawing.Size(552, 440)
+        Me.LogTextBox.Size = New System.Drawing.Size(860, 298)
         Me.LogTextBox.TabIndex = 0
         Me.LogTextBox.Text = ""
         '
@@ -279,7 +281,7 @@ Partial Class RockRatsClient
         Me.SettingsTab.Controls.Add(Me.GroupBox1)
         Me.SettingsTab.Location = New System.Drawing.Point(4, 22)
         Me.SettingsTab.Name = "SettingsTab"
-        Me.SettingsTab.Size = New System.Drawing.Size(558, 446)
+        Me.SettingsTab.Size = New System.Drawing.Size(866, 304)
         Me.SettingsTab.TabIndex = 2
         Me.SettingsTab.Text = "Settings"
         Me.SettingsTab.UseVisualStyleBackColor = True
@@ -291,9 +293,9 @@ Partial Class RockRatsClient
         Me.GroupBox2.Controls.Add(Me.JournalFolder)
         Me.GroupBox2.Controls.Add(Me.Label9)
         Me.GroupBox2.Controls.Add(Me.BrowserForDir)
-        Me.GroupBox2.Location = New System.Drawing.Point(3, 3)
+        Me.GroupBox2.Location = New System.Drawing.Point(417, 3)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(548, 90)
+        Me.GroupBox2.Size = New System.Drawing.Size(444, 90)
         Me.GroupBox2.TabIndex = 61
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Journal Scraping"
@@ -313,7 +315,7 @@ Partial Class RockRatsClient
         Me.CommanderName.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.CommanderName.Location = New System.Drawing.Point(111, 57)
         Me.CommanderName.Name = "CommanderName"
-        Me.CommanderName.Size = New System.Drawing.Size(270, 21)
+        Me.CommanderName.Size = New System.Drawing.Size(288, 21)
         Me.CommanderName.TabIndex = 32
         '
         'Label9
@@ -328,15 +330,16 @@ Partial Class RockRatsClient
         '
         'GroupBox1
         '
+        Me.GroupBox1.Controls.Add(Me.Label3)
         Me.GroupBox1.Controls.Add(Me.Label1)
         Me.GroupBox1.Controls.Add(Me.Label17)
         Me.GroupBox1.Controls.Add(Me.EDCapture)
         Me.GroupBox1.Controls.Add(Me.ScanMarginLeft)
         Me.GroupBox1.Controls.Add(Me.LogOcrCheckbox)
         Me.GroupBox1.Controls.Add(Me.Label14)
-        Me.GroupBox1.Location = New System.Drawing.Point(3, 105)
+        Me.GroupBox1.Location = New System.Drawing.Point(3, 3)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(276, 338)
+        Me.GroupBox1.Size = New System.Drawing.Size(408, 296)
         Me.GroupBox1.TabIndex = 59
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "OCR Calibration"
@@ -344,7 +347,7 @@ Partial Class RockRatsClient
         'Label17
         '
         Me.Label17.AutoSize = True
-        Me.Label17.Location = New System.Drawing.Point(183, 15)
+        Me.Label17.Location = New System.Drawing.Point(385, 14)
         Me.Label17.Name = "Label17"
         Me.Label17.Size = New System.Drawing.Size(15, 13)
         Me.Label17.TabIndex = 59
@@ -368,19 +371,19 @@ Partial Class RockRatsClient
         Me.SoftDataTab.Controls.Add(Me.AlwaysOnTopCheckbox)
         Me.SoftDataTab.Location = New System.Drawing.Point(4, 22)
         Me.SoftDataTab.Name = "SoftDataTab"
-        Me.SoftDataTab.Size = New System.Drawing.Size(558, 446)
+        Me.SoftDataTab.Size = New System.Drawing.Size(866, 304)
         Me.SoftDataTab.TabIndex = 3
         Me.SoftDataTab.Text = "OCR"
         Me.SoftDataTab.UseVisualStyleBackColor = True
         '
         'StatusBox
         '
-        Me.StatusBox.Location = New System.Drawing.Point(10, 255)
+        Me.StatusBox.Location = New System.Drawing.Point(582, 0)
         Me.StatusBox.Multiline = True
         Me.StatusBox.Name = "StatusBox"
         Me.StatusBox.ReadOnly = True
         Me.StatusBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.StatusBox.Size = New System.Drawing.Size(456, 182)
+        Me.StatusBox.Size = New System.Drawing.Size(281, 301)
         Me.StatusBox.TabIndex = 44
         '
         'SystemNameBox
@@ -407,11 +410,43 @@ Partial Class RockRatsClient
         Me.SoftDataGrid.Location = New System.Drawing.Point(10, 59)
         Me.SoftDataGrid.MultiSelect = False
         Me.SoftDataGrid.Name = "SoftDataGrid"
-        Me.SoftDataGrid.RowHeadersWidth = 4
+        Me.SoftDataGrid.RowHeadersWidth = 24
         Me.SoftDataGrid.ShowCellErrors = False
-        Me.SoftDataGrid.Size = New System.Drawing.Size(543, 190)
+        Me.SoftDataGrid.Size = New System.Drawing.Size(566, 190)
         Me.SoftDataGrid.TabIndex = 37
         Me.SoftDataGrid.Visible = False
+        '
+        'LoadingLabel
+        '
+        Me.LoadingLabel.AutoSize = True
+        Me.LoadingLabel.Location = New System.Drawing.Point(51, 8)
+        Me.LoadingLabel.Name = "LoadingLabel"
+        Me.LoadingLabel.Size = New System.Drawing.Size(54, 13)
+        Me.LoadingLabel.TabIndex = 49
+        Me.LoadingLabel.Text = "Loading..."
+        '
+        'AlwaysOnTopCheckbox
+        '
+        Me.AlwaysOnTopCheckbox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.AlwaysOnTopCheckbox.Location = New System.Drawing.Point(442, -1)
+        Me.AlwaysOnTopCheckbox.Name = "AlwaysOnTopCheckbox"
+        Me.AlwaysOnTopCheckbox.Size = New System.Drawing.Size(134, 23)
+        Me.AlwaysOnTopCheckbox.TabIndex = 42
+        Me.AlwaysOnTopCheckbox.Text = "Always on Top"
+        Me.AlwaysOnTopCheckbox.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.AlwaysOnTopCheckbox.UseVisualStyleBackColor = True
+        '
+        'Tabs
+        '
+        Me.Tabs.Controls.Add(Me.SoftDataTab)
+        Me.Tabs.Controls.Add(Me.SettingsTab)
+        Me.Tabs.Controls.Add(Me.LogTab)
+        Me.Tabs.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Tabs.Location = New System.Drawing.Point(0, 0)
+        Me.Tabs.Name = "Tabs"
+        Me.Tabs.SelectedIndex = 0
+        Me.Tabs.Size = New System.Drawing.Size(874, 330)
+        Me.Tabs.TabIndex = 5
         '
         'Faction
         '
@@ -461,47 +496,24 @@ Partial Class RockRatsClient
         '
         'Found
         '
-        Me.Found.HeaderText = "Found"
+        Me.Found.HeaderText = "OCRed"
         Me.Found.Name = "Found"
         Me.Found.Width = 50
         '
-        'LoadingLabel
+        'Label3
         '
-        Me.LoadingLabel.AutoSize = True
-        Me.LoadingLabel.Location = New System.Drawing.Point(51, 8)
-        Me.LoadingLabel.Name = "LoadingLabel"
-        Me.LoadingLabel.Size = New System.Drawing.Size(54, 13)
-        Me.LoadingLabel.TabIndex = 49
-        Me.LoadingLabel.Text = "Loading..."
-        '
-        'AlwaysOnTopCheckbox
-        '
-        Me.AlwaysOnTopCheckbox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.AlwaysOnTopCheckbox.Location = New System.Drawing.Point(419, -1)
-        Me.AlwaysOnTopCheckbox.Name = "AlwaysOnTopCheckbox"
-        Me.AlwaysOnTopCheckbox.Size = New System.Drawing.Size(134, 23)
-        Me.AlwaysOnTopCheckbox.TabIndex = 42
-        Me.AlwaysOnTopCheckbox.Text = "Always on Top"
-        Me.AlwaysOnTopCheckbox.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.AlwaysOnTopCheckbox.UseVisualStyleBackColor = True
-        '
-        'Tabs
-        '
-        Me.Tabs.Controls.Add(Me.SoftDataTab)
-        Me.Tabs.Controls.Add(Me.SettingsTab)
-        Me.Tabs.Controls.Add(Me.LogTab)
-        Me.Tabs.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Tabs.Location = New System.Drawing.Point(0, 0)
-        Me.Tabs.Name = "Tabs"
-        Me.Tabs.SelectedIndex = 0
-        Me.Tabs.Size = New System.Drawing.Size(566, 472)
-        Me.Tabs.TabIndex = 5
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(6, 278)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(336, 13)
+        Me.Label3.TabIndex = 62
+        Me.Label3.Text = "Use it to check the Factions text is the only part getting OCR scanned" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10)
         '
         'RockRatsClient
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(566, 472)
+        Me.ClientSize = New System.Drawing.Size(874, 330)
         Me.Controls.Add(Me.Tabs)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
@@ -544,13 +556,6 @@ Partial Class RockRatsClient
     Friend WithEvents ViewWebTracker As Button
     Friend WithEvents SystemLabel As Label
     Friend WithEvents SoftDataGrid As DataGridView
-    Friend WithEvents Faction As DataGridViewTextBoxColumn
-    Friend WithEvents Influence As DataGridViewTextBoxColumn
-    Friend WithEvents State As DataGridViewTextBoxColumn
-    Friend WithEvents PrevInfluence As DataGridViewTextBoxColumn
-    Friend WithEvents InfluenceDiff As DataGridViewTextBoxColumn
-    Friend WithEvents PrevState As DataGridViewTextBoxColumn
-    Friend WithEvents Found As DataGridViewCheckBoxColumn
     Friend WithEvents InfTotalVal As Label
     Friend WithEvents InfTotal As Label
     Friend WithEvents SelectedSystem As ComboBox
@@ -568,4 +573,12 @@ Partial Class RockRatsClient
     Friend WithEvents Label17 As Label
     Friend WithEvents GroupBox2 As GroupBox
     Friend WithEvents Label2 As Label
+    Friend WithEvents Label3 As Label
+    Friend WithEvents Faction As DataGridViewTextBoxColumn
+    Friend WithEvents Influence As DataGridViewTextBoxColumn
+    Friend WithEvents State As DataGridViewTextBoxColumn
+    Friend WithEvents PrevInfluence As DataGridViewTextBoxColumn
+    Friend WithEvents InfluenceDiff As DataGridViewTextBoxColumn
+    Friend WithEvents PrevState As DataGridViewTextBoxColumn
+    Friend WithEvents Found As DataGridViewCheckBoxColumn
 End Class
