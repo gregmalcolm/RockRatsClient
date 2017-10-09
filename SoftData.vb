@@ -2,6 +2,7 @@
 Imports Emgu.CV.CvEnum
 Imports Emgu.CV.OCR
 Imports System.Text.RegularExpressions
+Imports System.Text
 
 Module SoftData
     Private rockRatsOcr As Tesseract
@@ -15,7 +16,7 @@ Module SoftData
 
     Friend Sub ProcEDScreen(bitmapImage As System.Drawing.Bitmap)
         Try
-            updateFactionsData()
+            UpdateFactionsData()
             processingOcrTextChange = True
             rockRatsOcr = New Tesseract() ' OcrEngineMode.TesseractCubeCombined
             rockRatsOcr.SetVariable("tessedit_char_whitelist", "QWERTYUIOPASDFGHJKLZXCVBNM.0987654321%:")
@@ -29,38 +30,47 @@ Module SoftData
             Dim influence As String = ""
             Dim influenceVal As Decimal = 0
             For Each line As String In elements
-                ' Uncommit to see OCR text
-                ' RockRatsClient.LogEverywhere(line)
+                If Trim(line) <> "" Then
+                    ' Uncommit to see OCR text
+                    ' RockRatsClient.LogEverywhere(line)
 
-                ' line = whitelistChars(line)
-                If factionFirstLine <> "" Then
-                    LogOcrLine(line)
-                    If Not isGovermentText(line) Then
-                        factionFirstLine = factionFirstLine + " " + Trim(line)
+                    ' line = whitelistChars(line)
+                    line = UCase(line)
+                    If factionFirstLine <> "" Then
+                        LogOcrLine(line)
+                        If Not isGovermentText(line) Then
+                            factionFirstLine = Trim(factionFirstLine + " " + Trim(line))
+                        End If
+                        factionName = MatchFaction(factionFirstLine)
+                        ' MsgBox(catchFaction + vbNewLine + factionName)
+                        factionFirstLine = ""
+                        influence = ""
+                        influenceVal = 0
+
                     End If
-                    factionName = MatchFaction(factionFirstLine)
-                    ' MsgBox(catchFaction + vbNewLine + factionName)
-                    factionFirstLine = ""
-                    influence = ""
-                    influenceVal = 0
-
-                End If
-                If IsFactionText(line) Then
-                    factionFirstLine = Mid(line, 10, Len(line) - 9)
-                    LogOcrLine(line)
-                End If
-                If factionName <> "" AndAlso isInfluenceText(line) Then
-                    influenceVal = MatchInfluence(Trim(line))
-                    influence = Replace(influenceVal.ToString, ",", ".")
-                    LogOcrLine(line)
-                End If
-                If influence <> "" AndAlso isStateText(line) Then
-                    Dim s As String = MatchState(Trim(line))
-                    AddEDCaptureText(factionName, influence, s, influenceVal)
-                    factionName = ""
-                    influence = ""
-                    influenceVal = 0
-                    LogOcrLine(line)
+                    If isFactionText(line) Then
+                        factionFirstLine = Mid(line, 10, Len(line) - 9)
+                        LogOcrLine(line)
+                    End If
+                    If factionName <> "" AndAlso isInfluenceText(line) Then
+                        influenceVal = MatchInfluence(Trim(line))
+                        influence = Replace(influenceVal.ToString, ",", ".")
+                        LogOcrLine(line)
+                    End If
+                    If influenceVal <> 0 AndAlso isStateText(line) Then
+                        Dim s As String = MatchState(Trim(line))
+                        AddEDCaptureText(factionName, influence, s, influenceVal)
+                        factionName = ""
+                        influence = ""
+                        influenceVal = 0
+                        LogOcrLine(line)
+                    End If
+                    If IsRelationshipText(line) Then
+                        factionName = ""
+                        influence = ""
+                        influenceVal = 0
+                        LogOcrLine(line)
+                    End If
                 End If
             Next
         Catch ex As Exception
@@ -153,7 +163,7 @@ Module SoftData
 
     Friend Sub ProcessOCRTextChg()
         If Not processingOcrTextChange Then
-            updateFactionsData()
+            UpdateFactionsData()
             Dim i As Decimal = 0
             For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
                 If Not row.IsNewRow Then
@@ -199,63 +209,32 @@ Module SoftData
     Private Function MatchFaction(targetFaction As String) As String
         Dim factionName As String = ""
         targetFaction = Trim(UCase(targetFaction))
-        Dim factionMatched As Boolean = False
-        targetFaction = Regex.Replace(targetFaction, "[,'\.]", String.Empty)
+        targetFaction = Regex.Replace(targetFaction, "[,'\.]", "")
         targetFaction = Trim(Replace(targetFaction, "  ", " "))
         If factions IsNot Nothing Then
             If factions.FirstOrDefault(Function(faction) faction.Equals(targetFaction)) IsNot Nothing Then
-                factionMatched = True
+                Return targetFaction
             Else
-                Dim nameLength As Integer = Len(targetFaction)
-                Dim x As Integer = CInt(Math.Round(nameLength * 0.95))
-                Dim y As Integer = CInt(Math.Round(nameLength * 0.85))
-                Dim z As Integer = CInt(Math.Round(nameLength * 0.7))
-                Dim e As Integer = CInt(Math.Round(nameLength * 0.3))
-                Dim scores = New Dictionary(Of String, Integer)
                 For Each faction In factions
-                    Dim score As Integer = 0
-                    If InStr(faction.FactionName, Left(targetFaction, x)) > 0 Then
-                        score = score + 9
-                    End If
-                    If InStr(faction.FactionName, Right(targetFaction, x)) > 0 Then
-                        score = score + 9
-                    End If
-                    If InStr(faction.FactionName, Left(targetFaction, y)) > 0 Then
-                        score = score + 7
-                    End If
-                    If InStr(faction.FactionName, Right(targetFaction, y)) > 0 Then
-                        score = score + 7
-                    End If
-                    If InStr(faction.FactionName, Left(targetFaction, z)) > 0 Then
-                        score = score + 5
-                    End If
-                    If InStr(faction.FactionName, Right(targetFaction, z)) > 0 Then
-                        score = score + 5
-                    End If
-                    If Left(faction.FactionName, e) = Left(targetFaction, e) Then
-                        score = score + 3
-                    End If
-                    If Right(faction.FactionName, e) = Right(targetFaction, e) Then
-                        score = score + 3
-                    End If
-                    scores.Add(faction.FactionName, score)
-                Next
-                Dim maxValue As Integer = 0
-                For Each score In scores
-                    If score.Value > maxValue Then
-                        maxValue = score.Value
-                        factionName = score.Key
+                    Dim minMatchingChars As Integer = CInt(targetFaction.Length * 0.75)
+                    If WordMatchScore(targetFaction, faction.FactionName) > minMatchingChars Then
+                        Return faction.FactionName
                     End If
                 Next
             End If
         End If
-        Return factionName
+        Return ""
     End Function
 
     Private Function MatchInfluence(influence As String) As Decimal
         Dim val As Decimal = 0
         Dim pattern As String = ".*\b(\d{1,2})\.?(\d).*"
         Try
+            influence = Regex.Replace(influence, "['""][1I]", "1")
+            influence = influence.Replace("B", "8")
+            influence = influence.Replace(",", ".")
+            influence = influence.Replace("  ", " ")
+            influence = Regex.Replace(influence, "([\d.]) ", "$1")
             If Regex.Match(influence, pattern).Success Then
                 influence = Regex.Replace(influence, pattern, "$1.$2")
                 val = Decimal.Parse(influence)
@@ -270,10 +249,10 @@ Module SoftData
         Dim text As String = Replace(stateText, "_", "")
         text = Regex.Replace(text, "^[^ ]* +(\w.+)$", "$1")
 
-        If WordMatchScore(text, "CIVILUNREST", noOfWords:=2) > 8 Then
+        If WordMatchScore(text, "CIVIL UNREST") > 8 Then
             Return "Civil unrest"
         End If
-        If WordMatchScore(text, "CIVILWAR", noOfWords:=2) >= 7 Then
+        If WordMatchScore(text, "CIVIL WAR") >= 7 Then
             Return "Civil war"
         End If
         If WordMatchScore(text, "INVESTMENT") >= 6 Then
@@ -323,7 +302,7 @@ Module SoftData
         End Try
     End Sub
     Public Sub SaveSystemFactions()
-        updateFactionsData()
+        UpdateFactionsData()
 
         If factions IsNot Nothing And systemFactions IsNot Nothing Then
             If Not String.IsNullOrEmpty(selectedSystem) And systemFactions.ContainsKey(selectedSystem) Then
@@ -374,7 +353,7 @@ Module SoftData
         Return cleanSystemName
     End Function
 
-    Public Sub updateFactionsData()
+    Public Sub UpdateFactionsData()
         If systemFactions IsNot Nothing Then
             If Not systemFactions.ContainsKey(selectedSystem) Then
                 systemFactions.Add(selectedSystem, New List(Of Faction))
@@ -422,11 +401,11 @@ Module SoftData
     End Function
 
     Private Function isFactionText(line As String) As Boolean
-        Return LabelMatchScore(line, "FACTION", ExtraChars:=3) >= 4
+        Return LabelMatchScore(line, "FACTION", ExtraChars:=3) >= 5
     End Function
 
     Private Function isInfluenceText(line As String) As Boolean
-        Return LabelMatchScore(line, "INFLUENCE", ExtraChars:=2) >= 5
+        Return LabelMatchScore(line, "INFLUENCE", ExtraChars:=2) >= 7
     End Function
 
     Private Function isStateText(line As String) As Boolean
@@ -434,7 +413,10 @@ Module SoftData
     End Function
 
     Private Function isGovermentText(line As String) As Boolean
-        Return LabelMatchScore(line, "GOVERMENT", ExtraChars:=3) >= 5
+        Return LabelMatchScore(line, "GOVERMENT", ExtraChars:=3) >= 7
+    End Function
+    Private Function isRelationshipText(line As String) As Boolean
+        Return LabelMatchScore(line, "RELATIONSHIP", ExtraChars:=3) >= 10
     End Function
 
     Private Function LabelMatchScore(line As String, matchWord As String, Optional ExtraChars As Integer = 0) As Integer
@@ -446,23 +428,34 @@ Module SoftData
         Return 0
     End Function
 
-    Private Function WordMatchScore(line As String, matchWord As String, Optional noOfWords As Integer = 1) As Integer
+    Private Function WordMatchScore(line As String, matchWord As String) As Integer
         Dim found As Boolean = False
-        Dim space = New Regex(" ")
-        Dim Candidate = space.Replace(line, "", noOfWords - 1)
-        Candidate = Regex.Replace(Candidate, "[\W]+", "")
-        If Len(Candidate) >= matchWord.Count Then
+        Dim candidate = line.Replace("  ", " ")
+        candidate = candidate.Replace("|<", "K")
+        candidate = Regex.Replace(candidate, "['""][1I]", "1")
+
+        candidate = Regex.Replace(candidate, "[^\w ]+", "")
+        matchWord = Regex.Replace(matchWord, "[^\w ]+", "")
+        If Len(candidate) >= matchWord.Count - 1 Then
             Dim score = 0
             Dim n As Integer
-            For n = 0 To matchWord.Count - 1
-                Dim pattern = MatchGlpyhsPatternFor(matchWord.Chars(n))
-                Dim prevIndex = Math.Max(n - 1, 0)
-                Dim nextIndex = Math.Min(n + 1, matchWord.Count - 1)
+            For n = 0 To candidate.Count - 1
+                If n < matchWord.Count Then
+                    Dim pattern = MatchGlpyhsPatternFor(matchWord.Chars(n))
+                    Dim prevIndex = Math.Min(Math.Max(n - 1, 0), candidate.Count - 1)
+                    Dim currentIndex = Math.Min(n, candidate.Count - 1)
+                    Dim nextIndex = Math.Min(n + 1, candidate.Count - 1)
 
-                If Regex.Match(Candidate.ElementAt(n), pattern).Success Or
-                Regex.Match(Candidate.ElementAt(prevIndex), pattern).Success Or
-                Regex.Match(Candidate.ElementAt(nextIndex), pattern).Success Then
-                    score += 1
+                    If Regex.Match(candidate.ElementAt(prevIndex), pattern).Success Then
+                        candidate = ReplaceAt(candidate, prevIndex, "#"c)
+                        score += 1
+                    ElseIf Regex.Match(candidate.ElementAt(currentIndex), pattern).Success Then
+                        candidate = ReplaceAt(candidate, currentIndex, "#"c)
+                        score += 1
+                    ElseIf Regex.Match(candidate.ElementAt(nextIndex), pattern).Success Then
+                        candidate = ReplaceAt(candidate, nextIndex, "#"c)
+                        score += 1
+                    End If
                 End If
             Next
             Return score
@@ -474,15 +467,26 @@ Module SoftData
             Case "B"
                 Return "[BRE]"
             Case "C"
-                Return "[CE]"
+                Return "[CEO]"
             Case "F"
                 Return "[FP]"
+            Case "G"
+                Return "[GC]"
             Case "O"
                 Return "[OD]"
             Case "R"
-                Return "R|FI"
+                Return "R|H|FI"
+            Case "8"
+                Return "[8B]"
             Case Else
                 Return c.ToString
         End Select
     End Function
+    Public Function ReplaceAt(input As String, index As Integer, newChar As Char) As String
+        Dim chars = input.ToCharArray()
+        chars(index) = newChar
+        Return New String(chars)
+    End Function
+
+
 End Module
