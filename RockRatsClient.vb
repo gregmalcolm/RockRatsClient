@@ -1,26 +1,37 @@
 ﻿Imports System.IO
 Imports System.Deployment.Application
+Imports System.Globalization
 
 Public Class RockRatsClient
     Public Enum ColumnTypes
-        Faction = 0
-        Influence = 1
-        State = 2
-        PrevInfluence = 3
+        Found = 0
+        Faction = 1
+        PrevInfluence = 2
+        Influence = 3
         InfluenceDiff = 4
         PrevState = 5
-        Found = 6
+        State = 6
+    End Enum
+
+    Public Enum TickTimeState
+        PreTick = 0
+        PostTick = 1
     End Enum
 
     Private AppDataDir As String = Environment.GetEnvironmentVariable("USERPROFILE") + "\AppData\Local\RockRatsClient"
     Private clientVersion As String = Application.ProductVersion
     Private noLogDups As String = ""
 
+    Public Property ColorLockedBackground As Color = ColorTranslator.FromHtml("#F0F0F0")
+    Public Property ColorLockedForeground As Color = ColorTranslator.FromHtml("#333")
+    Public Property ColorAttention As Color = ColorTranslator.FromHtml("#C22")
+    Public Property ColorSuccess As Color = Color.DarkGreen
+
     Private Sub RockRatsClient_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         If Not Directory.Exists(AppDataDir) Then
             My.Computer.FileSystem.CreateDirectory(AppDataDir)
         End If
-        Parameters.InitDefaultParameters()  ' Call this first to set default values
+        Parameters.InitDefaultParameters()  ' Call this f to set default values
         Comms.InitCommsCodes()
         JournalFolder.Text = Parameters.GetParameter("JournalDirectory")
         Dim logOcrText As String = Parameters.GetParameter("LogOcrText")
@@ -28,15 +39,26 @@ Public Class RockRatsClient
             LogOcrCheckbox.Checked = True
         End If
         ScanMarginLeft.Text = Parameters.GetParameter("ScanMarginLeft2")
-
+        UpdateClock()
+        InitTickTime()
         CommanderName.Text = DataCache.GetDataCache("Store", "LastCommander")
         If String.IsNullOrEmpty(CommanderName.Text) Then
             CommanderName.Text = "Jameson"
         End If
         LogOutput("Version: " & getVersion())
         LogOutput("AppData: " & AppDataDir)
+        SetupGrid()
         Me.Refresh()                     ' Ensure the app is fully loaded before 
         CommsTimer.Enabled = True         ' opening comms - avoids possible exceptions.
+    End Sub
+    Private Sub SetupGrid()
+        SoftDataGrid.Columns(ColumnTypes.PrevInfluence).DefaultCellStyle.BackColor = ColorLockedBackground
+        SoftDataGrid.Columns(ColumnTypes.PrevState).DefaultCellStyle.BackColor = ColorLockedBackground
+        SoftDataGrid.Columns(ColumnTypes.InfluenceDiff).DefaultCellStyle.BackColor = ColorLockedBackground
+
+        SoftDataGrid.Columns(ColumnTypes.PrevInfluence).DefaultCellStyle.ForeColor = ColorLockedForeground
+        SoftDataGrid.Columns(ColumnTypes.PrevState).DefaultCellStyle.ForeColor = ColorLockedForeground
+        SoftDataGrid.Columns(ColumnTypes.InfluenceDiff).DefaultCellStyle.ForeColor = ColorAttention
     End Sub
 
     Private Sub BrowserForDir_Click(sender As Object, e As EventArgs) Handles BrowserForDir.Click
@@ -77,16 +99,18 @@ Public Class RockRatsClient
         Dim bounds As Rectangle
         Dim screenshot As System.Drawing.Bitmap
         Dim graph As Graphics
-        Dim scanMarginPercentage As Integer = 25
+        Dim scanMarginPercentage As Integer = 23
 
         If SoftData.AreAllFactionsOCRed() Then
             MessageBox.Show("I can't do that Commander!" & vbCrLf &
                 "All rows are marked As OCRed which means theres nothing left to update.",
-                "Orly", MessageBoxButtons.OK)
+                "Orly", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
         End If
 
-        StatusLog("OCR Scan in progress...")
         CaptureEDScreen.Enabled = False
+        ScanningPanel.Show()
+        ScanningPanel.Refresh()
 
         bounds = Screen.PrimaryScreen.Bounds
         Try
@@ -100,17 +124,8 @@ Public Class RockRatsClient
         graph.CopyFromScreen(bounds.X, bounds.Y, 0, 0, New Size(scanMargin, bounds.Height), CopyPixelOperation.SourceCopy)
 
         CompleteEDScreen(screenshot)
+        ScanningPanel.Hide()
         CaptureEDScreen.Enabled = True
-    End Sub
-
-    Private Sub PasteEDScreen_Click(sender As Object, e As EventArgs)
-        StatusLog("OCR Scan in progress...")
-        Dim screenshot As System.Drawing.Bitmap
-        If My.Computer.Clipboard.ContainsImage Then
-            screenshot = CType(My.Computer.Clipboard.GetImage, Bitmap)
-            '        EDCapture.Image = My.Computer.Clipboard.GetImage
-            CompleteEDScreen(screenshot)
-        End If
     End Sub
 
     Private Sub CompleteEDScreen(screenshot As System.Drawing.Bitmap)
@@ -122,8 +137,10 @@ Public Class RockRatsClient
         EDCapture.Image = procBitmap
 
         EDCapture.Refresh()
-        StatusLog("OCR Finished")
         Call Global.RockRatsClient.ProcessOCRTextChg()
+        If CInt(InfTotalVal.Text) > 98 And CInt(InfTotalVal.Text) < 102 Then
+            SoftData.AlreadyProcessedCheck()
+        End If
     End Sub
 
     Private Sub UpdateBgsData_Click(sender As Object, e As EventArgs) Handles UpdateBgsData.Click
@@ -136,47 +153,16 @@ Public Class RockRatsClient
             End If
         End If
         StatusLog("Sending '" & SelectedSystem.SelectedItem.ToString & "' data to server...")
-            Dim factionsSent As Integer = 0
+        Dim factionsSent As Integer = 0
         Dim done As Boolean = False
-        For Each row As DataGridViewRow In SoftDataGrid.Rows
-            Try
-                Dim InfluenceVal As Decimal = 0
-                If IsNumeric(row.Cells(ColumnTypes.Influence).Value.ToString) Then
-                    Try
-                        InfluenceVal = Decimal.Parse(row.Cells(ColumnTypes.Influence).Value.ToString)
-                    Catch ex As Exception
-                    End Try
-                End If
-
-                If row.Cells(ColumnTypes.Faction).Value IsNot Nothing Then
-                    If row.Cells(ColumnTypes.Influence).Value IsNot Nothing Then
-                        If row.Cells(ColumnTypes.Faction).Value.ToString.Trim <> "" Then
-                            If InfluenceVal <> 0 Then
-                                Dim cwaitForCompletion As Boolean = Comms.SendUpdate("", "", "",
-                                SelectedSystem.SelectedItem.ToString & ":" &
-                                row.Cells(ColumnTypes.Faction).Value.ToString.ToUpper & ":" &
-                                row.Cells(ColumnTypes.State).Value.ToString & ":" &
-                                row.Cells(ColumnTypes.Influence).Value.ToString & ":OCR v" & getVersion())
-                                factionsSent += 1
-                            Else
-                                LogEverywhere("Skipping " & row.Cells(ColumnTypes.Faction).Value.ToString & " because the infuence is zero")
-                            End If
-                        End If
-                    Else
-                        LogEverywhere("Skipping " & row.Cells(ColumnTypes.Faction).Value.ToString & " because no influence was present")
-                    End If
-                End If
-            Catch ex As Exception
-                LogEverywhere("Unable to send one of the rows")
-            End Try
-        Next
-        LogOutput("Updated " & factionsSent & "/" & (SoftDataGrid.Rows.Count - 1).ToString & " Factions in " & SelectedSystem.SelectedItem.ToString)
+        SoftData.SendFactionsData()
         GoToNextSystem()
     End Sub
 
     Private Async Sub commsTimer_Tick(sender As Object, e As EventArgs) Handles CommsTimer.Tick
         Try
             Await Comms.ProcUpdate()
+            SoftData.Ready = True
         Catch ex As Exception
             LogEverywhere("update went boom")
         End Try
@@ -192,7 +178,7 @@ Public Class RockRatsClient
         End If
     End Sub
 
-    Private Sub EDCapture_Click(sender As Object, e As EventArgs) 
+    Private Sub EDCapture_Click(sender As Object, e As EventArgs)
         If Not EDCapture.Image Is Nothing Then
             ViewImage.ImgBox.Width = EDCapture.Image.Width
             ViewImage.ImgBox.Height = EDCapture.Image.Height
@@ -242,12 +228,13 @@ Public Class RockRatsClient
         RemoveButton.Enabled = True
     End Sub
 
-    Private Async Sub AddButton_Click(sender As Object, e As EventArgs) Handles AddButton.Click
+    Private Async Sub AddButton_Click(sender As Object, e As EventArgs)
         Dim systemName As String
         systemName = SystemNameBox.Text.ToUpper()
 
         StatusLog("Adding the System Name to the server...")
-        If MessageBox.Show("Add " & systemName & " to the list of systems we're updating?", "Orly?", MessageBoxButtons.OKCancel) = DialogResult.OK Then
+        If MessageBox.Show("Add " & systemName & " to the list of systems we're updating?",
+                           "Orly?", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) = DialogResult.OK Then
             If Await Comms.AddSystemToRoster(systemName) Then
                 StatusLog("Successfully added " & systemName & "to the Rock Rat known systems list!")
                 SelectedSystem.SelectedIndex = SelectedSystem.Items.Count - 1
@@ -257,17 +244,18 @@ Public Class RockRatsClient
         End If
     End Sub
 
-    Private Sub SystemNameBox_TextChanged(sender As Object, e As EventArgs) Handles SystemNameBox.TextChanged
+    Private Sub SystemNameBox_TextChanged(sender As Object, e As EventArgs)
         AddButton.Enabled = True
         RemoveButton.Enabled = False
     End Sub
 
-    Private Async Sub RemoveButton_Click(sender As Object, e As EventArgs) Handles RemoveButton.Click
+    Private Async Sub RemoveButton_Click(sender As Object, e As EventArgs)
         Dim systemName As String
         systemName = SystemNameBox.Text.ToUpper()
 
         StatusLog("Removing the System Name to the server...")
-        If MessageBox.Show("So... you want to remove " & systemName & " from the list of systems we're updating?", "Huh?", MessageBoxButtons.OKCancel) = DialogResult.OK Then
+        If MessageBox.Show("So... you want to remove " & systemName & " from the list of systems we're updating?",
+                           "Huh?", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) = DialogResult.OK Then
             If Await Comms.RemoveSystemFromRoster(systemName) Then
                 StatusLog("Successfully removed " & systemName & "from the Rock Rat known systems list!")
             Else
@@ -288,12 +276,18 @@ Public Class RockRatsClient
             Case ColumnTypes.Influence
                 Try
                     Dim influence = Decimal.Parse(cell.Value.ToString)
-                    Dim prevInfluenceCell = SoftDataGrid(ColumnTypes.PrevInfluence, e.RowIndex)
-                    Dim InfluenceDiffCell = SoftDataGrid(ColumnTypes.InfluenceDiff, e.RowIndex)
-                    Dim diff = SoftData.CalcInfluenceDiff(prevInfluenceCell.Value.ToString, cell.Value.ToString)
-                    InfluenceDiffCell.Value = diff
                 Catch ex As Exception
                     cell.Value = "0"
+                End Try
+
+                Try
+                    Dim prevInfluenceCell = SoftDataGrid(ColumnTypes.PrevInfluence, e.RowIndex)
+                    Dim InfluenceDiffCell = SoftDataGrid(ColumnTypes.InfluenceDiff, e.RowIndex)
+                    If prevInfluenceCell.Value IsNot Nothing AndAlso cell.Value IsNot Nothing Then
+                        Dim diff = SoftData.CalcInfluenceDiff(prevInfluenceCell.Value.ToString, cell.Value.ToString)
+                        InfluenceDiffCell.Value = diff
+                    End If
+                Catch ex As Exception
                 End Try
         End Select
     End Sub
@@ -329,7 +323,7 @@ Public Class RockRatsClient
 
     End Sub
 
-    Private Sub LogOcrCheckbox_CheckedChanged(sender As Object, e As EventArgs) 
+    Private Sub LogOcrCheckbox_CheckedChanged(sender As Object, e As EventArgs)
         If LogOcrCheckbox.Checked Then
             Parameters.SetParameter("LogOcrText", "True")
         Else
@@ -337,7 +331,7 @@ Public Class RockRatsClient
         End If
     End Sub
 
-    Private Sub ScanMarginLeft_TextChanged(sender As Object, e As EventArgs) 
+    Private Sub ScanMarginLeft_TextChanged(sender As Object, e As EventArgs)
         Try
             Dim value = Integer.Parse(Trim(ScanMarginLeft.Text))
             Parameters.SetParameter("ScanMarginLeft2", ScanMarginLeft.Text)
@@ -352,8 +346,14 @@ Public Class RockRatsClient
 
     Public Sub ShowBgsTools()
         SelectedSystem.SelectedIndex = 0
-        SelectedSystem.Visible = True
-        SoftDataGrid.Visible = True
+        SelectedSystem.Show()
+        SoftDataGrid.Show()
+        CollectionTimingLabel.Show()
+        TickLabel.Show()
+        CollectionDateLabel.Show()
+        IgtLabel.Show()
+        PreOrPostTick.Show()
+        EntryDate.Show()
     End Sub
 
     Private Sub SoftDataGrid_RowsRemoved(sender As Object, e As DataGridViewRowsRemovedEventArgs) Handles SoftDataGrid.RowsRemoved
@@ -366,5 +366,50 @@ Public Class RockRatsClient
             End Try
         Next
 
+    End Sub
+    Public Function TickTimeToDate(tickTimeValue As String) As Date
+        Try
+            Return Date.ParseExact(tickTimeValue, "HH:mm", CultureInfo.InvariantCulture)
+        Catch ex As Exception
+            Return Date.Parse("14:00")
+        End Try
+    End Function
+
+    Private Sub TickTimePicker_ValueChanged(sender As Object, e As EventArgs) Handles TickTimePicker.ValueChanged
+        If TickTimePicker.Value.ToString("HH:mm") <> "01:23" Then
+            Parameters.SetParameter("TickTime", TickTimePicker.Value.ToString("HH:mm"))
+        End If
+    End Sub
+
+    Private Sub InitTickTime()
+        TickTimePicker.Value = TickTimeToDate(Parameters.GetParameter("TickTime"))
+        If Date.UtcNow().TimeOfDay() > TickTimePicker.Value().TimeOfDay() Then
+            PreOrPostTick.SelectedIndex = TickTimeState.PostTick
+        Else
+            PreOrPostTick.SelectedIndex = TickTimeState.PreTick
+        End If
+        UpdateCollectionDate()
+    End Sub
+    Private Sub UpdateCollectionDate()
+        Dim DaysSince = 0
+        If PreOrPostTick.SelectedIndex = TickTimeState.PreTick Then
+            DaysSince = -1
+        Else
+        End If
+        Dim PrevEntryDate = EntryDate.Text
+        EntryDate.Text = Date.UtcNow().AddDays(DaysSince).ToString("yyyy-MM-dd")
+
+        If Not String.IsNullOrEmpty(PrevEntryDate) Then
+            SoftData.UpdateCurrentFactionData(PrevEntryDate)
+        End If
+    End Sub
+    Private Sub PreOrPostTick_SelectedIndexChanged(sender As Object, e As EventArgs) Handles PreOrPostTick.SelectedIndexChanged
+        UpdateCollectionDate()
+    End Sub
+    Private Sub UpdateClock()
+        Clock.Text = Date.UtcNow.ToString("ddd yyyy-MM-dd hh:mm IGT")
+    End Sub
+    Private Sub ClockTimer_Tick(sender As Object, e As EventArgs) Handles ClockTimer.Tick
+        UpdateClock()
     End Sub
 End Class

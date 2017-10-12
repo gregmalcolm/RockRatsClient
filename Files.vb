@@ -177,34 +177,6 @@ Module Files
         Return dist
     End Function
 
-    Private Function ProcessActivity(cKey As String, uType As String, uSubType As String, sTimeStamp As String, uExtra As String) As Boolean
-        Try
-            If cKey <> "" Then
-                Dim DataRow As String = cKey
-                Dim cCat As String = "Activity"
-
-                If uExtra <> "" Then
-                    DataRow = DataRow + uExtra
-                End If
-                Dim waitForCompletion As Boolean = ProcessUpdate(DataRow, sTimeStamp, cCat, cKey, uType, uSubType)
-            End If
-            Return True
-        Catch ex As Exception
-            Return False
-        End Try
-    End Function
-    Private Function ProcessUpdate(DataRow As String, sTimeStamp As String, cCat As String, cKey As String, uType As String, uSubType As String) As Boolean
-        Dim localCache As String = DataRow + ":" + sTimeStamp
-        If DataCache.GetDataCache(cCat, cKey) <> localCache Then
-            If DataCache.SetDataCache(cCat, cKey, localCache) Then
-                Dim waitForCompletion As Boolean = Comms.SendUpdate(uType, uSubType, DataRow, "")
-                RockRatsClient.LogOutput("Sending " + cCat + " Update for " + cKey)
-            End If
-        Else
-            RockRatsClient.LogOutput("Skipping " + cCat + " Update for " + cKey + " - Duplicate Data")
-        End If
-        Return True
-    End Function
 
 
 End Module

@@ -11,6 +11,7 @@
         defaultValues.Add("UpdateSiteActivity", "O")
         defaultValues.Add("LogOcrText", "False")
         defaultValues.Add("ScanMarginLeft2", "23")
+        defaultValues.Add("TickTime", "14:00")
     End Sub
 
     Private Function GetDefaultParameter(pKey As String) As String

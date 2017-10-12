@@ -12,7 +12,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("")>
 <Assembly: AssemblyCompany("")>
 <Assembly: AssemblyProduct("RockRats Client")>
-<Assembly: AssemblyCopyright("Copyright ©  RockRats Tools 2016")>
+<Assembly: AssemblyCopyright("Copyright ©  RockRats Tools 2017")>
 <Assembly: AssemblyTrademark("")>
 
 <Assembly: ComVisible(False)>
@@ -31,5 +31,5 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("1.4.*")>
-<Assembly: AssemblyFileVersion("1.4.0.1")>
+<Assembly: AssemblyVersion("1.5.*")>
+<Assembly: AssemblyFileVersion("1.5.0.1")>

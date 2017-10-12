@@ -6,77 +6,80 @@ Imports System.Text
 
 Module SoftData
     Private rockRatsOcr As Tesseract
-    Private processingOcrTextChange As Boolean = True
     Private selectedSystem As String = ""
     Private allStates As New Hashtable()
     Private exeDir As String = AppDomain.CurrentDomain.BaseDirectory
     Private influenceAccountedFor As Decimal = 0
     Private systemFactions As New Dictionary(Of String, List(Of Faction))
     Private factions As List(Of Faction)
+    Private OCRUpdating As Boolean = False
+    Public Property Ready As Boolean = False
 
     Friend Sub ProcEDScreen(bitmapImage As System.Drawing.Bitmap)
-        Try
-            UpdateFactionsData()
-            processingOcrTextChange = True
-            rockRatsOcr = New Tesseract() ' OcrEngineMode.TesseractCubeCombined
-            rockRatsOcr.SetVariable("tessedit_char_whitelist", "QWERTYUIOPASDFGHJKLZXCVBNM.0987654321%:")
-            rockRatsOcr.Init(exeDir + "\tessdata", "eng", OcrEngineMode.TesseractOnly)
-            rockRatsOcr.Recognize(New Image(Of [Structure].Gray, Byte)(bitmapImage))
-            Dim elements() As String
-            Dim stringSeparators() As String = {vbCrLf}
-            elements = rockRatsOcr.GetText.Split(stringSeparators, StringSplitOptions.None)
-            Dim factionFirstLine As String = ""
-            Dim factionName As String = ""
-            Dim influence As String = ""
-            Dim influenceVal As Decimal = 0
-            For Each line As String In elements
-                If Trim(line) <> "" Then
-                    ' Uncommit to see OCR text
-                    ' RockRatsClient.LogEverywhere(line)
+        If Not OCRUpdating Then
+            Try
+                OCRUpdating = True
+                UpdateFactionsData()
+                rockRatsOcr = New Tesseract() ' OcrEngineMode.TesseractCubeCombined
+                rockRatsOcr.SetVariable("tessedit_char_whitelist", "QWERTYUIOPASDFGHJKLZXCVBNM.0987654321%:")
+                rockRatsOcr.Init(exeDir + "\tessdata", "eng", OcrEngineMode.TesseractOnly)
+                rockRatsOcr.Recognize(New Image(Of [Structure].Gray, Byte)(bitmapImage))
+                Dim elements() As String
+                Dim stringSeparators() As String = {vbCrLf}
+                elements = rockRatsOcr.GetText.Split(stringSeparators, StringSplitOptions.None)
+                Dim factionFirstLine As String = ""
+                Dim factionName As String = ""
+                Dim influence As String = ""
+                Dim influenceVal As Decimal = 0
+                For Each line As String In elements
+                    If Trim(line) <> "" Then
+                        ' Uncommit to see OCR text
+                        ' RockRatsClient.LogEverywhere(line)
 
-                    ' line = whitelistChars(line)
-                    line = UCase(line)
-                    If factionFirstLine <> "" Then
-                        LogOcrLine(line)
-                        If Not isGovermentText(line) Then
-                            factionFirstLine = Trim(factionFirstLine + " " + Trim(line))
+                        ' line = whitelistChars(line)
+                        line = UCase(line)
+                        If factionFirstLine <> "" Then
+                            LogOcrLine(line)
+                            If Not isGovermentText(line) Then
+                                factionFirstLine = Trim(factionFirstLine + " " + Trim(line))
+                            End If
+                            factionName = MatchFaction(factionFirstLine)
+                            ' MsgBox(catchFaction + vbNewLine + factionName)
+                            factionFirstLine = ""
+                            influence = ""
+                            influenceVal = 0
+
                         End If
-                        factionName = MatchFaction(factionFirstLine)
-                        ' MsgBox(catchFaction + vbNewLine + factionName)
-                        factionFirstLine = ""
-                        influence = ""
-                        influenceVal = 0
-
+                        If isFactionText(line) Then
+                            factionFirstLine = Mid(line, 10, Len(line) - 9)
+                            LogOcrLine(line)
+                        End If
+                        If factionName <> "" AndAlso isInfluenceText(line) Then
+                            influenceVal = MatchInfluence(Trim(line))
+                            influence = Replace(influenceVal.ToString, ",", ".")
+                            LogOcrLine(line)
+                        End If
+                        If influenceVal <> 0 AndAlso isStateText(line) Then
+                            Dim s As String = MatchState(Trim(line))
+                            AddEDCaptureText(factionName, influence, s, influenceVal)
+                            factionName = ""
+                            influence = ""
+                            influenceVal = 0
+                            LogOcrLine(line)
+                        End If
+                        If isRelationshipText(line) Then
+                            factionName = ""
+                            influence = ""
+                            influenceVal = 0
+                            LogOcrLine(line)
+                        End If
                     End If
-                    If isFactionText(line) Then
-                        factionFirstLine = Mid(line, 10, Len(line) - 9)
-                        LogOcrLine(line)
-                    End If
-                    If factionName <> "" AndAlso isInfluenceText(line) Then
-                        influenceVal = MatchInfluence(Trim(line))
-                        influence = Replace(influenceVal.ToString, ",", ".")
-                        LogOcrLine(line)
-                    End If
-                    If influenceVal <> 0 AndAlso isStateText(line) Then
-                        Dim s As String = MatchState(Trim(line))
-                        AddEDCaptureText(factionName, influence, s, influenceVal)
-                        factionName = ""
-                        influence = ""
-                        influenceVal = 0
-                        LogOcrLine(line)
-                    End If
-                    If IsRelationshipText(line) Then
-                        factionName = ""
-                        influence = ""
-                        influenceVal = 0
-                        LogOcrLine(line)
-                    End If
-                End If
-            Next
-        Catch ex As Exception
-            MsgBox("Something went wrong with OCR - Try Again")
-        End Try
-        processingOcrTextChange = False
+                Next
+            Catch ex As Exception
+                MsgBox("Something went wrong with OCR - Try Again")
+            End Try
+            OCRUpdating = False
+        End If
     End Sub
     Private Sub LogOcrLine(line As String)
         If Parameters.GetParameter("logOcrText") = "True" Then
@@ -133,13 +136,13 @@ Module SoftData
         Next
         If doInsert Then
             RockRatsClient.SoftDataGrid.Rows.Add(
+                faction.Found,
                 faction.FactionName,
-                faction.Influence,
-                faction.State,
                 faction.PrevInfluence,
+                faction.Influence,
                 influenceDiff,
                 faction.PrevState,
-                faction.Found)
+                faction.State)
         End If
     End Sub
     Public Function CalcInfluenceDiff(prevInfluence As String, influence As String) As String
@@ -162,7 +165,7 @@ Module SoftData
     End Function
 
     Friend Sub ProcessOCRTextChg()
-        If Not processingOcrTextChange Then
+        If Ready And Not OCRUpdating Then
             UpdateFactionsData()
             Dim i As Decimal = 0
             For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
@@ -182,11 +185,34 @@ Module SoftData
             influenceAccountedFor = i
             RockRatsClient.InfTotalVal.Text = influenceAccountedFor.ToString
             If HasUserFinishedOCRing() Then
-                RockRatsClient.InfTotal.ForeColor = Color.DarkGreen
-                RockRatsClient.InfTotalVal.ForeColor = Color.DarkGreen
+                RockRatsClient.InfTotal.ForeColor = RockRatsClient.ColorSuccess
+                RockRatsClient.InfTotalVal.ForeColor = RockRatsClient.ColorSuccess
+                RockRatsClient.SoftDataGrid.Columns(RockRatsClient.ColumnTypes.InfluenceDiff).DefaultCellStyle.ForeColor = RockRatsClient.ColorSuccess
+                RockRatsClient.UpdateBgsData.ForeColor = Color.DarkBlue
             Else
-                RockRatsClient.InfTotal.ForeColor = Color.DarkRed
-                RockRatsClient.InfTotalVal.ForeColor = Color.DarkRed
+                RockRatsClient.InfTotal.ForeColor = RockRatsClient.ColorAttention
+                RockRatsClient.InfTotalVal.ForeColor = RockRatsClient.ColorAttention
+                RockRatsClient.SoftDataGrid.Columns(RockRatsClient.ColumnTypes.InfluenceDiff).DefaultCellStyle.ForeColor = RockRatsClient.ColorAttention
+                RockRatsClient.UpdateBgsData.ForeColor = RockRatsClient.ColorAttention
+            End If
+
+            If factions IsNot Nothing AndAlso factions.Count > 0 Then
+                Dim faction = factions.First
+                If Not String.IsNullOrEmpty(faction.EntryDate) Then
+                    RockRatsClient.EnteredByLabel.Text = "Today's data: " & faction.Commander & " on " & faction.EntryDate
+                    RockRatsClient.EnteredByLabel.Show()
+                Else
+                    RockRatsClient.EnteredByLabel.Hide()
+                End If
+                If Not String.IsNullOrEmpty(faction.PrevEntryDate) Then
+                    RockRatsClient.PrevEnteredByLabel.Text = "Prev data: " & faction.PrevCommander & " on " & faction.PrevEntryDate
+                    RockRatsClient.PrevEnteredByLabel.Show()
+                Else
+                    RockRatsClient.PrevEnteredByLabel.Hide()
+                End If
+            Else
+                RockRatsClient.EnteredByLabel.Hide()
+                RockRatsClient.PrevEnteredByLabel.Hide()
             End If
         End If
     End Sub
@@ -203,6 +229,7 @@ Module SoftData
             LoadSystemFactions(systemName)
             selectedSystem = systemName
             RockRatsClient.SoftDataGrid.Enabled = True
+            ProcessOCRTextChg()
         End If
     End Sub
 
@@ -354,42 +381,82 @@ Module SoftData
     End Function
 
     Public Sub UpdateFactionsData()
-        If systemFactions IsNot Nothing Then
-            If Not systemFactions.ContainsKey(selectedSystem) Then
-                systemFactions.Add(selectedSystem, New List(Of Faction))
-            End If
-            Dim updatedFactions = systemFactions(selectedSystem)
-            For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
-                If updatedFactions IsNot Nothing And Not row.IsNewRow Then
-                    Dim gridFaction As String = Trim(UCase(WhitelistChars(row.Cells(RockRatsClient.ColumnTypes.Faction).Value.ToString)))
-                    If Not String.IsNullOrEmpty(gridFaction) Then
-                        If factions.FirstOrDefault(Function(f) f.FactionName.Equals(gridFaction)) Is Nothing Then
-                            Dim faction As New Faction() With {
-                                .FactionName = gridFaction
-                            }
-                            updatedFactions.Add(faction)
+        If Ready AndAlso RockRatsClient.SoftDataGrid.Visible AndAlso RockRatsClient.SoftDataGrid.Enabled Then
+            If systemFactions IsNot Nothing Then
+                If Not systemFactions.ContainsKey(selectedSystem) Then
+                    systemFactions.Add(selectedSystem, New List(Of Faction))
+                End If
+                Dim updatedFactions = systemFactions(selectedSystem)
+                For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
+                    If updatedFactions IsNot Nothing And Not row.IsNewRow Then
+                        Dim gridFaction As String = Trim(UCase(WhitelistChars(row.Cells(RockRatsClient.ColumnTypes.Faction).Value.ToString)))
+                        If Not String.IsNullOrEmpty(gridFaction) Then
+                            If factions.FirstOrDefault(Function(f) f.FactionName.Equals(gridFaction)) Is Nothing Then
+                                Dim faction As New Faction() With {
+                                    .FactionName = gridFaction
+                                }
+                                updatedFactions.Add(faction)
+                            End If
                         End If
                     End If
-                End If
-            Next
-            For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
-                If Not row.IsNewRow Then
-                    Dim gridFaction As String = Trim(UCase(WhitelistChars(row.Cells(RockRatsClient.ColumnTypes.Faction).Value.ToString)))
-                    If Not String.IsNullOrEmpty(gridFaction) Then
-                        Dim faction = updatedFactions.First(Function(f) f.FactionName.Equals(gridFaction))
-                        Try
-                            faction.Influence = Decimal.Parse(row.Cells(RockRatsClient.ColumnTypes.Influence).Value.ToString)
-                        Catch ex As Exception
-                        End Try
-                        faction.State = SafeString(row.Cells(RockRatsClient.ColumnTypes.State).Value)
-                        Try
-                            faction.Found = CBool(row.Cells(RockRatsClient.ColumnTypes.Found).Value)
-                        Catch ex As Exception
-                        End Try
+                Next
+                For Each row As DataGridViewRow In RockRatsClient.SoftDataGrid.Rows
+                    If Not row.IsNewRow Then
+                        Dim gridFaction As String = Trim(UCase(WhitelistChars(row.Cells(RockRatsClient.ColumnTypes.Faction).Value.ToString)))
+                        If Not String.IsNullOrEmpty(gridFaction) Then
+                            Dim faction = updatedFactions.First(Function(f) f.FactionName.Equals(gridFaction))
+                            Try
+                                faction.Influence = Decimal.Parse(row.Cells(RockRatsClient.ColumnTypes.Influence).Value.ToString)
+                            Catch ex As Exception
+                            End Try
+                            faction.State = SafeString(row.Cells(RockRatsClient.ColumnTypes.State).Value)
+                            Try
+                                faction.Found = CBool(row.Cells(RockRatsClient.ColumnTypes.Found).Value)
+                            Catch ex As Exception
+                            End Try
+                        End If
+                    End If
+                Next
+            End If
+        End If
+    End Sub
+    Public Sub SendFactionsData()
+        Dim factionsSent = 0
+        Dim entryDate = RockRatsClient.EntryDate.Text
+
+        For Each faction In factions
+            Try
+                If Not String.IsNullOrEmpty(faction.FactionName) Then
+                    If faction.Influence = 0 And faction.PrevInfluence > 0 Then
+                        faction.State = "Gone"
+                    End If
+                    If faction.Influence > 0 And faction.PrevInfluence = 0 Then
+                        faction.State = "New"
+                    End If
+
+                    If faction.Influence > 0 Or faction.PrevInfluence > 0 Then
+                        faction.Commander = RockRatsClient.CommanderName.Text
+                        faction.EntryDate = entryDate
+                        faction.System = RockRatsClient.SelectedSystem.SelectedItem.ToString
+
+                        Dim cwaitForCompletion As Boolean = Comms.SendUpdate(
+                            faction.System & ":" &
+                            faction.FactionName.ToString.ToUpper & ":" &
+                            faction.State.ToString & ":" &
+                            faction.Influence.ToString & ":OCR v" &
+                            RockRatsClient.getVersion() & ":" &
+                            faction.EntryDate)
+                        factionsSent += 1
+                    Else
+                        RockRatsClient.LogEverywhere("Skipping " & faction.FactionName & " because the infuence is zero")
                     End If
                 End If
-            Next
-        End If
+            Catch ex As Exception
+                RockRatsClient.LogEverywhere("Unable to send one of the rows")
+            End Try
+        Next
+        RockRatsClient.LogOutput("Updated " & factionsSent & "/" & factions.Count & " Factions in " & RockRatsClient.SelectedSystem.SelectedItem.ToString)
+
     End Sub
 
     Private Function SafeString(str As Object) As String
@@ -431,7 +498,7 @@ Module SoftData
     Private Function WordMatchScore(line As String, matchWord As String) As Integer
         Dim found As Boolean = False
         Dim candidate = line.Replace("  ", " ")
-        candidate = candidate.Replace("|<", "K")
+        candidate = candidate.Replace("|<", " K")
         candidate = Regex.Replace(candidate, "['""][1I]", "1")
 
         candidate = Regex.Replace(candidate, "[^\w ]+", "")
@@ -487,6 +554,44 @@ Module SoftData
         chars(index) = newChar
         Return New String(chars)
     End Function
+    Public Sub UpdateCurrentFactionData(PrevEntryDate As String)
+        For Each systemName In RockRatsClient.SelectedSystem.Items
+            If systemFactions.ContainsKey(systemName.ToString) Then
+                For Each faction In systemFactions(systemName.ToString)
+                    If PrevEntryDate = faction.PrevEntryDate Then
+                        faction.EntryDate = ""
+                        faction.Commander = ""
+                        faction.Influence = 0
+                        faction.State = ""
+                    End If
+                    If RockRatsClient.EntryDate.Text = faction.PrevEntryDate Then
+                        faction.EntryDate = faction.PrevEntryDate
+                        faction.Commander = faction.PrevCommander
+                        faction.Influence = faction.PrevInfluence
+                        faction.State = faction.PrevState
+                    End If
+                Next
+            End If
+        Next
+        If Not String.IsNullOrEmpty(selectedSystem) Then
+            LoadSystemFactions(selectedSystem)
+        End If
+        ProcessOCRTextChg()
+    End Sub
+    Public Sub AlreadyProcessedCheck()
+        If selectedSystem = "CHERTAN" Then
+            Try
+                If factions.FirstOrDefault(Function(f) _
+                                               String.IsNullOrEmpty(
+                                                    CalcInfluenceDiff(f.PrevInfluence.ToString(), f.Influence.ToString()))
+                                               ) IsNot Nothing Then
+                    MessageBox.Show("We're noticing that that the influence has changed in Chertan since the BGS update. It's likely that the Tick hasn't happened yet today. It's time does vary.",
+                                    "Hmm...", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                End If
+            Catch ex As Exception
+            End Try
+        End If
 
+    End Sub
 
 End Module

@@ -30,7 +30,6 @@ Module Comms
     Private authenticated As Boolean = False
     Private dataIsLoaded As Boolean = False
     Private awsClient As AmazonDynamoDBClient
-    Private tickTime As Date = DateTime.UtcNow - New TimeSpan(18, 0, 0)
 
     Private Function Connect() As Boolean
         Dim accessKey = ConfigurationManager.AppSettings("awsAccessKeyId")
@@ -41,13 +40,10 @@ Module Comms
         Return True
     End Function
 
-    Friend Function SendUpdate(type As String, subtype As String, data As String, softData As String) As Boolean
+    ' TODO: Move away from the old TCP base logic
+    Friend Function SendUpdate(softData As String) As Boolean
         Try
-            If softData <> "" Then
-                sendSoftDataQueue.Enqueue("7:" + softData)
-            Else
-                sendQueue.Enqueue(type + ":" + subtype + ":" + data + "!" + GetParameter("UpdateSiteActivity"))
-            End If
+            sendSoftDataQueue.Enqueue(Transmission.RockRatsSystemFaction & ":" & softData)
             Return True
         Catch ex As Exception
             RockRatsClient.LogOutput("Update failed: " & ex.Message)
@@ -67,7 +63,7 @@ Module Comms
             Try
                 Await ReceiveData()
             Catch ex As Exception
-                RockRatsClient.LogOutput("Recv failed: " & ex.Message)
+                RockRatsClient.LogEverywhere("Receive Data failed: " & ex.Message)
             End Try
         Else
             If authenticated Then
@@ -97,10 +93,6 @@ Module Comms
         End If
     End Function
 
-    Private Sub GetSystems()
-        sendCmdQueue.Enqueue("1")
-    End Sub
-
     Private Async Function SendDataUpdate(data As String) As Task
         ' 
         If data(0) = CStr(Transmission.RockRatsSystemFaction) Then
@@ -111,9 +103,6 @@ Module Comms
 
     Private Async Function SendFactionItemToAws(data As String) As Task
         RockRatsClient.LogOutput("Transmitting Report to AWS:   " & data)
-
-        Dim utc = DateTime.UtcNow
-        Dim entryDate = String.Format("{0:yyyy-MM-dd}", tickTime)
 
         Dim items = Split(data, ":")
 
@@ -128,6 +117,7 @@ Module Comms
         Dim state = Trim(items(3))
         Dim influence = Trim(items(4))
         Dim updateType = Trim(items(5))
+        Dim entryDate = Trim(items(6))
         Dim commander = RockRatsClient.CommanderName.Text
 
         Dim id = "" & system & "-" & faction & "-" & entryDate
@@ -205,7 +195,7 @@ Module Comms
     End Function
 
     Private Async Function ReadFactionsFromAws() As Task
-        Dim lastWeek = String.Format("{0:yyyy-MM-dd}", tickTime - New TimeSpan(24 * 7, 0, 0))
+        Dim lastWeek = String.Format("{0:yyyy-MM-dd}", Date.UtcNow - New TimeSpan(24 * 7, 0, 0))
         Dim request = New ScanRequest() With {
             .TableName = "rock-rat-factions",
             .IndexName = "date-index",
@@ -241,16 +231,20 @@ Module Comms
                 .Select(Function(faction) New Faction() With {
                     .System = faction("system").S,
                     .FactionName = faction("faction").S,
-                    .PrevEntryDate = Date.ParseExact(faction("date").S, "yyyy-MM-dd", Nothing),
+                    .PrevEntryDate = faction("date").S,
                     .PrevCommander = If(faction.ContainsKey("commander"), faction("commander").S, Nothing),
                     .PrevInfluence = If(faction.ContainsKey("influence"), Decimal.Parse(faction("influence").N), Nothing),
                     .PrevState = If(faction.ContainsKey("state"), faction("state").S, Nothing),
+                    .EntryDate = If(.PrevEntryDate = RockRatsClient.EntryDate.Text, .PrevEntryDate, Nothing),
+                    .Influence = If(.PrevEntryDate = RockRatsClient.EntryDate.Text, .PrevInfluence, Nothing),
+                    .State = If(.PrevEntryDate = RockRatsClient.EntryDate.Text, .PrevState, Nothing),
+                    .Commander = If(.PrevEntryDate = RockRatsClient.EntryDate.Text, .Commander, Nothing),
                     .Downloaded = True
                 }) _
                 .ToList()
 
             SoftData.AddFactions(systemName, factionsList)
-        End If
+            End If
     End Sub
     Private Async Function AddFactionNameToAws(systemName As String) As Task
         RockRatsClient.LogOutput("Transmitting Add System Name ('" + systemName + "') to AWS: ")
