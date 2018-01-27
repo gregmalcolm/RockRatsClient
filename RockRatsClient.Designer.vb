@@ -61,6 +61,8 @@ Partial Class RockRatsClient
         Me.Label3 = New System.Windows.Forms.Label()
         Me.Label17 = New System.Windows.Forms.Label()
         Me.SoftDataTab = New System.Windows.Forms.TabPage()
+        Me.ScanningPanel = New System.Windows.Forms.Panel()
+        Me.Label5 = New System.Windows.Forms.Label()
         Me.IgtLabel = New System.Windows.Forms.Label()
         Me.TickLabel = New System.Windows.Forms.Label()
         Me.Clock = New System.Windows.Forms.TextBox()
@@ -82,8 +84,6 @@ Partial Class RockRatsClient
         Me.AlwaysOnTopCheckbox = New System.Windows.Forms.CheckBox()
         Me.Tabs = New System.Windows.Forms.TabControl()
         Me.ClockTimer = New System.Windows.Forms.Timer(Me.components)
-        Me.ScanningPanel = New System.Windows.Forms.Panel()
-        Me.Label5 = New System.Windows.Forms.Label()
         CType(Me.EDCapture, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.LogTab.SuspendLayout()
         Me.SettingsTab.SuspendLayout()
@@ -91,9 +91,9 @@ Partial Class RockRatsClient
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.SoftDataTab.SuspendLayout()
+        Me.ScanningPanel.SuspendLayout()
         CType(Me.SoftDataGrid, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Tabs.SuspendLayout()
-        Me.ScanningPanel.SuspendLayout()
         Me.SuspendLayout()
         '
         'CommsTimer
@@ -490,6 +490,26 @@ Partial Class RockRatsClient
         Me.SoftDataTab.Text = "OCR"
         Me.SoftDataTab.UseVisualStyleBackColor = True
         '
+        'ScanningPanel
+        '
+        Me.ScanningPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.ScanningPanel.Controls.Add(Me.Label5)
+        Me.ScanningPanel.Location = New System.Drawing.Point(190, 104)
+        Me.ScanningPanel.Name = "ScanningPanel"
+        Me.ScanningPanel.Size = New System.Drawing.Size(200, 100)
+        Me.ScanningPanel.TabIndex = 61
+        Me.ScanningPanel.Visible = False
+        '
+        'Label5
+        '
+        Me.Label5.AutoSize = True
+        Me.Label5.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label5.Location = New System.Drawing.Point(59, 41)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(84, 16)
+        Me.Label5.TabIndex = 1
+        Me.Label5.Text = "Scanning..."
+        '
         'IgtLabel
         '
         Me.IgtLabel.AutoSize = True
@@ -535,6 +555,7 @@ Partial Class RockRatsClient
         Me.EntryDate.Name = "EntryDate"
         Me.EntryDate.Size = New System.Drawing.Size(69, 20)
         Me.EntryDate.TabIndex = 54
+        Me.EntryDate.Visible = False
         '
         'CollectionTimingLabel
         '
@@ -679,26 +700,6 @@ Partial Class RockRatsClient
         Me.ClockTimer.Enabled = True
         Me.ClockTimer.Interval = 5000
         '
-        'ScanningPanel
-        '
-        Me.ScanningPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.ScanningPanel.Controls.Add(Me.Label5)
-        Me.ScanningPanel.Location = New System.Drawing.Point(190, 104)
-        Me.ScanningPanel.Name = "ScanningPanel"
-        Me.ScanningPanel.Size = New System.Drawing.Size(200, 100)
-        Me.ScanningPanel.TabIndex = 61
-        Me.ScanningPanel.Visible = False
-        '
-        'Label5
-        '
-        Me.Label5.AutoSize = True
-        Me.Label5.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label5.Location = New System.Drawing.Point(59, 41)
-        Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(84, 16)
-        Me.Label5.TabIndex = 1
-        Me.Label5.Text = "Scanning..."
-        '
         'RockRatsClient
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -723,10 +724,10 @@ Partial Class RockRatsClient
         Me.GroupBox1.PerformLayout()
         Me.SoftDataTab.ResumeLayout(False)
         Me.SoftDataTab.PerformLayout()
-        CType(Me.SoftDataGrid, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.Tabs.ResumeLayout(False)
         Me.ScanningPanel.ResumeLayout(False)
         Me.ScanningPanel.PerformLayout()
+        CType(Me.SoftDataGrid, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.Tabs.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub

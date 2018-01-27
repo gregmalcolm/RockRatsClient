@@ -266,7 +266,11 @@ Public Class RockRatsClient
 
     Private Sub SoftDataGrid_CellEndEdit(sender As Object, e As DataGridViewCellEventArgs) Handles SoftDataGrid.CellEndEdit
         Dim cell = SoftDataGrid(e.ColumnIndex, e.RowIndex)
-        Select Case e.ColumnIndex
+
+        PostChangeUpdate(cell)
+    End Sub
+    Private Sub PostChangeUpdate(cell As DataGridViewCell)
+        Select Case cell.ColumnIndex
             Case ColumnTypes.Faction
                 Try
                     Dim faction = cell.Value.ToString
@@ -281,8 +285,8 @@ Public Class RockRatsClient
                 End Try
 
                 Try
-                    Dim prevInfluenceCell = SoftDataGrid(ColumnTypes.PrevInfluence, e.RowIndex)
-                    Dim InfluenceDiffCell = SoftDataGrid(ColumnTypes.InfluenceDiff, e.RowIndex)
+                    Dim prevInfluenceCell = SoftDataGrid(ColumnTypes.PrevInfluence, cell.RowIndex)
+                    Dim InfluenceDiffCell = SoftDataGrid(ColumnTypes.InfluenceDiff, cell.RowIndex)
                     If prevInfluenceCell.Value IsNot Nothing AndAlso cell.Value IsNot Nothing Then
                         Dim diff = SoftData.CalcInfluenceDiff(prevInfluenceCell.Value.ToString, cell.Value.ToString)
                         InfluenceDiffCell.Value = diff
@@ -290,35 +294,46 @@ Public Class RockRatsClient
                 Catch ex As Exception
                 End Try
         End Select
+
     End Sub
 
     Private Sub SoftDataGrid_KeyPress(sender As Object, e As KeyPressEventArgs) Handles SoftDataGrid.KeyPress
         Dim cell = SoftDataGrid.CurrentCell
-        If e.KeyChar.Equals(vbBack) Then
-            cell.Value = Nothing
-            SoftDataGrid.NotifyCurrentCellDirty(True)
+        If Not cell.ReadOnly Then
+            If e.KeyChar.Equals(vbBack) Then
+                cell.Value = Nothing
+                SoftDataGrid.NotifyCurrentCellDirty(True)
+                PostChangeUpdate(cell)
+            End If
         End If
     End Sub
 
     Private Sub SoftDataGrid_KeyDown(sender As Object, e As KeyEventArgs) Handles SoftDataGrid.KeyDown
         Dim cell = SoftDataGrid.CurrentCell
-        If e.KeyCode.Equals(Keys.Delete) Then
-            cell.Value = Nothing
-        End If
 
         If e.KeyCode = Keys.C AndAlso e.Modifiers = Keys.Control Then
             My.Computer.Clipboard.SetText(cell.Value.ToString)
         End If
 
-        If e.KeyCode = Keys.V AndAlso e.Modifiers = Keys.Control Then
-            cell.Value = My.Computer.Clipboard.GetText()
-            SoftDataGrid.NotifyCurrentCellDirty(True)
-        End If
+        If Not cell.ReadOnly Then
+            If e.KeyCode.Equals(Keys.Delete) Then
+                cell.Value = Nothing
+                SoftDataGrid.NotifyCurrentCellDirty(True)
+                PostChangeUpdate(cell)
+            End If
 
-        If e.KeyCode = Keys.X AndAlso e.Modifiers = Keys.Control Then
-            My.Computer.Clipboard.SetText(cell.Value.ToString)
-            cell.Value = Nothing
-            SoftDataGrid.NotifyCurrentCellDirty(True)
+            If e.KeyCode = Keys.V AndAlso e.Modifiers = Keys.Control Then
+                cell.Value = My.Computer.Clipboard.GetText()
+                SoftDataGrid.NotifyCurrentCellDirty(True)
+                PostChangeUpdate(cell)
+            End If
+
+            If e.KeyCode = Keys.X AndAlso e.Modifiers = Keys.Control Then
+                My.Computer.Clipboard.SetText(cell.Value.ToString)
+                cell.Value = Nothing
+                SoftDataGrid.NotifyCurrentCellDirty(True)
+                PostChangeUpdate(cell)
+            End If
         End If
 
     End Sub
@@ -407,7 +422,7 @@ Public Class RockRatsClient
         UpdateCollectionDate()
     End Sub
     Private Sub UpdateClock()
-        Clock.Text = Date.UtcNow.ToString("ddd yyyy-MM-dd hh:mm IGT")
+        Clock.Text = Date.UtcNow.ToString("ddd yyyy-MM-dd HH:mm IGT")
     End Sub
     Private Sub ClockTimer_Tick(sender As Object, e As EventArgs) Handles ClockTimer.Tick
         UpdateClock()
