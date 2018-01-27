@@ -582,9 +582,9 @@ Module SoftData
         If selectedSystem = "CHERTAN" Then
             Try
                 If factions.FirstOrDefault(Function(f) _
-                                               String.IsNullOrEmpty(
+                                               Not String.IsNullOrEmpty(
                                                     CalcInfluenceDiff(f.PrevInfluence.ToString(), f.Influence.ToString()))
-                                               ) IsNot Nothing Then
+                                               ) Is Nothing Then
                     MessageBox.Show("We're noticing that that the influence has changed in Chertan since the BGS update. It's likely that the Tick hasn't happened yet today. It's time does vary.",
                                     "Hmm...", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 End If

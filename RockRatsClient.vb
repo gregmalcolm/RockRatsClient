@@ -41,10 +41,22 @@ Public Class RockRatsClient
         ScanMarginLeft.Text = Parameters.GetParameter("ScanMarginLeft2")
         UpdateClock()
         InitTickTime()
+
         CommanderName.Text = DataCache.GetDataCache("Store", "LastCommander")
         If String.IsNullOrEmpty(CommanderName.Text) Then
             CommanderName.Text = "Jameson"
         End If
+
+        GameScreenWidth.Text = Parameters.GetParameter("GameScreenWidth")
+        If String.IsNullOrEmpty(GameScreenWidth.Text) Then
+            GameScreenWidth.Text = Screen.PrimaryScreen.Bounds.Width.ToString
+        End If
+
+        GameScreenHeight.Text = Parameters.GetParameter("GameScreenHeight")
+        If String.IsNullOrEmpty(GameScreenHeight.Text) Then
+            GameScreenHeight.Text = Screen.PrimaryScreen.Bounds.Height.ToString
+        End If
+
         LogOutput("Version: " & getVersion())
         LogOutput("AppData: " & AppDataDir)
         SetupGrid()
@@ -96,36 +108,7 @@ Public Class RockRatsClient
         End Try
     End Sub
     Private Sub CaptureEDScreen_Click(sender As Object, e As EventArgs) Handles CaptureEDScreen.Click
-        Dim bounds As Rectangle
-        Dim screenshot As System.Drawing.Bitmap
-        Dim graph As Graphics
-        Dim scanMarginPercentage As Integer = 23
-
-        If SoftData.AreAllFactionsOCRed() Then
-            MessageBox.Show("I can't do that Commander!" & vbCrLf &
-                "All rows are marked As OCRed which means theres nothing left to update.",
-                "Orly", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            Return
-        End If
-
-        CaptureEDScreen.Enabled = False
-        ScanningPanel.Show()
-        ScanningPanel.Refresh()
-
-        bounds = Screen.PrimaryScreen.Bounds
-        Try
-            scanMarginPercentage = Integer.Parse(Parameters.GetParameter("ScanMarginLeft2"))
-        Catch ex As Exception
-        End Try
-        Dim scanMargin As Integer = CInt(bounds.Width * (scanMarginPercentage / 100))
-
-        screenshot = New System.Drawing.Bitmap(scanMargin, bounds.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb) ' Format32bppArgb
-        graph = Graphics.FromImage(screenshot)
-        graph.CopyFromScreen(bounds.X, bounds.Y, 0, 0, New Size(scanMargin, bounds.Height), CopyPixelOperation.SourceCopy)
-
-        CompleteEDScreen(screenshot)
-        ScanningPanel.Hide()
-        CaptureEDScreen.Enabled = True
+        OcrScan()
     End Sub
 
     Private Sub CompleteEDScreen(screenshot As System.Drawing.Bitmap)
@@ -228,7 +211,7 @@ Public Class RockRatsClient
         RemoveButton.Enabled = True
     End Sub
 
-    Private Async Sub AddButton_Click(sender As Object, e As EventArgs)
+    Private Async Sub AddButton_Click(sender As Object, e As EventArgs) Handles AddButton.Click
         Dim systemName As String
         systemName = SystemNameBox.Text.ToUpper()
 
@@ -244,12 +227,7 @@ Public Class RockRatsClient
         End If
     End Sub
 
-    Private Sub SystemNameBox_TextChanged(sender As Object, e As EventArgs)
-        AddButton.Enabled = True
-        RemoveButton.Enabled = False
-    End Sub
-
-    Private Async Sub RemoveButton_Click(sender As Object, e As EventArgs)
+    Private Async Sub RemoveButton_Click(sender As Object, e As EventArgs) Handles RemoveButton.Click
         Dim systemName As String
         systemName = SystemNameBox.Text.ToUpper()
 
@@ -266,7 +244,11 @@ Public Class RockRatsClient
 
     Private Sub SoftDataGrid_CellEndEdit(sender As Object, e As DataGridViewCellEventArgs) Handles SoftDataGrid.CellEndEdit
         Dim cell = SoftDataGrid(e.ColumnIndex, e.RowIndex)
-        Select Case e.ColumnIndex
+
+        PostChangeUpdate(cell)
+    End Sub
+    Private Sub PostChangeUpdate(cell As DataGridViewCell)
+        Select Case cell.ColumnIndex
             Case ColumnTypes.Faction
                 Try
                     Dim faction = cell.Value.ToString
@@ -281,8 +263,8 @@ Public Class RockRatsClient
                 End Try
 
                 Try
-                    Dim prevInfluenceCell = SoftDataGrid(ColumnTypes.PrevInfluence, e.RowIndex)
-                    Dim InfluenceDiffCell = SoftDataGrid(ColumnTypes.InfluenceDiff, e.RowIndex)
+                    Dim prevInfluenceCell = SoftDataGrid(ColumnTypes.PrevInfluence, cell.RowIndex)
+                    Dim InfluenceDiffCell = SoftDataGrid(ColumnTypes.InfluenceDiff, cell.RowIndex)
                     If prevInfluenceCell.Value IsNot Nothing AndAlso cell.Value IsNot Nothing Then
                         Dim diff = SoftData.CalcInfluenceDiff(prevInfluenceCell.Value.ToString, cell.Value.ToString)
                         InfluenceDiffCell.Value = diff
@@ -290,40 +272,51 @@ Public Class RockRatsClient
                 Catch ex As Exception
                 End Try
         End Select
+
     End Sub
 
     Private Sub SoftDataGrid_KeyPress(sender As Object, e As KeyPressEventArgs) Handles SoftDataGrid.KeyPress
         Dim cell = SoftDataGrid.CurrentCell
-        If e.KeyChar.Equals(vbBack) Then
-            cell.Value = Nothing
-            SoftDataGrid.NotifyCurrentCellDirty(True)
+        If Not cell.ReadOnly Then
+            If e.KeyChar.Equals(vbBack) Then
+                cell.Value = Nothing
+                SoftDataGrid.NotifyCurrentCellDirty(True)
+                PostChangeUpdate(cell)
+            End If
         End If
     End Sub
 
     Private Sub SoftDataGrid_KeyDown(sender As Object, e As KeyEventArgs) Handles SoftDataGrid.KeyDown
         Dim cell = SoftDataGrid.CurrentCell
-        If e.KeyCode.Equals(Keys.Delete) Then
-            cell.Value = Nothing
-        End If
 
         If e.KeyCode = Keys.C AndAlso e.Modifiers = Keys.Control Then
             My.Computer.Clipboard.SetText(cell.Value.ToString)
         End If
 
-        If e.KeyCode = Keys.V AndAlso e.Modifiers = Keys.Control Then
-            cell.Value = My.Computer.Clipboard.GetText()
-            SoftDataGrid.NotifyCurrentCellDirty(True)
-        End If
+        If Not cell.ReadOnly Then
+            If e.KeyCode.Equals(Keys.Delete) Then
+                cell.Value = Nothing
+                SoftDataGrid.NotifyCurrentCellDirty(True)
+                PostChangeUpdate(cell)
+            End If
 
-        If e.KeyCode = Keys.X AndAlso e.Modifiers = Keys.Control Then
-            My.Computer.Clipboard.SetText(cell.Value.ToString)
-            cell.Value = Nothing
-            SoftDataGrid.NotifyCurrentCellDirty(True)
+            If e.KeyCode = Keys.V AndAlso e.Modifiers = Keys.Control Then
+                cell.Value = My.Computer.Clipboard.GetText()
+                SoftDataGrid.NotifyCurrentCellDirty(True)
+                PostChangeUpdate(cell)
+            End If
+
+            If e.KeyCode = Keys.X AndAlso e.Modifiers = Keys.Control Then
+                My.Computer.Clipboard.SetText(cell.Value.ToString)
+                cell.Value = Nothing
+                SoftDataGrid.NotifyCurrentCellDirty(True)
+                PostChangeUpdate(cell)
+            End If
         End If
 
     End Sub
 
-    Private Sub LogOcrCheckbox_CheckedChanged(sender As Object, e As EventArgs)
+    Private Sub LogOcrCheckbox_CheckedChanged(sender As Object, e As EventArgs) Handles LogOcrCheckbox.CheckedChanged
         If LogOcrCheckbox.Checked Then
             Parameters.SetParameter("LogOcrText", "True")
         Else
@@ -345,7 +338,10 @@ Public Class RockRatsClient
     End Sub
 
     Public Sub ShowBgsTools()
-        SelectedSystem.SelectedIndex = 0
+        If SelectedSystem.Items.Count > 0 Then
+            SelectedSystem.SelectedIndex = 0
+        End If
+
         SelectedSystem.Show()
         SoftDataGrid.Show()
         CollectionTimingLabel.Show()
@@ -407,9 +403,85 @@ Public Class RockRatsClient
         UpdateCollectionDate()
     End Sub
     Private Sub UpdateClock()
-        Clock.Text = Date.UtcNow.ToString("ddd yyyy-MM-dd hh:mm IGT")
+        Clock.Text = Date.UtcNow.ToString("ddd yyyy-MM-dd HH:mm IGT")
     End Sub
     Private Sub ClockTimer_Tick(sender As Object, e As EventArgs) Handles ClockTimer.Tick
         UpdateClock()
+    End Sub
+
+    Private Sub SystemNameBox_TextChanged(sender As Object, e As EventArgs) Handles SystemNameBox.TextChanged
+        AddButton.Enabled = Len(SystemNameBox.Text) > 0
+        RemoveButton.Enabled = Len(SystemNameBox.Text) > 0
+    End Sub
+
+    Private Sub RecalcScreenResButton_Click(sender As Object, e As EventArgs) Handles RecalcScreenResButton.Click
+        ScanMarginLeft.Text = "23"
+        GameScreenWidth.Text = Screen.PrimaryScreen.Bounds.Width.ToString
+        GameScreenHeight.Text = Screen.PrimaryScreen.Bounds.Height.ToString
+    End Sub
+
+    Private Sub GameScreenWidth_TextChanged(sender As Object, e As EventArgs) Handles GameScreenWidth.TextChanged
+        Try
+            Dim value = Integer.Parse(Trim(GameScreenWidth.Text))
+            Parameters.SetParameter("GameScreenWidth", GameScreenWidth.Text)
+        Catch ex As Exception
+
+        End Try
+    End Sub
+    Private Sub GameScreenHeight_TextChanged(sender As Object, e As EventArgs) Handles GameScreenHeight.TextChanged
+        Try
+            Dim value = Integer.Parse(Trim(GameScreenHeight.Text))
+            Parameters.SetParameter("GameScreenHeight", GameScreenHeight.Text)
+        Catch ex As Exception
+
+        End Try
+    End Sub
+
+    Private Sub TestOcrButton_Click(sender As Object, e As EventArgs) Handles TestOcrButton.Click
+        OcrScan()
+    End Sub
+
+    Private Sub OcrScan()
+        Dim bounds As Rectangle
+        Dim screenshot As System.Drawing.Bitmap
+        Dim graph As Graphics
+        Dim scanMarginPercentage As Integer = 23
+        Dim screenWidth As Integer = Screen.PrimaryScreen.Bounds.Width
+        Dim screenHeight As Integer = Screen.PrimaryScreen.Bounds.Height
+
+        If SoftData.AreAllFactionsOCRed() Then
+            MessageBox.Show("I can't do that Commander!" & vbCrLf &
+                "All rows are marked As OCRed which means theres nothing left to update.",
+                "Orly", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        CaptureEDScreen.Enabled = False
+        ScanningPanel.Show()
+        ScanningPanel.Refresh()
+
+        bounds = Screen.PrimaryScreen.Bounds
+        Try
+            scanMarginPercentage = Integer.Parse(Parameters.GetParameter("ScanMarginLeft2"))
+        Catch ex As Exception
+        End Try
+        Try
+            screenWidth = Integer.Parse(Parameters.GetParameter("GameScreenWidth"))
+        Catch ex As Exception
+        End Try
+        Try
+            screenHeight = Integer.Parse(Parameters.GetParameter("GameScreenHeight"))
+        Catch ex As Exception
+        End Try
+
+        Dim scanMargin As Integer = CInt(screenWidth * (scanMarginPercentage / 100))
+
+        screenshot = New System.Drawing.Bitmap(scanMargin, screenHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb) ' Format32bppArgb
+        graph = Graphics.FromImage(screenshot)
+        graph.CopyFromScreen(bounds.X, bounds.Y, 0, 0, New Size(scanMargin, screenHeight), CopyPixelOperation.SourceCopy)
+
+        CompleteEDScreen(screenshot)
+        ScanningPanel.Hide()
+        CaptureEDScreen.Enabled = True
     End Sub
 End Class
