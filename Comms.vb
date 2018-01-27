@@ -195,25 +195,38 @@ Module Comms
     End Function
 
     Private Async Function ReadFactionsFromAws() As Task
-        Dim lastWeek = String.Format("{0:yyyy-MM-dd}", Date.UtcNow - New TimeSpan(24 * 7, 0, 0))
-        Dim request = New ScanRequest() With {
-            .TableName = "rock-rat-factions",
-            .IndexName = "date-index",
-            .FilterExpression = "#entrydate >= :lastweek",
-            .ExpressionAttributeNames = New Dictionary(Of String, String)() From {
-                {"#entrydate", "date"}
-            },
-            .ExpressionAttributeValues = New Dictionary(Of String, AttributeValue)() From {
-                {":lastweek", New AttributeValue() With {.S = lastWeek}}
-            },
-            .Limit = 5000
-        }
-        RockRatsClient.LogEverywhere("Requesting factions from AWS. At the moment this sometimes takes a while... :/")
-        Dim response = Await awsClient.ScanAsync(request)
+        Dim response = Await FetchMostRecentFactionData()
+        If response IsNot Nothing Then
+            For Each systemName As String In RockRatsClient.SelectedSystem.Items
+                ReadFactionFromResults(response.Items, systemName)
+            Next
+        End If
+    End Function
+    Private Async Function FetchMostRecentFactionData() As Task(Of QueryResponse)
+        Dim response As QueryResponse = Nothing
+        For day = 0 To 365
+            Dim queryDate = Date.UtcNow - New TimeSpan(24 * day, 0, 0)
+            Dim formattedDate = String.Format("{0:yyyy-MM-dd}", queryDate)
+            Dim request = New QueryRequest() With {
+                .TableName = "rock-rat-factions",
+                .IndexName = "date-index",
+                .KeyConditionExpression = "#entrydate = :datestamp",
+                .ExpressionAttributeNames = New Dictionary(Of String, String)() From {
+                    {"#entrydate", "date"}
+                },
+                .ExpressionAttributeValues = New Dictionary(Of String, AttributeValue)() From {
+                    {":datestamp", New AttributeValue() With {.S = formattedDate}}
+                },
+                .Limit = 5000
+            }
+            RockRatsClient.LogEverywhere("Requesting factions from AWS. At the moment this sometimes takes a while... :/")
+            response = Await awsClient.QueryAsync(request)
 
-        For Each systemName As String In RockRatsClient.SelectedSystem.Items
-            ReadFactionFromResults(response.Items, systemName)
+            If response.Count > 0 Then
+                Exit For
+            End If
         Next
+        Return response
     End Function
     Private Sub ReadFactionFromResults(factionsData As List(Of Dictionary(Of String, AttributeValue)), systemName As String)
         Dim systemFactions = factionsData.Where(Function(faction) faction("system").S.Equals(systemName))
@@ -238,7 +251,7 @@ Module Comms
                     .EntryDate = If(.PrevEntryDate = RockRatsClient.EntryDate.Text, .PrevEntryDate, Nothing),
                     .Influence = If(.PrevEntryDate = RockRatsClient.EntryDate.Text, .PrevInfluence, Nothing),
                     .State = If(.PrevEntryDate = RockRatsClient.EntryDate.Text, .PrevState, Nothing),
-                    .Commander = If(.PrevEntryDate = RockRatsClient.EntryDate.Text, .Commander, Nothing),
+                    .Commander = If(.PrevEntryDate = RockRatsClient.EntryDate.Text, .PrevCommander, Nothing),
                     .Downloaded = True
                 }) _
                 .ToList()
