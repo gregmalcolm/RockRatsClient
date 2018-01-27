@@ -1,7 +1,7 @@
 Rock Rat Client
 ===============
 
-This is a blatant rip off of SEPPClient for use with Rock Rats faction in Elite Dangerous. Thanks to Hamouras for original code/
+BGS OCR Client. Uploads BGS data to Rock Rat Central
 
 AWS Configuration
 -----------------

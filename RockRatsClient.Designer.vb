@@ -36,9 +36,6 @@ Partial Class RockRatsClient
         Me.InfTotal = New System.Windows.Forms.Label()
         Me.InfTotalVal = New System.Windows.Forms.Label()
         Me.ViewWebTracker = New System.Windows.Forms.Button()
-        Me.LogOcrCheckbox = New System.Windows.Forms.CheckBox()
-        Me.ScanMarginLeft = New System.Windows.Forms.TextBox()
-        Me.Label14 = New System.Windows.Forms.Label()
         Me.EDCapture = New System.Windows.Forms.PictureBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.RemoveButton = New System.Windows.Forms.Button()
@@ -46,6 +43,15 @@ Partial Class RockRatsClient
         Me.Label7 = New System.Windows.Forms.Label()
         Me.EnteredByLabel = New System.Windows.Forms.Label()
         Me.PrevEnteredByLabel = New System.Windows.Forms.Label()
+        Me.TestOcrButton = New System.Windows.Forms.Button()
+        Me.RecalcScreenResButton = New System.Windows.Forms.Button()
+        Me.Label8 = New System.Windows.Forms.Label()
+        Me.GameScreenHeight = New System.Windows.Forms.TextBox()
+        Me.Label6 = New System.Windows.Forms.Label()
+        Me.GameScreenWidth = New System.Windows.Forms.TextBox()
+        Me.ScanMarginLeft = New System.Windows.Forms.TextBox()
+        Me.LogOcrCheckbox = New System.Windows.Forms.CheckBox()
+        Me.Label14 = New System.Windows.Forms.Label()
         Me.LogTab = New System.Windows.Forms.TabPage()
         Me.LogTextBox = New System.Windows.Forms.RichTextBox()
         Me.SettingsTab = New System.Windows.Forms.TabPage()
@@ -59,7 +65,6 @@ Partial Class RockRatsClient
         Me.Label9 = New System.Windows.Forms.Label()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.Label3 = New System.Windows.Forms.Label()
-        Me.Label17 = New System.Windows.Forms.Label()
         Me.SoftDataTab = New System.Windows.Forms.TabPage()
         Me.ScanningPanel = New System.Windows.Forms.Panel()
         Me.Label5 = New System.Windows.Forms.Label()
@@ -196,39 +201,6 @@ Partial Class RockRatsClient
         Me.ToolTip1.SetToolTip(Me.ViewWebTracker, "Update RockRats Soft Data" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only available when Influence Total is 100%")
         Me.ViewWebTracker.UseVisualStyleBackColor = True
         '
-        'LogOcrCheckbox
-        '
-        Me.LogOcrCheckbox.AutoSize = True
-        Me.LogOcrCheckbox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.LogOcrCheckbox.Location = New System.Drawing.Point(247, 39)
-        Me.LogOcrCheckbox.Name = "LogOcrCheckbox"
-        Me.LogOcrCheckbox.Size = New System.Drawing.Size(146, 17)
-        Me.LogOcrCheckbox.TabIndex = 51
-        Me.LogOcrCheckbox.Text = "Log OCR text translations"
-        Me.ToolTip1.SetToolTip(Me.LogOcrCheckbox, "Covert the Image to Grey Scale prior to OCR processing" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "This can improve OCR accu" &
-        "racy but at a minor delay")
-        Me.LogOcrCheckbox.UseVisualStyleBackColor = True
-        '
-        'ScanMarginLeft
-        '
-        Me.ScanMarginLeft.Location = New System.Drawing.Point(344, 11)
-        Me.ScanMarginLeft.Name = "ScanMarginLeft"
-        Me.ScanMarginLeft.Size = New System.Drawing.Size(41, 20)
-        Me.ScanMarginLeft.TabIndex = 56
-        Me.ToolTip1.SetToolTip(Me.ScanMarginLeft, "Set how much of the screen to look at when capturing text. This will stop other t" &
-        "ext like this window contaminating the results")
-        '
-        'Label14
-        '
-        Me.Label14.AutoSize = True
-        Me.Label14.Location = New System.Drawing.Point(210, 14)
-        Me.Label14.Name = "Label14"
-        Me.Label14.Size = New System.Drawing.Size(131, 13)
-        Me.Label14.TabIndex = 57
-        Me.Label14.Text = "Area of left screen to scan"
-        Me.ToolTip1.SetToolTip(Me.Label14, "Set how much of the screen to look at when capturing text. This will stop other t" &
-        "ext like this window contaminating the results")
-        '
         'EDCapture
         '
         Me.EDCapture.BackColor = System.Drawing.Color.DarkGray
@@ -307,6 +279,99 @@ Partial Class RockRatsClient
         Me.PrevEnteredByLabel.Text = "Previous Data: Jameson 20XX-XX-XX"
         Me.ToolTip1.SetToolTip(Me.PrevEnteredByLabel, "Influence Total has to be 100% before update is enabled")
         Me.PrevEnteredByLabel.Visible = False
+        '
+        'TestOcrButton
+        '
+        Me.TestOcrButton.Location = New System.Drawing.Point(300, 183)
+        Me.TestOcrButton.Name = "TestOcrButton"
+        Me.TestOcrButton.Size = New System.Drawing.Size(93, 54)
+        Me.TestOcrButton.TabIndex = 67
+        Me.TestOcrButton.Text = "Test OCR"
+        Me.ToolTip1.SetToolTip(Me.TestOcrButton, "Add the entered system name to the list of official SEPP Systems")
+        Me.TestOcrButton.UseVisualStyleBackColor = True
+        '
+        'RecalcScreenResButton
+        '
+        Me.RecalcScreenResButton.Location = New System.Drawing.Point(201, 186)
+        Me.RecalcScreenResButton.Name = "RecalcScreenResButton"
+        Me.RecalcScreenResButton.Size = New System.Drawing.Size(67, 51)
+        Me.RecalcScreenResButton.TabIndex = 66
+        Me.RecalcScreenResButton.Text = "Recalc Screen Resolution"
+        Me.ToolTip1.SetToolTip(Me.RecalcScreenResButton, "Add the entered system name to the list of official SEPP Systems")
+        Me.RecalcScreenResButton.UseVisualStyleBackColor = True
+        '
+        'Label8
+        '
+        Me.Label8.AutoSize = True
+        Me.Label8.Location = New System.Drawing.Point(198, 160)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(118, 13)
+        Me.Label8.TabIndex = 63
+        Me.Label8.Text = "Override Screen Height"
+        Me.ToolTip1.SetToolTip(Me.Label8, "Set how much of the screen to look at when capturing text. This will stop other t" &
+        "ext like this window contaminating the results")
+        '
+        'GameScreenHeight
+        '
+        Me.GameScreenHeight.Location = New System.Drawing.Point(322, 157)
+        Me.GameScreenHeight.Name = "GameScreenHeight"
+        Me.GameScreenHeight.Size = New System.Drawing.Size(71, 20)
+        Me.GameScreenHeight.TabIndex = 65
+        Me.ToolTip1.SetToolTip(Me.GameScreenHeight, "Set how much of the screen to look at when capturing text. This will stop other t" &
+        "ext like this window contaminating the results")
+        '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Location = New System.Drawing.Point(198, 134)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(115, 13)
+        Me.Label6.TabIndex = 70
+        Me.Label6.Text = "Override Screen Width"
+        Me.ToolTip1.SetToolTip(Me.Label6, "Set how much of the screen to look at when capturing text. This will stop other t" &
+        "ext like this window contaminating the results")
+        '
+        'GameScreenWidth
+        '
+        Me.GameScreenWidth.Location = New System.Drawing.Point(322, 131)
+        Me.GameScreenWidth.Name = "GameScreenWidth"
+        Me.GameScreenWidth.Size = New System.Drawing.Size(71, 20)
+        Me.GameScreenWidth.TabIndex = 71
+        Me.ToolTip1.SetToolTip(Me.GameScreenWidth, "Set how much of the screen to look at when capturing text. This will stop other t" &
+        "ext like this window contaminating the results")
+        '
+        'ScanMarginLeft
+        '
+        Me.ScanMarginLeft.Location = New System.Drawing.Point(352, 105)
+        Me.ScanMarginLeft.Name = "ScanMarginLeft"
+        Me.ScanMarginLeft.Size = New System.Drawing.Size(41, 20)
+        Me.ScanMarginLeft.TabIndex = 68
+        Me.ToolTip1.SetToolTip(Me.ScanMarginLeft, "Set how much of the screen to look at when capturing text. This will stop other t" &
+        "ext like this window contaminating the results")
+        '
+        'LogOcrCheckbox
+        '
+        Me.LogOcrCheckbox.AutoSize = True
+        Me.LogOcrCheckbox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.LogOcrCheckbox.Location = New System.Drawing.Point(236, 33)
+        Me.LogOcrCheckbox.Name = "LogOcrCheckbox"
+        Me.LogOcrCheckbox.Size = New System.Drawing.Size(146, 17)
+        Me.LogOcrCheckbox.TabIndex = 64
+        Me.LogOcrCheckbox.Text = "Log OCR text translations"
+        Me.ToolTip1.SetToolTip(Me.LogOcrCheckbox, "Covert the Image to Grey Scale prior to OCR processing" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "This can improve OCR accu" &
+        "racy but at a minor delay")
+        Me.LogOcrCheckbox.UseVisualStyleBackColor = True
+        '
+        'Label14
+        '
+        Me.Label14.AutoSize = True
+        Me.Label14.Location = New System.Drawing.Point(218, 108)
+        Me.Label14.Name = "Label14"
+        Me.Label14.Size = New System.Drawing.Size(131, 13)
+        Me.Label14.TabIndex = 69
+        Me.Label14.Text = "Area of left screen to scan"
+        Me.ToolTip1.SetToolTip(Me.Label14, "Set how much of the screen to look at when capturing text. This will stop other t" &
+        "ext like this window contaminating the results")
         '
         'LogTab
         '
@@ -428,13 +493,18 @@ Partial Class RockRatsClient
         '
         'GroupBox1
         '
-        Me.GroupBox1.Controls.Add(Me.Label3)
-        Me.GroupBox1.Controls.Add(Me.Label1)
-        Me.GroupBox1.Controls.Add(Me.Label17)
-        Me.GroupBox1.Controls.Add(Me.EDCapture)
+        Me.GroupBox1.Controls.Add(Me.TestOcrButton)
+        Me.GroupBox1.Controls.Add(Me.RecalcScreenResButton)
+        Me.GroupBox1.Controls.Add(Me.Label8)
+        Me.GroupBox1.Controls.Add(Me.GameScreenHeight)
+        Me.GroupBox1.Controls.Add(Me.Label6)
+        Me.GroupBox1.Controls.Add(Me.GameScreenWidth)
         Me.GroupBox1.Controls.Add(Me.ScanMarginLeft)
         Me.GroupBox1.Controls.Add(Me.LogOcrCheckbox)
         Me.GroupBox1.Controls.Add(Me.Label14)
+        Me.GroupBox1.Controls.Add(Me.Label3)
+        Me.GroupBox1.Controls.Add(Me.Label1)
+        Me.GroupBox1.Controls.Add(Me.EDCapture)
         Me.GroupBox1.Location = New System.Drawing.Point(3, 3)
         Me.GroupBox1.Name = "GroupBox1"
         Me.GroupBox1.Size = New System.Drawing.Size(408, 296)
@@ -450,15 +520,6 @@ Partial Class RockRatsClient
         Me.Label3.Size = New System.Drawing.Size(336, 13)
         Me.Label3.TabIndex = 62
         Me.Label3.Text = "Use it to check the Factions text is the only part getting OCR scanned" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10)
-        '
-        'Label17
-        '
-        Me.Label17.AutoSize = True
-        Me.Label17.Location = New System.Drawing.Point(385, 14)
-        Me.Label17.Name = "Label17"
-        Me.Label17.Size = New System.Drawing.Size(15, 13)
-        Me.Label17.TabIndex = 59
-        Me.Label17.Text = "%"
         '
         'SoftDataTab
         '
@@ -756,13 +817,9 @@ Partial Class RockRatsClient
     Friend WithEvents LoadingLabel As Label
     Friend WithEvents Tabs As TabControl
     Friend WithEvents AlwaysOnTopCheckbox As CheckBox
-    Friend WithEvents ScanMarginLeft As TextBox
-    Friend WithEvents Label14 As Label
     Friend WithEvents EDCapture As PictureBox
-    Friend WithEvents LogOcrCheckbox As CheckBox
     Friend WithEvents GroupBox1 As GroupBox
     Friend WithEvents Label1 As Label
-    Friend WithEvents Label17 As Label
     Friend WithEvents GroupBox2 As GroupBox
     Friend WithEvents Label2 As Label
     Friend WithEvents Label3 As Label
@@ -792,4 +849,13 @@ Partial Class RockRatsClient
     Friend WithEvents EnteredByLabel As Label
     Friend WithEvents ScanningPanel As Panel
     Friend WithEvents Label5 As Label
+    Friend WithEvents TestOcrButton As Button
+    Friend WithEvents RecalcScreenResButton As Button
+    Friend WithEvents Label8 As Label
+    Friend WithEvents GameScreenHeight As TextBox
+    Friend WithEvents Label6 As Label
+    Friend WithEvents GameScreenWidth As TextBox
+    Friend WithEvents ScanMarginLeft As TextBox
+    Friend WithEvents LogOcrCheckbox As CheckBox
+    Friend WithEvents Label14 As Label
 End Class
