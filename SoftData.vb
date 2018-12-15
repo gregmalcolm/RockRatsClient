@@ -33,8 +33,8 @@ Module SoftData
                 Dim influenceVal As Decimal = 0
                 For Each line As String In elements
                     If Trim(line) <> "" Then
-                        ' Uncommit to see OCR text
-                        ' RockRatsClient.LogEverywhere(line)
+                        ' Uncomment to see OCR text
+                        RockRatsClient.LogEverywhere(line)
 
                         ' line = whitelistChars(line)
                         line = UCase(line)
@@ -274,7 +274,9 @@ Module SoftData
 
     Private Function MatchState(stateText As String) As String
         Dim text As String = Replace(stateText, "_", "")
-        text = Regex.Replace(text, "^[^ ]* +(\w.+)$", "$1")
+        ' For example, grab the state out of something like:
+        ' "STATEI A CIVIL WAR"
+        text = Regex.Replace(text, "^[^ ]* +\w? *(\w.+)$", "$1")
 
         If WordMatchScore(text, "CIVIL UNREST") > 8 Then
             Return "Civil unrest"
