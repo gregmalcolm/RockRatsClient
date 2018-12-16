@@ -29,12 +29,14 @@ Module SoftData
                 elements = rockRatsOcr.GetText.Split(stringSeparators, StringSplitOptions.None)
                 Dim factionFirstLine As String = ""
                 Dim factionName As String = ""
+                Dim factionState As String = ""
                 Dim influence As String = ""
                 Dim influenceVal As Decimal = 0
+                Dim faction As Faction
                 For Each line As String In elements
                     If Trim(line) <> "" Then
                         ' Uncomment to see OCR text
-                        RockRatsClient.LogEverywhere(line)
+                        ' RockRatsClient.LogEverywhere(line)
 
                         ' line = whitelistChars(line)
                         line = UCase(line)
@@ -48,7 +50,8 @@ Module SoftData
                             factionFirstLine = ""
                             influence = ""
                             influenceVal = 0
-
+                            factionState = ""
+                            faction = Nothing
                         End If
                         If isFactionText(line) Then
                             factionFirstLine = Mid(line, 10, Len(line) - 9)
@@ -59,18 +62,32 @@ Module SoftData
                             influence = Replace(influenceVal.ToString, ",", ".")
                             LogOcrLine(line)
                         End If
-                        If influenceVal <> 0 AndAlso isStateText(line) Then
-                            Dim s As String = MatchState(Trim(line))
-                            AddEDCaptureText(factionName, influence, s, influenceVal)
-                            factionName = ""
-                            influence = ""
-                            influenceVal = 0
-                            LogOcrLine(line)
-                        End If
                         If isRelationshipText(line) Then
                             factionName = ""
                             influence = ""
                             influenceVal = 0
+                            factionState = ""
+                            LogOcrLine(line)
+                        End If
+                        If factionState <> "" Then
+                            Dim s As String = MatchState(Trim(line))
+                            If Trim(s) <> "" Then
+                                faction = UpdateEDCaptureText(faction, s)
+                                If faction IsNot Nothing Then
+                                    factionState = faction.State
+                                End If
+                                LogOcrLine(line)
+                            End If
+                        End If
+                        If influenceVal <> 0 AndAlso isStateText(line) Then
+                            Dim s As String = MatchState(Trim(line))
+                            faction = AddEDCaptureText(factionName, influence, s, influenceVal)
+                            factionName = ""
+                            influence = ""
+                            influenceVal = 0
+                            If faction IsNot Nothing Then
+                                factionState = faction.State
+                            End If
                             LogOcrLine(line)
                         End If
                     End If
@@ -91,9 +108,10 @@ Module SoftData
         Return factions.FirstOrDefault(Function(f) Not f.Found) Is Nothing
     End Function
 
-    Private Sub AddEDCaptureText(factionName As String, influence As String, state As String, influenceVal As Decimal)
+    Private Function AddEDCaptureText(factionName As String, influence As String, state As String, influenceVal As Decimal) As Faction
+        Dim faction As Faction
         Try
-            Dim faction = factions.First(Function(f) f.FactionName.Equals(factionName))
+            faction = factions.First(Function(f) f.FactionName.Equals(factionName))
             If faction IsNot Nothing Then
                 If Not faction.Found Then
                     faction.Influence = influenceVal
@@ -104,11 +122,24 @@ Module SoftData
                     UpdateDataGridRow(faction, True)
                 End If
             End If
-
+            Return faction
         Catch ex As Exception
-
         End Try
-    End Sub
+    End Function
+    Private Function UpdateEDCaptureText(faction As Faction, factionState As String) As Faction
+        Try
+            If faction IsNot Nothing Then
+                If factionState = "" Then
+                    faction.State = factionState
+                Else
+                    faction.State &= ", " & factionState
+                End If
+                UpdateDataGridRow(faction, True)
+            End If
+            Return faction
+        Catch ex As Exception
+        End Try
+    End Function
     Public Sub UpdateDataGridRow(faction As Faction, Optional scrollToChanges As Boolean = False)
         Dim doInsert As Boolean = True
         Dim influenceDiff = CalcInfluenceDiff(faction.PrevInfluence.ToString, faction.Influence.ToString)
@@ -276,7 +307,7 @@ Module SoftData
         Dim text As String = Replace(stateText, "_", "")
         ' For example, grab the state out of something like:
         ' "STATEI A CIVIL WAR"
-        text = Regex.Replace(text, "^[^ ]* +\w? *(\w.+)$", "$1")
+        text = Regex.Replace(text, "^[^ ]* +[^ ]? *(\w.+)$", "$1")
 
         If WordMatchScore(text, "CIVIL UNREST") > 8 Then
             Return "Civil unrest"
