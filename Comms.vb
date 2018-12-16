@@ -195,27 +195,29 @@ Module Comms
     End Function
 
     Private Async Function ReadFactionsFromAws() As Task
-        Dim response = Await FetchMostRecentFactionData()
-        If response IsNot Nothing Then
-            For Each systemName As String In RockRatsClient.SelectedSystem.Items
+        For Each systemName As String In RockRatsClient.SelectedSystem.Items
+            Dim response = Await FetchMostRecentFactionData(systemName)
+            If response IsNot Nothing Then
                 ReadFactionFromResults(response.Items, systemName)
-            Next
-        End If
+            End If
+        Next
     End Function
-    Private Async Function FetchMostRecentFactionData() As Task(Of QueryResponse)
+    Private Async Function FetchMostRecentFactionData(systemName As String) As Task(Of QueryResponse)
         Dim response As QueryResponse = Nothing
         For day = 0 To 365
             Dim queryDate = Date.UtcNow - New TimeSpan(24 * day, 0, 0)
             Dim formattedDate = String.Format("{0:yyyy-MM-dd}", queryDate)
             Dim request = New QueryRequest() With {
                 .TableName = "rock-rat-factions",
-                .IndexName = "date-index",
-                .KeyConditionExpression = "#entrydate = :datestamp",
+                .IndexName = "date-system-index",
+                .KeyConditionExpression = "#entrydate = :datestamp and #system = :system",
                 .ExpressionAttributeNames = New Dictionary(Of String, String)() From {
-                    {"#entrydate", "date"}
+                    {"#entrydate", "date"},
+                    {"#system", "system"}
                 },
                 .ExpressionAttributeValues = New Dictionary(Of String, AttributeValue)() From {
-                    {":datestamp", New AttributeValue() With {.S = formattedDate}}
+                    {":datestamp", New AttributeValue() With {.S = formattedDate}},
+                    {":system", New AttributeValue() With {.S = systemName}}
                 },
                 .Limit = 5000
             }
